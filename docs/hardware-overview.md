@@ -1,405 +1,253 @@
 # Hardware Overview
 
-MycoBox is built around two cooperating ESP32 microcontrollers.
+MycoBox is a local environmental-control system built around two ESP32 microcontrollers.
 
-The system intentionally separates the main automation logic from Zigbee communication:
+The architecture separates the main automation logic from the Zigbee radio network.
 
-* **ESP32-S3** runs the main application, web interface, sensors and climate-control logic.
-* **ESP32-H2** operates as the dedicated Zigbee coordinator.
-* The two controllers communicate through an internal **SPI bridge**.
-
-This separation keeps the Zigbee network independent from the higher-level cultivation logic while still allowing the Main Controller to manage connected devices.
+This allows the Main Controller to focus on measurements, schedules and control decisions while a dedicated controller handles communication with external Zigbee devices.
 
 ---
 
-## System architecture
+# System architecture
 
 ```mermaid
 flowchart LR
-    USER["Phone / Tablet / Computer"]
+    SENSOR["Environmental sensors<br>SCD4x / SHT3x"]
 
-    subgraph MYCOBOX["MycoBox Controller"]
-        S3["ESP32-S3\nMain Controller"]
-        H2["ESP32-H2\nZigbee Controller"]
+    RTC["DS3231 RTC"]
 
-        SENSOR["Environmental Sensors\nSCD4x / SHT3x"]
-        RTC["DS3231 RTC"]
-        DISPLAY["Local Display"]
-        JOYSTICK["Joystick"]
+    S3["ESP32-S3<br>Main Controller"]
 
-        SENSOR -->|I²C| S3
-        RTC <-->|I²C| S3
-        S3 --> DISPLAY
-        JOYSTICK --> S3
+    DISPLAY["Local display<br>and joystick"]
 
-        S3 <-->|SPI| H2
-    end
+    WIFI["Wi-Fi<br>Web interface"]
 
-    USER <-->|Wi-Fi / HTTP| S3
+    H2["ESP32-H2<br>Zigbee Coordinator"]
 
-    H2 <-->|Zigbee| PLUGS["Zigbee switches\nand smart plugs"]
+    ACTUATORS["Zigbee actuators<br>Humidification / Fan / Heat / Light"]
 
-    PLUGS --> HUM["Humidifier"]
-    PLUGS --> FAN["Ventilation"]
-    PLUGS --> HEAT["Heating"]
-    PLUGS --> LIGHT["Lighting"]
+    SENSOR --> S3
+    RTC --> S3
+    DISPLAY --> S3
+    WIFI <--> S3
+
+    S3 <-->|SPI| H2
+
+    H2 <-->|Zigbee| ACTUATORS
 ```
-
-The controller itself does not need to switch mains voltage directly.
-
-Instead, external equipment can be connected through compatible Zigbee switching devices.
 
 ---
 
-## ESP32-S3 — Main Controller
+# ESP32-S3 Main Controller
 
-The ESP32-S3 is the central processor of MycoBox.
+The ESP32-S3 is the primary application processor.
 
-It is responsible for the high-level behavior of the system.
+It is responsible for:
 
-Its main responsibilities include:
-
-* reading environmental sensors,
-* maintaining cultivation schedules,
-* humidity control,
-* ventilation control,
-* heating control,
-* lighting control,
+* environmental measurements,
+* automation logic,
 * Wi-Fi connectivity,
-* local web interface,
-* historical measurements and logs,
-* time synchronization,
-* local display,
-* joystick input,
-* communication with the ESP32-H2,
-* firmware management.
+* the local web interface,
+* time-based schedules,
+* environmental profiles,
+* historical data,
+* local display operation,
+* user input,
+* firmware management,
+* communication with the Zigbee Controller.
 
-The S3 therefore acts as the main source of decisions inside MycoBox.
+The Main Controller determines when connected equipment should operate.
 
-The Zigbee controller does not decide when a humidifier, fan or heater should operate. Those decisions are made by the Main Controller and then sent to the Zigbee subsystem.
-
----
-
-## ESP32-H2 — Zigbee Controller
-
-The ESP32-H2 is dedicated to Zigbee communication.
-
-It operates as the **Zigbee Coordinator** for the MycoBox network.
-
-Its responsibilities include:
-
-* creating and maintaining the Zigbee network,
-* pairing Zigbee devices,
-* discovering connected devices,
-* communicating with Zigbee switches,
-* executing commands received from the Main Controller,
-* reporting Zigbee information back to the Main Controller.
-
-The currently active control path is based around Zigbee switch devices.
-
-This makes ordinary Zigbee smart plugs and switching modules suitable as actuators for equipment such as humidifiers, fans, heaters and lights.
+External mains-powered devices are controlled through Zigbee actuators rather than directly from the ESP32-S3.
 
 ---
 
-## Communication between the controllers
+# ESP32-H2 Zigbee Controller
 
-The ESP32-S3 and ESP32-H2 are connected through an internal SPI communication bridge.
+The ESP32-H2 operates as the Zigbee Coordinator.
 
-```text
-ESP32-S3
-   │
-   │  SPI
-   │
-ESP32-H2
-   │
-   │  Zigbee
-   │
-External devices
-```
+Its main responsibilities are:
 
-The ESP32-S3 acts as the main application controller.
+* maintaining the Zigbee network,
+* allowing compatible devices to join,
+* tracking paired switch-type devices,
+* controlling Zigbee endpoints,
+* reporting device state to the Main Controller.
 
-When the climate-control logic decides that an external device should change state, the request is sent through the SPI bridge to the ESP32-H2.
+The ESP32-S3 and ESP32-H2 communicate through an internal SPI connection.
 
-The H2 then performs the required operation on the Zigbee network.
-
-This architecture keeps two very different responsibilities separate:
-
-```text
-Cultivation logic      → ESP32-S3
-Zigbee communication   → ESP32-H2
-```
+This separation allows the Zigbee subsystem to operate independently from the Wi-Fi and application logic.
 
 ---
 
-## Environmental sensors
+# Environmental sensors
 
-MycoBox uses digital environmental sensors connected to the Main Controller.
+Current MycoBox firmware supports sensors from the:
 
-The current implementation supports the Sensirion:
+* Sensirion SCD4x family,
+* Sensirion SHT3x family.
 
-* **SCD4x family**
-* **SHT3x family**
-
-These sensor families are suitable for measuring the environmental parameters required inside a growing chamber.
-
-Depending on the installed sensor configuration, MycoBox can monitor:
+Depending on the installed hardware, these sensors provide measurements including:
 
 * temperature,
 * relative humidity,
 * CO₂ concentration.
 
-The sensor subsystem is connected to the ESP32-S3 through I²C.
+The sensor subsystem is connected directly to the Main Controller.
 
-The same I²C bus is shared by other internal peripherals and access to it is coordinated by the Main Controller.
+Environmental data is used both for display and automatic control.
 
 ---
 
-## Real-time clock
+# Real-time clock
 
-MycoBox contains a **DS3231 real-time clock**.
+MycoBox uses a DS3231 real-time clock.
 
-The controller uses two complementary time sources:
+Network time can be used as the reference when available, while the RTC provides local time when network synchronization is unavailable.
 
-```text
-Internet available
-        │
-        ▼
-       NTP
-        │
-        ▼
-  MycoBox system time
-        │
-        ▼
-      DS3231
-```
+Reliable time is important for:
 
-When network synchronization is available, NTP provides the reference time.
-
-The RTC provides an offline fallback so the controller can maintain meaningful time even when an internet connection is unavailable.
-
-Accurate time is important for:
-
-* cultivation schedules,
-* lighting periods,
-* day transitions,
+* lighting schedules,
+* equipment schedules,
+* environmental profiles,
 * historical measurements,
-* event logs.
+* daily transitions.
+
+The system can therefore continue time-dependent operation without continuous internet access.
 
 ---
 
-## Local user interface
+# Local user interface
 
-MycoBox can be operated without a permanently connected phone or computer.
+The Main Controller supports a local display and joystick.
 
-The Main Controller supports:
+This interface allows basic controller information to remain available directly on the device without requiring a phone or computer.
 
-* a local display,
-* a five-direction joystick.
-
-The local interface is intended to provide essential controller information directly on the device.
-
-More advanced configuration is performed through the web interface.
+More detailed configuration is performed through the web interface.
 
 ---
 
-## Wi-Fi and web interface
+# Wi-Fi and web interface
 
-Wi-Fi connectivity is handled directly by the ESP32-S3.
+The ESP32-S3 provides Wi-Fi connectivity and hosts the MycoBox web interface locally.
 
-The controller contains its own HTTP server, so the user interface is served directly by MycoBox.
+A normal browser can be used to:
+
+* monitor environmental measurements,
+* review historical data,
+* configure control settings,
+* configure time-dependent profiles,
+* manage Zigbee devices,
+* change network settings,
+* update firmware.
+
+A cloud service is not required for normal operation.
+
+---
+
+# Zigbee actuators
+
+External equipment is controlled using compatible Zigbee switch-type devices.
+
+Typical actuator hardware includes:
+
+* smart plugs,
+* relay modules,
+* multi-outlet power strips.
+
+These can be assigned to MycoBox functions such as:
+
+* humidification,
+* ventilation,
+* lighting,
+* heating.
+
+Using external Zigbee switching devices keeps mains-voltage switching physically separate from the Main Controller.
+
+It also allows individual actuators to be replaced without redesigning the controller hardware.
+
+---
+
+# Example installations
+
+The same MycoBox hardware can be adapted to different controlled environments.
 
 ```text
-Phone / Tablet / Computer
-            │
-          Wi-Fi
-            │
-            ▼
-        ESP32-S3
-            │
-            ▼
-     MycoBox Web UI
+Indoor growing enclosure
+├── Temperature / humidity sensor
+├── Grow light
+├── Ventilation fan
+└── Humidifier
 ```
 
-No external application server is required.
-
-When connected to the local network, a browser communicates directly with the controller.
-
-During initial setup or network recovery, MycoBox can also create its own Wi-Fi access point.
-
----
-
-## Zigbee actuators
-
-MycoBox uses Zigbee switching devices as remote actuators.
-
-A typical installation can therefore look like:
-
 ```text
-MycoBox
-   │
-   └── Zigbee
-        │
-        ├── Smart Plug → Humidifier
-        ├── Smart Plug → Exhaust Fan
-        ├── Smart Plug → Heater
-        └── Smart Plug → Lighting
+Mushroom fruiting chamber
+├── Temperature / humidity / CO₂ sensor
+├── Humidifier
+├── Fresh-air fan
+└── Lighting
 ```
 
-The exact equipment connected to a smart plug is not important to the Zigbee network.
-
-MycoBox assigns a logical purpose to the outlet, for example:
-
 ```text
-Zigbee device 0x1234 → Humidifier
-Zigbee device 0x5678 → Ventilation
+Terrarium / vivarium
+├── Temperature / humidity sensor
+├── Heating equipment
+├── Lighting
+└── Ventilation
 ```
 
-The cultivation logic can then operate the assigned function without needing to know the physical location of the outlet.
+The required equipment depends on the application.
+
+Not every MycoBox installation needs to use every available control function.
 
 ---
 
-## Why not control mains equipment directly?
+# Multi-outlet Zigbee devices
 
-One of the design goals of MycoBox is to keep mains-voltage switching outside the main controller whenever practical.
+Some Zigbee devices expose several independently controlled endpoints.
 
-Using external Zigbee switching devices provides several advantages:
-
-* easier replacement of failed actuators,
-* flexible placement of equipment,
-* reduced mains wiring inside the controller,
-* electrical separation between the automation electronics and controlled appliances,
-* easier expansion of the installation.
-
-It also allows the main controller hardware to remain largely unchanged when the grow chamber configuration changes.
-
----
-
-## Typical installation
-
-A simple fruiting chamber installation may contain:
+For example:
 
 ```text
-                    ┌─────────────────────┐
-                    │       MycoBox       │
-                    │                     │
-Environmental ─────►│ ESP32-S3            │
-Sensors             │     │               │
-                    │     │ SPI           │
-                    │     ▼               │
-                    │ ESP32-H2            │
-                    └─────┬───────────────┘
-                          │
-                        Zigbee
-                          │
-             ┌────────────┼────────────┐
-             │            │            │
-             ▼            ▼            ▼
-        Humidifier       Fan         Heater
-                                             \
-                                              Lighting
+Zigbee power strip
+├── Endpoint 1 → Humidifier
+├── Endpoint 2 → Fan
+├── Endpoint 3 → Light
+└── Endpoint 4 → Heating
 ```
 
-The sensors provide environmental information to the Main Controller.
+This can reduce the number of separate smart plugs required for an installation.
 
-The Main Controller compares those measurements with the currently configured cultivation targets.
+Endpoint support depends on the implementation used by the Zigbee device.
 
-When action is required, it sends a command to the Zigbee Controller.
-
-The Zigbee Controller then switches the appropriate external device.
+Always test each endpoint before enabling automatic control.
 
 ---
 
-## Local-first operation
+# Firmware components
 
-The hardware architecture is designed so that normal climate automation remains inside the MycoBox system.
-
-The essential control path is:
+MycoBox contains two separate firmware components.
 
 ```text
-Sensors
-   │
-   ▼
 ESP32-S3
-   │
-   ▼
-Climate-control logic
-   │
-   ▼
-SPI
-   │
-   ▼
+└── Main Controller firmware
+
 ESP32-H2
-   │
-   ▼
-Zigbee actuator
+└── Zigbee Controller firmware
 ```
 
-No cloud service is required in this control loop.
+Each controller can be updated independently.
 
-Loss of internet connectivity should therefore not prevent MycoBox from continuing its normal environmental-control tasks.
+A public release may therefore contain firmware for only one controller or for both.
 
----
+See:
 
-## Firmware architecture
-
-Because MycoBox contains two processors, it also contains two firmware components:
-
-### Main Controller firmware
-
-Runs on the ESP32-S3 and contains:
-
-* application logic,
-* environmental control,
-* web interface,
-* networking,
-* sensor support.
-
-### Zigbee Controller firmware
-
-Runs on the ESP32-H2 and contains:
-
-* Zigbee coordinator functionality,
-* Zigbee device control,
-* communication with the Main Controller.
-
-Firmware versions distributed through the MycoBox project may therefore contain separate components for the S3 and H2 controllers.
-
-See [Firmware Updates](firmware-update.md) for update instructions.
+[Firmware Updates](firmware-update.md)
 
 ---
 
-## Hardware philosophy
-
-The MycoBox hardware follows several design principles.
-
-### Separation of responsibilities
-
-The application processor and Zigbee radio controller have clearly separated roles.
-
-### Replaceable peripherals
-
-Sensors and actuator devices should be replaceable without redesigning the entire controller.
-
-### Local autonomy
-
-The hardware should remain useful even without an external cloud platform.
-
-### Electrical separation
-
-Whenever practical, mains-powered equipment is controlled through external switching devices rather than directly by the controller electronics.
-
-### Serviceability
-
-The two-controller architecture and separate firmware components are designed to allow individual parts of the system to be diagnosed and updated.
-
----
-
-## Related documentation
+# Related documentation
 
 * [Getting Started](getting-started.md)
-* [User Guide](user-guide.md)
-* [Cultivation Cycles](cultivation-cycle.md)
 * [Zigbee Setup](zigbee.md)
 * [Firmware Updates](firmware-update.md)
-* [Troubleshooting](troubleshooting.md)
