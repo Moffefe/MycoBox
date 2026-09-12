@@ -70,13 +70,13 @@ Its main responsibilities are:
 
 * maintaining the Zigbee network,
 * allowing compatible devices to join,
-* tracking paired switch-type devices,
-* controlling Zigbee endpoints,
-* reporting device state to the Main Controller.
+* tracking supported paired devices,
+* sending ON/OFF commands to Zigbee switch endpoints,
+* providing Zigbee device information to the Main Controller.
 
 The ESP32-S3 and ESP32-H2 communicate through an internal SPI connection.
 
-This separation allows the Zigbee subsystem to operate independently from the Wi-Fi and application logic.
+This separation keeps the Zigbee radio subsystem independent from Wi-Fi connectivity and the main environmental-control logic.
 
 ---
 
@@ -87,15 +87,17 @@ Current MycoBox firmware supports sensors from the:
 * Sensirion SCD4x family,
 * Sensirion SHT3x family.
 
-Depending on the installed hardware, these sensors provide measurements including:
+Depending on the installed hardware, these sensors can provide measurements including:
 
 * temperature,
 * relative humidity,
 * CO₂ concentration.
 
-The sensor subsystem is connected directly to the Main Controller.
+The environmental sensors are connected directly to the Main Controller.
 
-Environmental data is used both for display and automatic control.
+Temperature and humidity can be used by automatic control functions.
+
+CO₂ is currently available as a monitored environmental parameter and can be displayed and recorded by MycoBox.
 
 ---
 
@@ -111,7 +113,7 @@ Reliable time is important for:
 * equipment schedules,
 * environmental profiles,
 * historical measurements,
-* daily transitions.
+* day transitions.
 
 The system can therefore continue time-dependent operation without continuous internet access.
 
@@ -123,7 +125,7 @@ The Main Controller supports a local display and joystick.
 
 This interface allows basic controller information to remain available directly on the device without requiring a phone or computer.
 
-More detailed configuration is performed through the web interface.
+More detailed configuration is performed through the local web interface.
 
 ---
 
@@ -138,7 +140,7 @@ A normal browser can be used to:
 * configure control settings,
 * configure time-dependent profiles,
 * manage Zigbee devices,
-* change network settings,
+* change network and system settings,
 * update firmware.
 
 A cloud service is not required for normal operation.
@@ -166,11 +168,20 @@ Using external Zigbee switching devices keeps mains-voltage switching physically
 
 It also allows individual actuators to be replaced without redesigning the controller hardware.
 
+Current MycoBox bindings are:
+
+* **Humidifier**
+* **FAE / Fan**
+* **Light**
+* **Heatpad**
+
 ---
 
 # Example installations
 
 The same MycoBox hardware can be adapted to different controlled environments.
+
+## Indoor growing enclosure
 
 ```text
 Indoor growing enclosure
@@ -180,6 +191,8 @@ Indoor growing enclosure
 └── Humidifier
 ```
 
+## Mushroom fruiting chamber
+
 ```text
 Mushroom fruiting chamber
 ├── Temperature / humidity / CO₂ sensor
@@ -187,6 +200,8 @@ Mushroom fruiting chamber
 ├── Fresh-air fan
 └── Lighting
 ```
+
+## Terrarium or vivarium
 
 ```text
 Terrarium / vivarium
@@ -218,9 +233,74 @@ Zigbee power strip
 
 This can reduce the number of separate smart plugs required for an installation.
 
-Endpoint support depends on the implementation used by the Zigbee device.
+Endpoint numbering is determined by the Zigbee device manufacturer and does not necessarily match the physical outlet numbering.
 
-Always test each endpoint before enabling automatic control.
+The current MycoBox Zigbee switch controller supports switch endpoints:
+
+```text
+1 through 6
+```
+
+Always test each endpoint manually before enabling automatic control.
+
+See:
+
+[Zigbee Setup](zigbee.md)
+
+---
+
+# Control path
+
+A typical automatic control path looks like this:
+
+```text
+Environmental measurement / schedule
+                │
+                ▼
+        ESP32-S3 control logic
+                │
+                ▼
+          Zigbee binding
+                │
+                ▼
+              SPI
+                │
+                ▼
+             ESP32-H2
+                │
+                ▼
+             Zigbee
+                │
+                ▼
+        Smart plug / relay
+                │
+                ▼
+      Environmental equipment
+```
+
+This separation means that MycoBox automation works with logical functions such as **Humidifier** or **Heatpad**, while the Zigbee configuration determines which physical device and endpoint performs that function.
+
+---
+
+# Network operation
+
+MycoBox is designed for local operation.
+
+The Wi-Fi connection is used to provide access to the web interface and optional network services such as time synchronization.
+
+Normal control logic runs on the controller itself.
+
+If internet access is unavailable, local environmental automation can continue.
+
+If the configured Wi-Fi network cannot be reached, MycoBox can use its own Access Point mode for network configuration and recovery.
+
+See:
+
+[Getting Started](getting-started.md)
+
+and:
+
+[Troubleshooting](troubleshooting.md)
 
 ---
 
@@ -240,9 +320,33 @@ Each controller can be updated independently.
 
 A public release may therefore contain firmware for only one controller or for both.
 
+The ESP32-S3 uses a dedicated OTA update package.
+
+The ESP32-H2 uses a complete firmware image programmed through the Main Controller.
+
 See:
 
 [Firmware Updates](firmware-update.md)
+
+---
+
+# Safety considerations
+
+MycoBox can control mains-powered environmental equipment.
+
+The controller itself should not be treated as the only protection against unsafe conditions.
+
+In particular:
+
+* respect the electrical ratings of Zigbee switching devices,
+* keep electrical equipment away from water and condensation,
+* use independent protection for heating equipment where appropriate,
+* manually verify every Zigbee endpoint before enabling automation,
+* observe a new or modified installation before unattended operation.
+
+See:
+
+[Safety](safety.md)
 
 ---
 
@@ -251,3 +355,5 @@ See:
 * [Getting Started](getting-started.md)
 * [Zigbee Setup](zigbee.md)
 * [Firmware Updates](firmware-update.md)
+* [Troubleshooting](troubleshooting.md)
+* [Safety](safety.md)
