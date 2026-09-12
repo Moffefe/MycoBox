@@ -100,6 +100,41 @@ The configured profile is executed locally by the controller.
 
 ---
 
+## Zigbee configuration
+
+<p align="center">
+  <img src="media/web-ui/zigbee-settings.png"
+       alt="MycoBox Zigbee configuration"
+       width="900">
+</p>
+
+Compatible Zigbee devices can be paired, tested and assigned directly from the local web interface.
+
+MycoBox uses switch-type Zigbee devices as remote actuators for functions such as:
+
+* humidification,
+* ventilation,
+* lighting,
+* heating.
+
+Compatible multi-outlet devices can expose several independently controlled endpoints, allowing one physical device to be used for several MycoBox functions.
+
+---
+
+## Firmware management
+
+<p align="center">
+  <img src="media/web-ui/firmware-settings.png"
+       alt="MycoBox firmware management"
+       width="900">
+</p>
+
+Both the ESP32-S3 Main Controller and ESP32-H2 Zigbee Controller can be updated from the local web interface.
+
+Firmware information is available directly from MycoBox, while stable public firmware packages are distributed through GitHub Releases.
+
+---
+
 # System architecture
 
 MycoBox uses two dedicated microcontrollers with separate responsibilities.
