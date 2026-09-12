@@ -1,12 +1,14 @@
 # Getting Started
 
-This guide covers the first startup of a MycoBox controller and the basic configuration required before using it to control a growing chamber.
+This guide covers the first startup of a MycoBox controller and the basic configuration required before using it to manage a controlled environment.
 
-## 1. Power on the controller
+---
+
+# 1. Power on the controller
 
 Connect the MycoBox controller to its power supply.
 
-During startup, the Main Controller initializes its internal configuration, sensors, Zigbee controller and network connection.
+During startup, the Main Controller initializes its configuration, sensors, Zigbee controller and network connection.
 
 If no Wi-Fi network has been configured yet, MycoBox automatically creates its own Wi-Fi access point.
 
@@ -16,7 +18,7 @@ The network name has the following format:
 <controller-name>_AP
 ```
 
-A new controller is automatically assigned a unique controller name beginning with `FC`.
+A new controller is automatically assigned a unique name beginning with `FC`.
 
 For example:
 
@@ -24,7 +26,9 @@ For example:
 FC123456_AP
 ```
 
-## 2. Connect to the MycoBox access point
+---
+
+# 2. Connect to the MycoBox access point
 
 On a phone, tablet or computer, open the Wi-Fi settings and connect to the network created by the controller.
 
@@ -36,9 +40,11 @@ Default access point password:
 
 Once connected, open a web browser and access the controller web interface.
 
-> The access point is intended primarily for initial configuration and network recovery.
+The access point is intended primarily for initial configuration and network recovery.
 
-## 3. Log in
+---
+
+# 3. Log in
 
 The MycoBox web interface is protected with authentication.
 
@@ -55,7 +61,9 @@ The credentials can be changed from:
 
 **System → Authorization**
 
-## 4. Configure Wi-Fi
+---
+
+# 4. Configure Wi-Fi
 
 Open:
 
@@ -67,13 +75,15 @@ Select your network from the list or enter the SSID manually, then provide the W
 
 Save the settings.
 
-MycoBox will store the network configuration and automatically restart.
+MycoBox stores the network configuration and automatically restarts.
 
-After restarting, the controller will attempt to connect to the configured Wi-Fi network.
+After restarting, the controller attempts to connect to the configured Wi-Fi network.
 
-If the connection cannot be established, MycoBox will eventually return to Access Point mode so the network settings can be corrected.
+If the connection cannot be established, MycoBox eventually returns to Access Point mode so the network settings can be corrected.
 
-## 5. Open MycoBox on your local network
+---
+
+# 5. Open MycoBox on your local network
 
 When connected to your normal Wi-Fi network, MycoBox can be accessed using its local network address.
 
@@ -91,160 +101,200 @@ For example:
 http://FC123456.local
 ```
 
-The exact IP address assigned by the router can also be used.
+The IP address assigned by the router can also be used.
 
 > `.local` address support depends on the operating system and local network configuration. If the name does not resolve, use the controller's IP address instead.
 
-## 6. Change the controller name
+---
 
-The controller name identifies the MycoBox unit on the network.
+# 6. Change the controller name
 
-It is also used for local network discovery.
+The controller name identifies the MycoBox unit on the local network.
 
-The name can be changed from the main web interface.
-
-Choose a short and unique name, especially if multiple MycoBox controllers will operate on the same network.
+Choose a short and unique name, especially if several controllers operate on the same network.
 
 Example:
 
 ```text
-FruitingChamber
+GrowRoom
 ```
 
-The controller can then be available as:
+The controller may then be available as:
 
 ```text
-http://FruitingChamber.local
+http://GrowRoom.local
 ```
 
-## 7. Configure time and localization
+Other examples could include:
+
+```text
+PropagationBox
+Terrarium
+FruitingChamber
+Greenhouse
+```
+
+---
+
+# 7. Configure time and localization
 
 Open:
 
 **System → Time & Localization**
 
-Configure the timezone appropriate for the controller location.
+Correct local time is important for:
 
-Automatic time synchronization can be enabled when the controller has network access.
+* schedules,
+* environmental profiles,
+* historical measurements,
+* day transitions.
 
-Correct time configuration is important because cultivation cycles, schedules and historical measurements depend on the controller clock.
+MycoBox can synchronize its clock from the network when available.
 
-## 8. Check the sensors
+A hardware RTC provides an offline time source so scheduled operation does not depend on continuous internet access.
 
-Open the **Sensors** page.
+---
 
-Verify that the environmental measurements are available and plausible.
+# 8. Check the sensors
 
-Depending on the installed sensor configuration, MycoBox can monitor:
+Open:
+
+**Sensors**
+
+Verify that the expected environmental readings are available.
+
+Depending on the installed sensor configuration, MycoBox may display:
 
 * temperature,
 * relative humidity,
 * CO₂ concentration.
 
-Do not start automatic climate control until the installed sensors are reporting valid measurements.
+Before enabling automatic control, verify that the displayed measurements are reasonable for the current environment.
 
-## 9. Configure Zigbee devices
+A disconnected or incorrectly installed sensor should be corrected before automatic operation is enabled.
+
+---
+
+# 9. Configure Zigbee devices
 
 Open:
 
 **System → Zigbee**
 
-MycoBox uses its dedicated ESP32-H2 controller to communicate with compatible Zigbee switching devices.
+MycoBox uses compatible Zigbee switching devices to control external equipment.
 
-Currently supported actuator types include:
+Typical examples include:
 
-* Zigbee switches,
-* Zigbee smart plugs,
-* Zigbee power strips.
-
-To add a new device:
-
-1. Select **Open Zigbee Network**.
-2. The Zigbee network will remain open for pairing for a limited time.
-3. Put the Zigbee device into pairing mode.
-4. Wait for it to appear in the MycoBox device list.
-5. Test the outlet using the available ON/OFF controls.
-6. Assign the appropriate outlet to a MycoBox function.
-
-Typical assignments include:
-
-* humidifier,
-* ventilation fan,
-* heater,
+* humidifiers,
+* ventilation fans,
+* heating equipment,
 * lighting.
 
-Each controlled chamber function should be assigned to the correct physical Zigbee outlet before automatic control is enabled.
+To add a device:
 
-## 10. Configure the cultivation cycle
+1. Press **Open Zigbee Network**.
+2. Put the Zigbee device into pairing mode.
+3. Wait for the device to join.
+4. Refresh the paired-device list.
+5. Test the appropriate outlet or endpoint.
+6. Assign it to the required MycoBox function.
 
-Open the **Control** page.
+Always verify which physical device is being switched before enabling automatic control.
 
-The cultivation cycle defines how environmental conditions should change over time.
+For detailed instructions, see:
 
-Configure the required parameters for the mushroom species and cultivation stage being used.
-
-Before leaving the chamber unattended, verify that:
-
-* humidity targets are correct,
-* temperature targets are correct,
-* lighting schedule is correct,
-* ventilation behavior is appropriate,
-* Zigbee devices are assigned to the correct functions.
-
-## 11. Test the system
-
-Before starting an unattended cultivation cycle, manually verify each controlled device.
-
-Confirm that:
-
-* the humidifier switches correctly,
-* fans switch correctly,
-* heating equipment switches correctly,
-* lighting switches correctly,
-* sensor values react as expected,
-* each Zigbee outlet controls the intended physical device.
-
-Never assume an outlet assignment is correct without testing it.
-
-## 12. Ready for operation
-
-Once networking, time, sensors, Zigbee devices and cultivation settings are configured, MycoBox can operate locally without requiring a continuously connected computer or cloud service.
-
-Normal climate-control logic is executed directly by the controller.
+[Zigbee Setup](zigbee.md)
 
 ---
 
-## If you lose network access
+# 10. Configure environmental control
 
-If MycoBox cannot establish its configured Wi-Fi connection, it can return to Access Point mode.
+Open:
 
-Look for a Wi-Fi network ending with:
+**Control**
+
+Start with the simplest configuration appropriate for your application.
+
+A controlled environment does not need to use changing cycles or profiles.
+
+For installations where the desired conditions remain constant, fixed targets and normal equipment schedules may be sufficient.
+
+If your environment requires parameters to change over time, MycoBox can use days and time periods with different target values.
+
+Examples include:
+
+* day and night temperature changes,
+* lighting periods,
+* different humidity targets during the day,
+* changing conditions during plant development,
+* terrarium or vivarium day/night profiles,
+* controlled experiments.
+
+Configure only the functions required by your installation.
+
+---
+
+# 11. Test every controlled device
+
+Before leaving MycoBox in automatic operation, manually verify all connected equipment.
+
+Check that:
+
+* the humidifier binding controls the humidifier,
+* the fan binding controls the intended ventilation device,
+* the heating binding controls the intended heater,
+* the lighting binding controls the intended light.
+
+Also verify the correct Zigbee endpoint if a multi-outlet device is used.
+
+Be particularly careful when testing heating equipment and other high-power devices.
+
+---
+
+# 12. Observe the environment
+
+After enabling automatic control, observe the system before relying on unattended operation.
+
+Check that:
+
+* sensor values remain reasonable,
+* the expected devices switch on and off,
+* temperature and humidity move in the expected direction,
+* ventilation behaves correctly,
+* scheduled changes occur at the expected time.
+
+The initial observation period is also useful for tuning control parameters for the specific enclosure.
+
+---
+
+# Network recovery
+
+If MycoBox can no longer connect to the configured Wi-Fi network, it can return to Access Point mode.
+
+Connect to:
 
 ```text
-_AP
+<controller-name>_AP
 ```
 
-Connect to it and correct the network configuration from the web interface.
+and correct the network configuration.
 
 ---
 
-## Factory reset
+# Factory reset
 
-MycoBox supports a factory reset during controller startup.
+MycoBox provides a factory-reset procedure that clears the stored controller configuration.
 
-Factory reset removes the stored controller configuration and should only be used when normal configuration recovery is not possible.
+A factory reset should normally be used only when configuration recovery is not possible.
 
-Detailed factory-reset instructions will be provided in the troubleshooting documentation.
+Detailed recovery instructions will be included in the troubleshooting documentation.
 
 ---
 
-## Next steps
+# Next steps
 
-After the initial setup, continue with:
+Continue with:
 
 * [Hardware Overview](hardware-overview.md)
-* [User Guide](user-guide.md)
-* [Cultivation Cycles](cultivation-cycle.md)
 * [Zigbee Setup](zigbee.md)
 * [Firmware Updates](firmware-update.md)
-* [Troubleshooting](troubleshooting.md)
