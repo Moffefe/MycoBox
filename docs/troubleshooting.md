@@ -25,19 +25,19 @@ MycoBox normally advertises its configured name using mDNS.
 
 Try:
 
-```text
+```text id="q8luhm"
 http://<controller-name>.local
 ```
 
 For example:
 
-```text
+```text id="qsx3gr"
 http://FC123456.local
 ```
 
 or, if the controller has been renamed:
 
-```text
+```text id="poahr7"
 http://GrowRoom.local
 ```
 
@@ -54,7 +54,7 @@ If the `.local` address does not resolve:
 
 For example:
 
-```text
+```text id="4g00gh"
 http://192.168.1.120
 ```
 
@@ -68,19 +68,19 @@ If MycoBox cannot connect to the configured Wi-Fi network, it can return to Acce
 
 Look for a network named:
 
-```text
+```text id="90ushh"
 <controller-name>_AP
 ```
 
 For example:
 
-```text
+```text id="otuc3m"
 FC123456_AP
 ```
 
 Default Access Point password:
 
-```text
+```text id="1skj21"
 12345678
 ```
 
@@ -125,7 +125,7 @@ Wait for the restart to complete.
 
 Then try:
 
-```text
+```text id="ivb7zk"
 http://<controller-name>.local
 ```
 
@@ -133,7 +133,7 @@ or use the new IP address assigned by the router.
 
 If the configured Wi-Fi network cannot be reached, look for:
 
-```text
+```text id="a9ddzg"
 <controller-name>_AP
 ```
 
@@ -145,7 +145,7 @@ and correct the network settings from Access Point mode.
 
 A new controller uses:
 
-```text
+```text id="yshcz0"
 Username: admin
 Password: admin
 ```
@@ -158,7 +158,7 @@ Authentication settings are available under:
 
 If the configured credentials are no longer known, a factory reset may be required.
 
-> A factory reset clears stored controller configuration.
+> A Main Controller factory reset clears stored ESP32-S3 configuration.
 
 ---
 
@@ -205,6 +205,18 @@ Large differences may indicate:
 * an unsuitable mounting position.
 
 For useful environmental control, the sensor should measure conditions representative of the controlled space rather than conditions directly beside one actuator.
+
+---
+
+# CO₂ is displayed but ventilation does not react to it
+
+This is expected with the current firmware.
+
+CO₂ is currently available as a monitored environmental parameter.
+
+Ventilation operates according to its configured ON and OFF timing settings rather than directly regulating CO₂ concentration.
+
+Use the sensor history to observe CO₂ behavior and adjust ventilation timing if necessary.
 
 ---
 
@@ -286,7 +298,7 @@ Then:
 
 The MycoBox pairing window remains open for:
 
-```text
+```text id="c4qk81"
 120 seconds
 ```
 
@@ -307,7 +319,7 @@ The current MycoBox interface supports switch-type Zigbee devices.
 
 First test:
 
-```text
+```text id="8x98up"
 Endpoint 1
 ```
 
@@ -317,10 +329,10 @@ For multi-outlet devices, individual outlets may use different endpoints.
 
 Test available endpoints one by one.
 
-The current Zigbee switch controller actively handles endpoints:
+The current Zigbee switch controller actively handles:
 
-```text
-1 through 6
+```text id="cmdevj"
+Endpoints 1 through 6
 ```
 
 If no supported endpoint operates the device, the Zigbee implementation used by that device may not currently be compatible with MycoBox.
@@ -333,7 +345,7 @@ Endpoint numbers are determined by the Zigbee device manufacturer.
 
 Do not assume that:
 
-```text
+```text id="br5zwb"
 Endpoint 1 = Outlet 1
 Endpoint 2 = Outlet 2
 ```
@@ -348,7 +360,7 @@ Then save the correct endpoint in the appropriate MycoBox binding.
 
 The quick ON/OFF controls in the paired-device list currently test:
 
-```text
+```text id="v7zzpu"
 Endpoint 1
 ```
 
@@ -358,7 +370,9 @@ To test another endpoint, use the test controls inside the appropriate binding s
 
 # A Zigbee device disappeared after an H2 firmware update
 
-Updating the ESP32-H2 Zigbee Controller requires the Zigbee network to be rebuilt.
+Updating the ESP32-H2 Zigbee Controller resets the Zigbee network state.
+
+Previously paired devices must therefore be paired again.
 
 After an H2 update:
 
@@ -373,6 +387,10 @@ See:
 
 [Zigbee Setup](zigbee.md)
 
+and:
+
+[Firmware Updates](firmware-update.md)
+
 ---
 
 # Forget paired devices was used accidentally
@@ -381,13 +399,16 @@ The **Forget paired devices** operation resets the Zigbee network maintained by 
 
 Previously paired devices must then be paired again.
 
-This is different from removing a single binding.
+This operation is different from:
+
+* removing a single MycoBox binding,
+* performing a Main Controller factory reset.
 
 After a Zigbee network reset:
 
 1. Pair the required devices again.
 2. Identify their endpoints.
-3. Recheck MycoBox bindings.
+3. Review MycoBox bindings.
 4. Test all connected equipment.
 
 ---
@@ -429,6 +450,10 @@ An interrupted H2 update may require firmware recovery.
 
 Normal recovery images and production tooling are not distributed as standard public firmware assets.
 
+See:
+
+[Firmware Updates](firmware-update.md)
+
 ---
 
 # Firmware file is rejected
@@ -437,13 +462,13 @@ Make sure the correct firmware file is being used for the correct controller.
 
 For the Main Controller use a file such as:
 
-```text
+```text id="670u42"
 MycoBox-S3-OTA-vX.XXX.EN.bin
 ```
 
 For the Zigbee Controller use:
 
-```text
+```text id="1v0p5p"
 MycoBox-H2-vX.XXX.EN.bin
 ```
 
@@ -529,7 +554,7 @@ For actuator-related settings, also verify the Zigbee binding.
 
 Check the control path in this order:
 
-```text
+```text id="puwu37"
 Sensor / schedule
         ↓
 MycoBox control logic
@@ -551,42 +576,55 @@ If the outlet cannot be controlled manually, troubleshoot Zigbee first.
 
 # Factory reset
 
-A factory reset clears the stored Main Controller configuration.
+A Main Controller factory reset clears the stored ESP32-S3 configuration.
 
 Use it only when normal configuration recovery is not possible.
 
 To perform the current factory-reset procedure:
 
-1. Power off or restart MycoBox.
-2. Hold the **BOOT** button during startup.
-3. Continue holding it during the approximately 7-second startup reset window.
-4. MycoBox erases its stored configuration and restarts.
+1. Restart or power on MycoBox.
+2. During the first approximately 7 seconds of startup, press and hold the **BOOT** button.
+3. Keep it pressed until the controller detects the reset request and begins restarting.
+4. MycoBox erases its stored Main Controller configuration and restarts.
 
-After a factory reset, settings such as network configuration and authorization return to their defaults.
+After a factory reset, the Main Controller must be configured again.
 
-The controller will need to be configured again.
+This may include:
+
+* network configuration,
+* authorization settings,
+* time and localization settings,
+* environmental-control settings,
+* schedules and profiles,
+* stored Zigbee bindings.
+
+> The Main Controller factory reset is separate from **Forget paired devices** on the Zigbee page.
+
+A Main Controller factory reset does not represent the same operation as resetting the Zigbee network maintained by the ESP32-H2.
+
+If the Zigbee network itself must be rebuilt, use the dedicated Zigbee reset procedure.
 
 ---
 
-# After a factory reset
+# After a Main Controller factory reset
 
-Expect to repeat the initial setup:
+Expect to repeat the initial setup.
 
-1. Connect to:
+1. Look for:
 
-```text
+```text id="g7okti"
 <controller-name>_AP
 ```
 
-2. Use the default AP password:
+2. Connect using the default Access Point password:
 
-```text
+```text id="6oeihg"
 12345678
 ```
 
 3. Log in with:
 
-```text
+```text id="mpf6qc"
 Username: admin
 Password: admin
 ```
@@ -596,10 +634,29 @@ Password: admin
 6. Verify sensors.
 7. Review Zigbee configuration.
 8. Reconfigure environmental control.
+9. Recreate any required Zigbee bindings.
+10. Test all controlled equipment.
 
 See:
 
 [Getting Started](getting-started.md)
+
+---
+
+# Main Controller factory reset vs. Zigbee reset
+
+The two reset operations affect different parts of MycoBox.
+
+| Operation                     | Controller | Main configuration                | Zigbee network               |
+| ----------------------------- | ---------- | --------------------------------- | ---------------------------- |
+| Main Controller factory reset | ESP32-S3   | Cleared                           | Not the same reset operation |
+| Forget paired devices         | ESP32-H2   | Does not perform S3 factory reset | Reset                        |
+
+Use **Main Controller factory reset** when the ESP32-S3 configuration needs to be restored to defaults.
+
+Use **Forget paired devices** only when you intentionally want to rebuild the Zigbee network.
+
+After either operation, review MycoBox bindings before returning to unattended operation.
 
 ---
 
@@ -612,9 +669,16 @@ After troubleshooting or changing configuration, verify:
 * each actuator controls the intended equipment,
 * heating equipment operates safely,
 * humidification behaves as expected,
+* ventilation follows the configured timing,
 * schedules use the correct local time.
 
 Observe the controlled environment before relying on fully unattended operation.
+
+See:
+
+[Safety](safety.md)
+
+for additional precautions.
 
 ---
 
@@ -642,9 +706,10 @@ When reporting a problem, include only the information required to reproduce the
 
 ---
 
-## Related documentation
+# Related documentation
 
 * [Getting Started](getting-started.md)
 * [Hardware Overview](hardware-overview.md)
 * [Zigbee Setup](zigbee.md)
 * [Firmware Updates](firmware-update.md)
+* [Safety](safety.md)
