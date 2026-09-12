@@ -13,7 +13,7 @@ You normally do not need to connect either controller to a computer or use a USB
 
 # Before updating
 
-Firmware updates modify the software responsible for controlling the growing chamber.
+Firmware updates temporarily interrupt normal environmental control.
 
 Before starting an update:
 
@@ -22,6 +22,7 @@ Before starting an update:
 * keep the browser page open,
 * do not restart the controller,
 * do not disconnect power,
+* make sure the controlled environment can tolerate temporary loss of automation,
 * download firmware only from the official MycoBox release page.
 
 Official firmware releases are available at:
@@ -32,22 +33,25 @@ Read the release notes before installing a new version.
 
 Some releases may update only the Main Controller, while others may include firmware for both controllers.
 
+Not every release requires both firmware files to be installed.
+
 ---
 
 # Firmware files
 
 A MycoBox release may contain separate firmware files for the two processors.
 
-A typical release may contain files named similarly to:
+A typical release may contain:
 
 ```text
-MycoBox-S3-OTA-<version>.bin
-MycoBox-H2-<version>.bin
+MycoBox-S3-OTA-vX.XXX.EN.bin
+MycoBox-H2-vX.XXX.EN.bin
+SHA256SUMS.txt
 ```
 
-The exact file names may vary between releases.
-
 Always use the file identified for the correct controller.
+
+Do not interchange S3 and H2 firmware files.
 
 ---
 
@@ -147,7 +151,7 @@ Before confirming, make sure the controller will remain powered for the entire o
 
 ## 4. Firmware transfer
 
-The browser will transfer the firmware to the controller.
+The browser transfers the firmware to the controller.
 
 A progress bar shows the transfer progress.
 
@@ -246,11 +250,15 @@ Common causes include:
 
 If MycoBox continues to operate normally after the failed update, there is usually no need for recovery firmware.
 
+For additional diagnostic steps, see:
+
+[Troubleshooting](troubleshooting.md)
+
 ---
 
 # Updating the Zigbee Controller
 
-The ESP32-H2 is updated through the ESP32-S3.
+The ESP32-H2 is updated through the ESP32-S3 Main Controller.
 
 You do not upload the H2 firmware directly to the Zigbee Controller.
 
@@ -260,11 +268,11 @@ Instead:
 Browser
    │
    ▼
-ESP32-S3
+ESP32-S3 Main Controller
    │
    │ programming connection
    ▼
-ESP32-H2
+ESP32-H2 Zigbee Controller
 ```
 
 Open:
@@ -286,7 +294,7 @@ The page displays the currently detected:
 
 Updating the Zigbee Controller is more invasive than updating the Main Controller.
 
-During the operation, the ESP32-S3 places the ESP32-H2 into its programming mode and rewrites the complete H2 flash image.
+During the operation, the ESP32-S3 places the ESP32-H2 into programming mode and rewrites the complete H2 flash image.
 
 Because the entire Zigbee Controller firmware is being replaced, interruption during this operation may leave the ESP32-H2 unable to start normally.
 
@@ -296,7 +304,7 @@ If an H2 update is interrupted, firmware recovery may be required.
 
 ---
 
-## Zigbee network after an update
+# Zigbee network after an H2 update
 
 Updating the ESP32-H2 resets the Zigbee network state.
 
@@ -320,7 +328,7 @@ Review MycoBox bindings
 Test ON / OFF
 ```
 
-Do not leave the chamber unattended until the Zigbee devices and actuator assignments have been verified again.
+Do not return the installation to unattended automatic operation until the Zigbee devices and actuator assignments have been verified again.
 
 ---
 
@@ -362,10 +370,7 @@ Press:
 
 Select the ESP32-H2 firmware file.
 
-The web interface checks that:
-
-* the file has the `.bin` extension,
-* the image size is exactly 2 MiB.
+The web interface checks that the selected image meets the expected firmware requirements before programming begins.
 
 ---
 
@@ -439,10 +444,12 @@ After pairing, test every controlled output.
 
 Verify:
 
-* Humidifier
-* FAE / Fan
-* Light
-* Heatpad
+* Humidifier,
+* FAE / Fan,
+* Light,
+* Heatpad.
+
+Also verify the correct endpoint for each assigned device.
 
 Do not assume that the system is ready for unattended operation simply because the firmware update succeeded.
 
@@ -492,6 +499,22 @@ Compare these values with the release notes.
 
 ---
 
+# Firmware file integrity
+
+Public releases may include:
+
+```text
+SHA256SUMS.txt
+```
+
+This file contains SHA-256 checksums for the published firmware assets.
+
+For additional verification, compare the checksum of the downloaded firmware file with the value provided in the release.
+
+A mismatching checksum indicates that the file should not be used.
+
+---
+
 # Recovery firmware
 
 Recovery firmware is different from normal web-update firmware.
@@ -502,7 +525,7 @@ Recovery images must **not** be uploaded through the normal Main Controller OTA 
 
 Normal users should use only firmware explicitly marked for web-based updating.
 
-If a controller cannot boot after a failed update, follow the dedicated recovery procedure or contact the project maintainer.
+If a controller cannot boot after a failed update, follow the applicable recovery procedure or contact the project maintainer.
 
 ---
 
@@ -524,23 +547,28 @@ Before pressing **Update**:
 ```text
 [ ] Correct controller selected
 [ ] Correct firmware release selected
-[ ] Correct .bin file selected
+[ ] Correct firmware file selected
 [ ] Stable controller power
-[ ] Stable Wi-Fi connection
+[ ] Stable local Wi-Fi connection
 [ ] Browser page will remain open
-[ ] Chamber can tolerate temporary loss of control
+[ ] Controlled environment can tolerate temporary loss of automation
 ```
 
-For an H2 update additionally confirm:
+For an H2 update, additionally confirm:
 
 ```text
 [ ] I can pair the Zigbee devices again afterwards
 [ ] I know which physical device belongs to each MycoBox function
+[ ] I can verify the correct endpoint for each controlled output
 ```
+
+For additional precautions, see:
+
+[Safety](safety.md)
 
 ---
 
-# Recommended release workflow
+# Recommended update workflow
 
 For normal users:
 
@@ -559,17 +587,34 @@ For normal users:
         ↓
 7. Verify the reported version
         ↓
-8. Test chamber equipment
+8. Test controlled equipment
 ```
 
-Firmware updates should never be performed immediately before leaving the chamber unattended.
+Firmware updates should not be performed immediately before leaving the installation unattended.
 
 ---
 
-## Related documentation
+# If something goes wrong
+
+If an update fails:
+
+1. Read the error shown by MycoBox.
+2. Do not repeatedly power-cycle the controller.
+3. Verify that the correct firmware file was selected.
+4. Confirm that the downloaded file is complete.
+5. Check whether the affected controller still starts normally.
+6. Follow the appropriate troubleshooting procedure before attempting recovery.
+
+See:
+
+[Troubleshooting](troubleshooting.md)
+
+---
+
+# Related documentation
 
 * [Getting Started](getting-started.md)
 * [Hardware Overview](hardware-overview.md)
 * [Zigbee Setup](zigbee.md)
-* [User Guide](user-guide.md)
 * [Troubleshooting](troubleshooting.md)
+* [Safety](safety.md)
