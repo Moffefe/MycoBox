@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide covers the first startup of a MycoBox controller and the basic configuration required before using it to manage a controlled environment.
+This guide covers the first startup of a MycoBox controller and the basic configuration required before using it to monitor and control a controlled environment.
 
 ---
 
@@ -8,7 +8,7 @@ This guide covers the first startup of a MycoBox controller and the basic config
 
 Connect the MycoBox controller to its power supply.
 
-During startup, the Main Controller initializes its configuration, sensors, Zigbee controller and network connection.
+During startup, the Main Controller initializes its configuration, sensors, Zigbee Controller and network connection.
 
 If no Wi-Fi network has been configured yet, MycoBox automatically creates its own Wi-Fi access point.
 
@@ -38,7 +38,7 @@ Default access point password:
 12345678
 ```
 
-Once connected, open a web browser and access the controller web interface.
+Once connected, open a web browser and access the MycoBox web interface.
 
 The access point is intended primarily for initial configuration and network recovery.
 
@@ -79,7 +79,7 @@ MycoBox stores the network configuration and automatically restarts.
 
 After restarting, the controller attempts to connect to the configured Wi-Fi network.
 
-If the connection cannot be established, MycoBox eventually returns to Access Point mode so the network settings can be corrected.
+If the connection cannot be established, MycoBox can return to Access Point mode so the network settings can be corrected.
 
 ---
 
@@ -151,7 +151,9 @@ Correct local time is important for:
 
 MycoBox can synchronize its clock from the network when available.
 
-A hardware RTC provides an offline time source so scheduled operation does not depend on continuous internet access.
+A hardware RTC provides an offline time source so time-dependent operation does not depend on continuous internet access.
+
+Verify the local time and timezone before configuring schedules or environmental profiles.
 
 ---
 
@@ -172,6 +174,8 @@ Depending on the installed sensor configuration, MycoBox may display:
 Before enabling automatic control, verify that the displayed measurements are reasonable for the current environment.
 
 A disconnected or incorrectly installed sensor should be corrected before automatic operation is enabled.
+
+CO₂ is currently used as a monitored environmental parameter.
 
 ---
 
@@ -228,7 +232,7 @@ Examples include:
 * different humidity targets during the day,
 * changing conditions during plant development,
 * terrarium or vivarium day/night profiles,
-* controlled experiments.
+* controlled environmental experiments.
 
 Configure only the functions required by your installation.
 
@@ -240,14 +244,20 @@ Before leaving MycoBox in automatic operation, manually verify all connected equ
 
 Check that:
 
-* the humidifier binding controls the humidifier,
-* the fan binding controls the intended ventilation device,
-* the heating binding controls the intended heater,
-* the lighting binding controls the intended light.
+* the Humidifier binding controls the intended humidifier,
+* the FAE / Fan binding controls the intended ventilation device,
+* the Heatpad binding controls the intended heating equipment,
+* the Light binding controls the intended light.
 
 Also verify the correct Zigbee endpoint if a multi-outlet device is used.
 
+Do not assume that endpoint numbering matches the physical outlet numbering.
+
 Be particularly careful when testing heating equipment and other high-power devices.
+
+For additional precautions, see:
+
+[Safety](safety.md)
 
 ---
 
@@ -260,8 +270,9 @@ Check that:
 * sensor values remain reasonable,
 * the expected devices switch on and off,
 * temperature and humidity move in the expected direction,
-* ventilation behaves correctly,
-* scheduled changes occur at the expected time.
+* ventilation operates according to its configured timing,
+* lighting follows the intended schedule,
+* time-dependent changes occur at the expected time.
 
 The initial observation period is also useful for tuning control parameters for the specific enclosure.
 
@@ -271,23 +282,61 @@ The initial observation period is also useful for tuning control parameters for 
 
 If MycoBox can no longer connect to the configured Wi-Fi network, it can return to Access Point mode.
 
-Connect to:
+Look for:
 
 ```text
 <controller-name>_AP
 ```
 
-and correct the network configuration.
+Connect to the access point and correct the network configuration.
+
+Default Access Point password:
+
+```text
+12345678
+```
+
+For additional network troubleshooting, see:
+
+[Troubleshooting](troubleshooting.md)
 
 ---
 
 # Factory reset
 
-MycoBox provides a factory-reset procedure that clears the stored controller configuration.
+MycoBox provides a factory-reset procedure that clears the stored Main Controller configuration.
 
 A factory reset should normally be used only when configuration recovery is not possible.
 
-Detailed recovery instructions will be included in the troubleshooting documentation.
+The Main Controller factory reset is separate from the Zigbee network reset available through **Forget paired devices**.
+
+For the current factory-reset procedure and information about what is cleared, see:
+
+[Troubleshooting](troubleshooting.md)
+
+---
+
+# Before unattended operation
+
+Before relying on MycoBox for unattended environmental control, verify:
+
+```text
+[ ] Sensor readings are reasonable
+[ ] Local time and timezone are correct
+[ ] Required Zigbee devices are paired
+[ ] Correct endpoints have been identified
+[ ] Every actuator has been tested manually
+[ ] Environmental-control settings are correct
+[ ] Schedules behave as expected
+[ ] Heating equipment operates safely
+[ ] Electrical equipment is suitable for the environment
+```
+
+See:
+
+[Safety](safety.md)
+
+for additional safety guidance.
 
 ---
 
@@ -298,3 +347,5 @@ Continue with:
 * [Hardware Overview](hardware-overview.md)
 * [Zigbee Setup](zigbee.md)
 * [Firmware Updates](firmware-update.md)
+* [Troubleshooting](troubleshooting.md)
+* [Safety](safety.md)
