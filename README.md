@@ -10,19 +10,22 @@ It can be used in applications such as:
 * mushroom cultivation,
 * terraria and vivaria,
 * environmental and cultivation experiments,
-* other enclosed spaces where temperature, humidity, CO₂ or equipment schedules need to be controlled.
+* other enclosed spaces where temperature, humidity, CO₂ or equipment schedules need to be monitored or controlled.
 
 Once configured, MycoBox continuously monitors environmental conditions and controls connected equipment locally — without requiring a cloud service or permanently connected computer.
 
 ---
 
-## What can it control?
+## What can it monitor and control?
 
-MycoBox can manage the main environmental elements commonly required in controlled environments:
+MycoBox can monitor:
 
-* relative humidity,
 * air temperature,
-* CO₂ concentration,
+* relative humidity,
+* CO₂ concentration.
+
+It can automatically control:
+
 * ventilation,
 * humidification,
 * heating,
@@ -80,7 +83,7 @@ Historical data makes it possible to observe how the controlled environment reac
 
 A MycoBox installation does not need to use changing environmental cycles.
 
-For many applications, fixed target values and schedules are sufficient.
+For many applications, fixed target values and normal equipment schedules are sufficient.
 
 When conditions need to change over time, MycoBox can organize environmental settings into days and time periods with different targets.
 
@@ -177,6 +180,8 @@ Depending on the installed sensor configuration, MycoBox can measure:
 
 Measurements can be stored by the controller and displayed as historical charts in the local web interface.
 
+CO₂ is currently used as a monitored environmental parameter. Ventilation operates according to its configured control settings rather than directly regulating CO₂ concentration.
+
 ---
 
 # Climate control
@@ -205,7 +210,9 @@ This can help reduce large humidity oscillations and overshooting.
 
 A Zigbee-controlled fan can be assigned to the ventilation function.
 
-Ventilation can then be managed by MycoBox as part of the configured environmental control.
+Ventilation operates according to the configured ON and OFF timing settings.
+
+This allows controlled air exchange without requiring the fan to remain permanently active.
 
 ---
 
@@ -353,6 +360,8 @@ Currently available:
 * [Hardware Overview](docs/hardware-overview.md)
 * [Zigbee Setup](docs/zigbee.md)
 * [Firmware Updates](docs/firmware-update.md)
+* [Troubleshooting](docs/troubleshooting.md)
+* [Safety](docs/safety.md)
 
 Additional user documentation will be added as the project develops.
 
@@ -379,3 +388,7 @@ Do not exceed the electrical ratings of connected Zigbee outlets, relays or othe
 Heating equipment, humidifiers, fans and other powered devices should be tested before being used for unattended automatic control.
 
 MycoBox should not be treated as a certified safety or life-support system.
+
+For additional guidance, see:
+
+[**Safety Guide →**](docs/safety.md)
