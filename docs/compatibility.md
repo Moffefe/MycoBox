@@ -27,12 +27,16 @@ Current MycoBox firmware supports sensors from the following families:
 
 | Sensor family | Measurements | Status | Notes |
 | --- | --- | --- | --- |
-| Sensirion SCD4x | Temperature, humidity, CO₂ | Firmware-supported | CO₂ is currently monitored and recorded; ventilation is not directly regulated from CO₂ concentration. Recommended for environments expected to operate at or very near 100% relative humidity. |
+| Sensirion SCD4x | Temperature, humidity, CO₂ | Firmware-supported | CO₂ is currently monitored and recorded; ventilation is not directly regulated from CO₂ concentration. Recommended for environments expected to operate at or very near 100% relative humidity. Supports configurable altitude compensation from 0–3000 m for CO₂ pressure compensation. |
 | Sensirion SHT3x | Temperature, humidity | Firmware-supported | Used for environmental temperature and humidity measurements. Correct readings are not guaranteed at 100% relative humidity. |
 
 For environments expected to reach or remain near **100% relative humidity**, the **Sensirion SCD4x series is recommended** instead of SHT3x.
 
-Exact model-specific verification is not yet published in this repository.
+When an SCD4x sensor is installed, the installation altitude can be configured from:
+
+**System → Environmental Sensor**
+
+The configured altitude is applied by MycoBox when the SCD4x is initialized and is used for CO₂ pressure compensation. This setting does not affect SHT3x sensors.
 
 If a sensor belongs to one of the supported families but behaves differently from expected, open a compatibility issue and include the exact model number.
 
