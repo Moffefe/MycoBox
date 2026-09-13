@@ -9,7 +9,7 @@ body:
       value: |
         Thanks for reporting a problem. Please provide enough detail to reproduce it.
 
-        **Do not use this form for security vulnerabilities.** Follow `SECURITY.md` instead.
+        If the report contains passwords, keys, credentials or other sensitive information, do not include them in a public issue.
 
   - type: input
     id: version
@@ -102,6 +102,4 @@ body:
         - label: I have searched existing issues for the same problem.
           required: true
         - label: I have removed passwords, tokens, encryption keys and other secrets from this report.
-          required: true
-        - label: This is not a security vulnerability.
           required: true
