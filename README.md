@@ -35,6 +35,22 @@ The system can operate with simple fixed settings or use time-dependent environm
 
 ---
 
+# Quick Start
+
+For a new MycoBox installation:
+
+1. Power on the controller.
+2. Connect to the `<controller-name>_AP` Wi-Fi network.
+3. Open the local web interface and configure your normal Wi-Fi network.
+4. Pair and test the required Zigbee actuators.
+5. Configure environmental control and verify every controlled device before unattended operation.
+
+For the complete first-start procedure, default credentials and recovery instructions, see:
+
+[**Getting Started →**](docs/getting-started.md)
+
+---
+
 # Web interface
 
 MycoBox contains its own local web server.
@@ -217,6 +233,10 @@ Measurements can be stored by the controller and displayed as historical charts 
 
 CO₂ is currently used as a monitored environmental parameter. Ventilation operates according to its configured control settings rather than directly regulating CO₂ concentration.
 
+For sensor limitations and tested hardware, see:
+
+[**Compatibility →**](docs/compatibility.md)
+
 ---
 
 # Climate control
@@ -306,6 +326,10 @@ This provides:
 
 Compatible multi-outlet Zigbee devices may expose several independently controlled endpoints, allowing one physical device to control multiple functions.
 
+For currently supported device classes and physically verified models, see:
+
+[**Compatibility →**](docs/compatibility.md)
+
 ---
 
 # Local control
@@ -356,6 +380,8 @@ See:
 
 [**Zigbee Setup Guide →**](docs/zigbee.md)
 
+[**Compatibility →**](docs/compatibility.md)
+
 ---
 
 # Firmware updates
@@ -393,10 +419,12 @@ Currently available:
 
 * [Getting Started](docs/getting-started.md)
 * [Hardware Overview](docs/hardware-overview.md)
+* [Compatibility](docs/compatibility.md)
 * [Zigbee Setup](docs/zigbee.md)
 * [Firmware Updates](docs/firmware-update.md)
 * [Troubleshooting](docs/troubleshooting.md)
 * [Safety](docs/safety.md)
+* [Security Policy](SECURITY.md)
 
 Additional user documentation will be added as the project develops.
 
@@ -409,6 +437,18 @@ Stable firmware versions are published using GitHub Releases.
 Release notes describe relevant changes, compatibility information and firmware update requirements.
 
 [**View MycoBox Releases →**](https://github.com/Moffefe/MycoBox/releases)
+
+---
+
+# Security
+
+MycoBox includes local-network authentication, firmware-update functionality and control of physical equipment.
+
+Do not include passwords, keys, credentials or other secrets in public Issues.
+
+For security guidance, see:
+
+[**Security Policy →**](SECURITY.md)
 
 ---
 
