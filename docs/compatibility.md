@@ -116,17 +116,13 @@ Do not assume endpoint numbering from the physical outlet labels.
 
 # Verified device models
 
-A model-specific compatibility list will only contain devices that have been physically tested.
+The following device models have been physically tested with MycoBox.
 
-No public model-specific verification list has been published yet.
-
-Future entries should use the following format:
-
-| Manufacturer | Model | Device type | Endpoints | Result | Notes |
+| Manufacturer / brand | Model | Device type | Endpoints | Result | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Example | Example model | Smart plug | 1 | Verified | Example only — replace with a physically tested device before publishing. |
+| BORUIDAPLS | WP34 | Zigbee power strip | Multiple | Verified | Tested with MycoBox as a multi-outlet Zigbee switch device. The WP34 design is sold under multiple brand names, so compatibility with other rebranded versions should not be assumed until physically tested. |
 
-Do not treat the example row above as a compatibility claim.
+For rebranded devices, the external appearance and model designation may be identical while the internal Zigbee implementation can differ. Treat an untested rebrand as **not yet verified**, even if it is also sold as `WP34`.
 
 ---
 
