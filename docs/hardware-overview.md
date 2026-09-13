@@ -99,6 +99,14 @@ Temperature and humidity can be used by automatic control functions.
 
 CO₂ is currently available as a monitored environmental parameter and can be displayed and recorded by MycoBox.
 
+For SCD4x installations, MycoBox provides configurable altitude compensation from 0–3000 m. The value is configured from **System → Environmental Sensor** and is applied when the SCD4x is initialized for CO₂ pressure compensation.
+
+This altitude setting does not affect SHT3x sensors.
+
+For sensor limitations and tested hardware, see:
+
+[Compatibility](compatibility.md)
+
 ---
 
 # Real-time clock
@@ -247,6 +255,10 @@ See:
 
 [Zigbee Setup](zigbee.md)
 
+and:
+
+[Compatibility](compatibility.md)
+
 ---
 
 # Control path
@@ -353,6 +365,7 @@ See:
 # Related documentation
 
 * [Getting Started](getting-started.md)
+* [Compatibility](compatibility.md)
 * [Zigbee Setup](zigbee.md)
 * [Firmware Updates](firmware-update.md)
 * [Troubleshooting](troubleshooting.md)
