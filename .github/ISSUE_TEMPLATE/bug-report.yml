@@ -1,0 +1,107 @@
+name: Bug report
+description: Report a reproducible problem with MycoBox
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Please provide enough detail to reproduce it.
+
+        **Do not use this form for security vulnerabilities.** Follow `SECURITY.md` instead.
+
+  - type: input
+    id: version
+    attributes:
+      label: MycoBox firmware version
+      description: Example: 1.619.EN
+      placeholder: 1.619.EN
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Web interface
+        - Sensors
+        - Environmental control
+        - Zigbee / ESP32-H2
+        - Wi-Fi / networking
+        - Time / RTC / NTP
+        - Firmware update
+        - Cluster
+        - Local display / joystick
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: hardware
+    attributes:
+      label: Hardware / setup
+      description: Include relevant sensor models, Zigbee device models, endpoints and controller setup.
+      placeholder: |
+        Sensor: SCD4x
+        Zigbee device: manufacturer + exact model
+        Endpoint: 1
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Configure ...
+        3. Press ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshots
+      description: Remove passwords, tokens, keys and other secrets before posting.
+      render: shell
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser / client
+      description: Relevant for web-interface issues.
+      placeholder: Chrome 140 / Firefox 142 / Android / Windows
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I have searched existing issues for the same problem.
+          required: true
+        - label: I have removed passwords, tokens, encryption keys and other secrets from this report.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
