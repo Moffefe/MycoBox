@@ -15,7 +15,7 @@ body:
     id: version
     attributes:
       label: MycoBox firmware version
-      description: Example: 1.619.EN
+      description: "Example: 1.619.EN"
       placeholder: 1.619.EN
     validations:
       required: true
