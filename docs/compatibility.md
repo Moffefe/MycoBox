@@ -27,8 +27,10 @@ Current MycoBox firmware supports sensors from the following families:
 
 | Sensor family | Measurements | Status | Notes |
 | --- | --- | --- | --- |
-| Sensirion SCD4x | Temperature, humidity, CO₂ | Firmware-supported | CO₂ is currently monitored and recorded; ventilation is not directly regulated from CO₂ concentration. |
-| Sensirion SHT3x | Temperature, humidity | Firmware-supported | Used for environmental temperature and humidity measurements. |
+| Sensirion SCD4x | Temperature, humidity, CO₂ | Firmware-supported | CO₂ is currently monitored and recorded; ventilation is not directly regulated from CO₂ concentration. Recommended for environments expected to operate at or very near 100% relative humidity. |
+| Sensirion SHT3x | Temperature, humidity | Firmware-supported | Used for environmental temperature and humidity measurements. Correct readings are not guaranteed at 100% relative humidity. |
+
+For environments expected to reach or remain near **100% relative humidity**, the **Sensirion SCD4x series is recommended** instead of SHT3x.
 
 Exact model-specific verification is not yet published in this repository.
 
