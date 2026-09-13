@@ -111,7 +111,17 @@ The IP address assigned by the router can also be used.
 
 The controller name identifies the MycoBox unit on the local network.
 
+Click the pencil icon next to the controller name in the web interface to edit it.
+
 Choose a short and unique name, especially if several controllers operate on the same network.
+
+Controller names:
+
+* must contain between 3 and 20 characters,
+* must start with a letter,
+* may contain letters and digits only.
+
+Changing the controller name restarts the Main Controller so the new network name can take effect.
 
 Example:
 
@@ -176,6 +186,24 @@ Before enabling automatic control, verify that the displayed measurements are re
 A disconnected or incorrectly installed sensor should be corrected before automatic operation is enabled.
 
 CO₂ is currently used as a monitored environmental parameter.
+
+If an SCD4x sensor is installed, open:
+
+**System → Environmental Sensor**
+
+and configure the approximate installation altitude above sea level.
+
+The supported range is:
+
+```text
+0–3000 m
+```
+
+The value is used by the SCD4x for CO₂ pressure compensation and does not affect SHT3x sensors.
+
+For sensor limitations and compatibility information, see:
+
+[Compatibility](compatibility.md)
 
 ---
 
@@ -322,6 +350,7 @@ Before relying on MycoBox for unattended environmental control, verify:
 
 ```text
 [ ] Sensor readings are reasonable
+[ ] SCD4x installation altitude is configured if applicable
 [ ] Local time and timezone are correct
 [ ] Required Zigbee devices are paired
 [ ] Correct endpoints have been identified
@@ -345,6 +374,7 @@ for additional safety guidance.
 Continue with:
 
 * [Hardware Overview](hardware-overview.md)
+* [Compatibility](compatibility.md)
 * [Zigbee Setup](zigbee.md)
 * [Firmware Updates](firmware-update.md)
 * [Troubleshooting](troubleshooting.md)
