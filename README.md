@@ -171,10 +171,10 @@ flowchart LR
     HEAT["Heating"]
     LIGHT["Lighting"]
 
-    SENSOR --> S3
-    JOYSTICK --> S3
-    RTC --> S3
-    S3 --> DISPLAY
+    SENSOR -->|I²C| S3
+    JOYSTICK -->|GPIO| S3
+    RTC -->|I²C| S3
+    S3 -->|I²C| DISPLAY
 
     S3 -->|SPI| H2
 
