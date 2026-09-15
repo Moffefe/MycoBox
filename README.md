@@ -158,8 +158,11 @@ MycoBox uses two dedicated microcontrollers with separate responsibilities.
 ```mermaid
 flowchart LR
     SENSOR["Environmental sensors<br>SCD4x / SHT3x"]
+    JOYSTICK["Joystick"]
+    RTC["RTC"]
 
     S3["ESP32-S3<br>Main Controller"]
+    DISPLAY["OLED Display"]
 
     H2["ESP32-H2<br>Zigbee Coordinator"]
 
@@ -169,6 +172,9 @@ flowchart LR
     LIGHT["Lighting"]
 
     SENSOR --> S3
+    JOYSTICK --> S3
+    RTC --> S3
+    S3 --> DISPLAY
 
     S3 -->|SPI| H2
 
