@@ -426,6 +426,7 @@ Currently available:
 * [Getting Started](docs/getting-started.md)
 * [Hardware Overview](docs/hardware-overview.md)
 * [Compatibility](docs/compatibility.md)
+* [Roadmap](docs/roadmap.md)
 * [Zigbee Setup](docs/zigbee.md)
 * [Firmware Updates](docs/firmware-update.md)
 * [Troubleshooting](docs/troubleshooting.md)
