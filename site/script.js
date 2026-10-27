@@ -45,7 +45,6 @@ if (typeof dialog.showModal === 'function') {
   }
   sizeButton.addEventListener('click', () => {
     const original = dialog.querySelector('.dialog-scroll').classList.toggle('is-original');
-    sizeButton.setAttribute('aria-pressed', String(original));
     sizeButton.textContent = original ? 'Fit to screen' : 'Full size';
   });
   dialog.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
@@ -55,7 +54,6 @@ if (typeof dialog.showModal === 'function') {
   dialog.addEventListener('close', () => {
     document.body.classList.remove('no-scroll');
     dialog.querySelector('.dialog-scroll').classList.remove('is-original');
-    sizeButton.setAttribute('aria-pressed', 'false');
     sizeButton.textContent = 'Full size';
     previousFocus?.focus();
     enlargedImage.removeAttribute('src');
