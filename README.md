@@ -6,7 +6,7 @@
 
 Monitor temperature and humidity, follow your growing cycle and control humidification, ventilation, heating and lighting from one local interface. MycoBox runs on the controller, with access from a phone or computer.
 
-[Getting started](docs/getting-started.md) · [Firmware releases](https://github.com/Moffefe/MycoBox/releases) · [Compatibility](docs/compatibility.md)
+[Project website](https://moffefe.github.io/MycoBox/) · [Getting started](docs/getting-started.md) · [Firmware releases](https://github.com/Moffefe/MycoBox/releases) · [Compatibility](docs/compatibility.md)
 
 ## Your growbox at a glance
 
