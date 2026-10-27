@@ -1,621 +1,138 @@
 # Zigbee Setup
 
-MycoBox uses Zigbee devices as remote actuators for external environmental-control equipment.
+Open **Zigbee** from the main navigation to pair a device, identify its outputs and assign them to automation.
 
-The Zigbee network is managed by the dedicated ESP32-H2 controller operating as the Zigbee Coordinator.
+MycoBox supports **one paired ON/OFF switch or power strip**. A device with several independent outputs can control several functions; a single-output plug can serve one function. Four separate plugs cannot be paired together.
 
-Typical compatible devices include:
+![Zigbee page with the paired device, four assignments and output test controls](../media/web-ui/zigbee-settings.png)
 
-* smart plugs,
-* single-channel switches,
-* relay modules,
-* multi-outlet power strips.
+## Currently supported devices
 
-These devices can be assigned to MycoBox functions such as:
+Use a compatible switch-type Zigbee device, such as a smart plug or power strip with independently switched outputs. Zigbee environmental sensors are not supported; MycoBox takes environmental measurements from its connected sensor.
 
-* humidification,
-* ventilation,
-* lighting,
-* heating.
+MycoBox discovers the device's supported ON/OFF outputs. It can handle up to **32 outputs**, with endpoint numbers **1–240**. Numbers may be nonconsecutive. The interface offers only detected outputs; this does not imply compatibility with every Zigbee product.
 
----
+See [Compatibility](compatibility.md) for the supported device class and hardware guidance.
 
-# How Zigbee is used
+## Pairing a new Zigbee device
 
-The ESP32-S3 Main Controller decides when equipment should be switched on or off.
+1. Open **Zigbee** and wait for **Zigbee controller available**.
+2. Select **Start pairing**. The pairing window opens for 120 seconds.
+3. Put the switch or power strip into pairing mode using its manufacturer's instructions.
+4. Wait for the pairing result and output discovery. After successful pairing, the window closes automatically.
+5. Select **Refresh** if you need to read the device again. Expand **Device information** to see its address and discovered output numbers.
 
-The command is sent through the internal SPI connection to the ESP32-H2 Zigbee Controller, which performs the Zigbee operation.
+Use **Cancel pairing** to close an open window early. Follow any message about an incompatible device or failed discovery before trying again. An output-discovery failure is different from a device being identified as unsupported.
 
-```mermaid
-flowchart LR
-    LOGIC["Environmental-control logic<br>ESP32-S3"]
-    H2["Zigbee Coordinator<br>ESP32-H2"]
-    PLUG["Zigbee smart plug / relay"]
-    DEVICE["Humidifier / Fan / Heater / Light"]
+If a device is already paired, MycoBox does not accept a second one. To replace it, use the [network reset procedure](#forgetting-all-zigbee-devices), then pair its replacement.
 
-    LOGIC -->|SPI| H2
-    H2 -->|Zigbee| PLUG
-    PLUG --> DEVICE
-```
+## Understanding endpoints
 
-The Zigbee device itself does not need to know its purpose.
+An endpoint identifies an output on the paired device. **Output 3** in MycoBox need not be the socket marked “3” on a power strip. There is no universal numbering scheme.
 
-Its role is assigned inside the MycoBox configuration.
+Use the detected **Output** choices and test each one to identify the physical socket. Do not guess endpoint numbers or assume that output 1 is always the right choice.
 
----
+<a id="current-endpoint-support"></a>
+The available choices come from discovery, including nonconsecutive numbers. An output missing from that list cannot be selected for normal control or an assignment.
 
-# Currently supported devices
+## Testing a device
 
-The current MycoBox firmware supports Zigbee devices that behave as switches.
+Under **Test output**:
 
-This includes typical:
+1. Select a discovered **Output**.
+2. Check which equipment is connected and that it is safe to switch.
+3. Select **Turn ON** and wait for confirmation. Check the actual equipment.
+4. Select **Turn OFF**, wait for confirmation and check that the equipment stopped.
+5. Repeat for the other outputs you intend to use.
 
-* Zigbee smart plugs,
-* Zigbee relay modules,
-* Zigbee power strips exposing switch endpoints.
+The test controls act on the selected output, not a fixed endpoint. A successful result confirms that particular command. **Last test** is not a continuous reading, and automation may change an assigned output again after the test.
 
-Battery-powered Zigbee sensors and other device types are not currently supported by the MycoBox binding system.
+During maintenance after a network reset or H2 update, **Turn ON** is disabled until a new assignment is saved. This is expected, not a pairing failure. Follow [Restoring assignments after maintenance](#restoring-assignments-after-maintenance) before ON tests.
 
-Environmental sensors used by MycoBox are connected directly to the Main Controller rather than through Zigbee.
+If a test is not confirmed, investigate the device and communication before assigning the output. If its result is unknown after a connection interruption, check the equipment; an OFF command can be sent again. See [Troubleshooting](troubleshooting.md#zigbee-device-appears-but-cannot-be-controlled).
 
----
+## Binding devices to MycoBox functions
 
-# Pairing a new Zigbee device
+The **Assignments** section contains four roles:
 
-Open:
+| Role | Equipment |
+| --- | --- |
+| **Humidifier** | Humidification |
+| **Fan** | Ventilation |
+| **Light** | Lighting |
+| **Heat** | Heating equipment |
 
-**System → Zigbee**
+Each role uses a **different output on the same paired device**. An output already assigned to one role cannot also serve another. Pairing establishes communication; an assignment tells MycoBox what an output controls.
 
-The Zigbee configuration page contains the controls required to add and configure devices.
+### Creating a binding
 
----
+1. Identify the physical outputs using **Test output**, finishing each test with confirmed OFF.
+2. Check the intended growing mode and schedule under **Cycle & automation**.
+3. In the required role's **Assigned output** list, select the appropriate detected output.
+4. Select that role's **Save** button and wait for success.
+5. Check that the role shows **Saved** and the intended **Saved: output …** value.
 
-## 1. Open the Zigbee network
+When changing an assignment, MycoBox must confirm the previous output OFF and establish OFF on the new output before saving. An unconfirmed OFF blocks the change. A saved assignment becomes available to automation, which may then switch it according to the selected mode and cycle.
 
-Press:
+Assignment saves are separate from **Save cycle**. Save each role individually.
 
-**Open Zigbee Network**
+### Removing a binding
 
-MycoBox allows new Zigbee devices to join the network for:
+Select **Not assigned** in the role's **Assigned output** list, then select **Save**. Removing an existing assignment also requires its old output to confirm OFF. The device stays paired.
 
-```text
-120 seconds
-```
+If an old output is unreachable, restore its communication before retrying the change. If the save result is unknown, use **Reload settings** to read the stored assignment before making another change.
 
-After this time, the network automatically closes for new devices.
+## Restoring assignments after maintenance
 
-Already paired devices continue to operate normally.
+After a Zigbee network reset or H2 update, pairing alone does not release maintenance. **Turn ON** remains disabled until the first new assignment is successfully saved.
 
-Opening or closing the pairing window does not disconnect existing devices.
+1. Keep the controlled loads independently isolated or use a harmless test load while restoring the mapping. Saving an assignment can allow automation to operate it immediately.
+2. Check the paired-device status. If no device is paired, use **Start pairing** to pair the switch or power strip. Wait for its detected outputs to appear.
+3. Under one intended role, choose an actual detected **Assigned output** and select **Save**. Use your recorded mapping where available. Saving unchanged **Not assigned** selections cannot release maintenance.
+4. Once that save succeeds, use **Test output** to identify and check ON/OFF operation. Keep the other loads isolated while their mapping is uncertain; automation may act on saved roles during testing.
+5. Finish or correct the remaining distinct assignments, saving each role and checking its stored output.
+6. Restore the intended mode/schedule and verify the actual equipment under supervision before leaving it unattended.
 
----
+## Using multi-outlet power strips
 
-## 2. Put the Zigbee device into pairing mode
+A compatible four-output strip can provide all four roles. For example:
 
-Immediately after opening the MycoBox Zigbee network, activate pairing mode on the Zigbee device.
+| Detected output | Assigned role |
+| --- | --- |
+| Output 1 | Humidifier |
+| Output 3 | Fan |
+| Output 5 | Light |
+| Output 8 | Heat |
 
-The exact procedure depends on the device manufacturer.
+These numbers are an example, not a required layout. Use only the outputs your device actually exposes and verify their physical sockets.
 
-Typical smart plugs may enter pairing mode after:
+<a id="forgetting-all-zigbee-devices"></a>
+## Resetting the Zigbee network
 
-* holding their button for several seconds,
-* performing a factory reset,
-* following a specific power-cycle sequence.
+Open **Zigbee → Advanced → Reset Zigbee network** and select **Reset network** only when you intend to remove the paired device and rebuild its assignments.
 
-Consult the instructions supplied with the Zigbee device if necessary.
+Before resetting, MycoBox blocks new ON commands and attempts to confirm OFF for the outputs that need it, including relevant manual activity. If OFF cannot be confirmed, the reset is blocked. After preparation succeeds, assignments are cleared; a lost response does not justify assuming that nothing changed.
 
-The device will usually indicate pairing mode using a flashing LED.
+After a confirmed reset, wait for the Zigbee controller to become available, then follow [Restoring assignments after maintenance](#restoring-assignments-after-maintenance). Keep the loads safe, pair the device and save an initial intended assignment before ON tests; then finish and verify the remaining roles.
 
----
+Maintenance blocks new ON commands until a new assignment is successfully saved. This pause survives a Main Controller restart. If the result is uncertain, select **Reload settings** and inspect the current state before another operation.
 
-## 3. Wait for pairing
+This is separate from removing one assignment or performing a [Main Controller factory reset](troubleshooting.md#factory-reset).
 
-Give the device some time to join the network.
+## Zigbee Controller firmware
 
-After pairing, press:
+The H2 firmware controls are under **Zigbee → Advanced → Zigbee Controller · ESP32-H2**. Use **Update Zigbee Controller** only with the correct release file.
 
-**Refresh paired devices**
+An H2 update requires OFF preparation, clears assignments and replaces the Zigbee network state. Afterwards, pair the device again and restore an initial assignment before ON tests, then complete and verify the remaining assignments. Interrupted updates may require recovery; keep the page open and power connected until installation is confirmed.
 
-The device should appear in the list.
+Follow [Firmware Updates](firmware-update.md#updating-the-zigbee-controller) for the complete procedure.
 
-MycoBox currently displays supported devices using information such as:
+## Troubleshooting Zigbee
 
-```text
-Type: switch
-IEEE Address: XX:XX:XX:XX:XX:XX:XX:XX
-```
+If a device is absent, discovery fails, a test is not confirmed or an assignment cannot be saved, read the result shown on the page. **Technical details** may provide additional information for a problem report.
 
-The IEEE address uniquely identifies the physical Zigbee device.
+Check [Troubleshooting](troubleshooting.md) before resetting the network. When inspecting or servicing connected equipment, use an independent means of making it safe; a manual test does not prevent automation from acting later.
 
-Example:
+## Related documentation
 
-```text
-switch
-84:FD:27:FF:FE:12:34:56
-```
-
-You normally do not need to enter the IEEE address manually.
-
-MycoBox uses it internally when assigning a physical Zigbee device to a control function.
-
----
-
-# Understanding endpoints
-
-A Zigbee device can contain one or more independently controlled outputs.
-
-Each output is represented by an **endpoint**.
-
-A simple smart plug commonly uses:
-
-```text
-Endpoint 1
-```
-
-A multi-outlet power strip may expose several independently controlled endpoints.
-
-For example:
-
-```text
-IEEE: 84:FD:27:FF:FE:12:34:56
-
-Endpoint 1 → Outlet 1
-Endpoint 2 → Outlet 2
-Endpoint 3 → Outlet 3
-```
-
-The exact endpoint layout depends on the device manufacturer and firmware.
-
-Do not assume that endpoint numbers always match the physical outlet numbers.
-
-Use the MycoBox test controls to identify them.
-
----
-
-# Current endpoint support
-
-The current MycoBox Zigbee switch controller actively handles switch endpoints:
-
-```text
-1 through 6
-```
-
-For ordinary single-outlet smart plugs, start with:
-
-```text
-Endpoint 1
-```
-
-For multi-outlet devices, test the available endpoints individually to determine which endpoint controls each physical outlet.
-
----
-
-# Testing a device
-
-Before assigning a Zigbee device to automatic control, test it manually.
-
-MycoBox provides **ON** and **OFF** controls on the Zigbee configuration page.
-
-For devices shown in the paired-device list, the quick test currently targets:
-
-```text
-Endpoint 1
-```
-
-To test another endpoint, use the test controls inside the binding section.
-
----
-
-## Recommended testing procedure
-
-If possible, connect a harmless and easily observable load.
-
-For example:
-
-* a small lamp,
-* another low-power test device.
-
-Then:
-
-1. Select the paired Zigbee device.
-2. Enter the endpoint.
-3. Press **ON**.
-4. Confirm that the expected physical outlet turns on.
-5. Press **OFF**.
-6. Confirm that the same outlet turns off.
-
-Only after confirming the correct device and endpoint should it be assigned to automatic environmental control.
-
----
-
-# Binding devices to MycoBox functions
-
-MycoBox currently provides four Zigbee bindings:
-
-| MycoBox function | Purpose                           |
-| ---------------- | --------------------------------- |
-| **Humidifier**   | Controls humidification equipment |
-| **FAE / Fan**    | Controls ventilation equipment    |
-| **Light**        | Controls lighting                 |
-| **Heatpad**      | Controls heating equipment        |
-
-Each function can be assigned to one Zigbee device and one endpoint.
-
-The names above correspond to the current MycoBox interface.
-
----
-
-# Example binding configuration
-
-Suppose a Zigbee power strip has the following layout:
-
-```text
-IEEE: 84:FD:27:FF:FE:12:34:56
-
-Endpoint 1 → Humidifier
-Endpoint 2 → Fan
-Endpoint 3 → Light
-Endpoint 4 → Heater
-```
-
-The same Zigbee device can then be used for several MycoBox functions:
-
-```text
-Humidifier
-Device:   84:FD:27:FF:FE:12:34:56
-Endpoint: 1
-
-FAE / Fan
-Device:   84:FD:27:FF:FE:12:34:56
-Endpoint: 2
-
-Light
-Device:   84:FD:27:FF:FE:12:34:56
-Endpoint: 3
-
-Heatpad
-Device:   84:FD:27:FF:FE:12:34:56
-Endpoint: 4
-```
-
-This allows one compatible multi-outlet Zigbee device to control several pieces of equipment.
-
----
-
-# Creating a binding
-
-Open:
-
-**System → Zigbee → Bind devices**
-
-Select the function you want to configure:
-
-* Humidifier
-* FAE / Fan
-* Light
-* Heatpad
-
-Then:
-
-1. Select the Zigbee device by its IEEE address.
-2. Enter the endpoint number.
-3. Use **Test Outlet → ON**.
-4. Confirm that the correct physical device starts.
-5. Use **Test Outlet → OFF**.
-6. Confirm that it stops.
-7. Press **Save binding**.
-
-The binding is stored in the MycoBox configuration.
-
-From that point, the corresponding environmental-control function can operate the assigned Zigbee outlet.
-
----
-
-# Removing a binding
-
-A device can be detached from a MycoBox function without removing it from the Zigbee network.
-
-In the appropriate binding section:
-
-1. Select **(not bound)** or clear the endpoint.
-2. Press **Save binding**.
-
-The selected MycoBox function will no longer control that Zigbee outlet.
-
-The Zigbee device itself remains paired to the Zigbee network.
-
----
-
-# Paired device vs. binding
-
-Pairing and binding are two different concepts.
-
-## Paired device
-
-A paired device belongs to the MycoBox Zigbee network.
-
-```text
-MycoBox Zigbee network
-        │
-        └── Smart plug
-```
-
-Pairing establishes Zigbee communication with the device.
-
----
-
-## Binding
-
-A MycoBox binding defines what the paired device and endpoint are used for.
-
-```text
-Smart plug + Endpoint 1
-        │
-        └── Humidifier
-```
-
-A device may therefore be:
-
-* paired but not assigned to any MycoBox function,
-* paired and assigned to one function,
-* assigned to several functions using different endpoints.
-
----
-
-# Using multi-outlet power strips
-
-Multi-outlet Zigbee power strips can be especially useful with MycoBox.
-
-Instead of using several separate smart plugs:
-
-```text
-Humidifier → Plug A
-Fan        → Plug B
-Light      → Plug C
-Heater     → Plug D
-```
-
-a compatible power strip may provide:
-
-```text
-Power strip
-├── Endpoint 1 → Humidifier
-├── Endpoint 2 → Fan
-├── Endpoint 3 → Light
-└── Endpoint 4 → Heater
-```
-
-Compatibility depends on how the manufacturer exposes the individual outlets through Zigbee.
-
-Endpoint numbering is not standardized across all devices.
-
-Always test each endpoint before assigning it.
-
----
-
-# Safety when testing outlets
-
-Zigbee pairing and testing can physically switch connected equipment.
-
-Before pressing **ON**, verify:
-
-* which Zigbee device is selected,
-* which endpoint is selected,
-* what equipment is connected to the outlet.
-
-Be especially careful with:
-
-* heaters,
-* heating mats,
-* high-power humidifiers,
-* pumps,
-* fans,
-* equipment containing moving parts.
-
-Never repeatedly switch equipment that is not designed for rapid power cycling.
-
-The connected load must remain within the electrical ratings of the Zigbee smart plug, relay or switching device.
-
-For additional guidance, see:
-
-[Safety](safety.md)
-
----
-
-# If a device does not appear
-
-If a newly paired device is not shown after pressing **Refresh paired devices**:
-
-1. Verify that the device is actually in pairing mode.
-2. Open the Zigbee network again.
-3. Move the device closer to MycoBox during initial pairing.
-4. Factory-reset the Zigbee device according to its manufacturer's instructions.
-5. Try the pairing process again.
-
-Also remember that the current MycoBox interface is intended for supported switch-type devices.
-
-A joined Zigbee device using an unsupported device type or implementation may therefore not be usable through the current binding interface.
-
----
-
-# If ON/OFF does not work
-
-First verify the endpoint.
-
-For a simple smart plug, try:
-
-```text
-Endpoint 1
-```
-
-For a multi-outlet device, test the supported endpoints one by one.
-
-The current switch controller supports:
-
-```text
-Endpoints 1 through 6
-```
-
-If the device appears in the paired list but none of the supported endpoints operates it, the device may use a Zigbee implementation that is not currently compatible with the MycoBox switch controller.
-
----
-
-# Quick test always controls endpoint 1
-
-The ON/OFF buttons shown directly in the paired-device list currently target:
-
-```text
-Endpoint 1
-```
-
-This is convenient for ordinary single-outlet smart plugs.
-
-For devices using other endpoints, use the test controls inside the appropriate binding section.
-
----
-
-# Forgetting all Zigbee devices
-
-MycoBox provides a Zigbee network reset function:
-
-**Forget paired devices**
-
-This operation resets the Zigbee network maintained by the ESP32-H2.
-
-Use it only when you intentionally want to rebuild the Zigbee network.
-
-After the reset:
-
-* previously paired devices are removed from the MycoBox Zigbee network,
-* the Zigbee Controller restarts,
-* devices must be paired again before they can be used,
-* MycoBox bindings should be reviewed and tested again.
-
-> This is different from removing a binding. Removing a binding leaves the Zigbee network and paired devices intact.
-
-It is also separate from the Main Controller factory reset described in the troubleshooting documentation.
-
----
-
-# Zigbee Controller firmware
-
-The Zigbee page also provides firmware information and update controls for the ESP32-H2 Zigbee Controller.
-
-Updating the Zigbee Controller firmware is a maintenance operation and should not be confused with pairing or binding devices.
-
-Do not disconnect power while the ESP32-H2 firmware is being updated.
-
-An H2 firmware update rewrites the Zigbee Controller firmware and requires the Zigbee devices to be paired again afterwards.
-
-After an H2 update:
-
-1. Wait for the Zigbee Controller to restart.
-2. Open the Zigbee network.
-3. Pair the required devices again.
-4. Refresh the paired-device list.
-5. Identify the correct endpoints.
-6. Review all MycoBox bindings.
-7. Test every controlled output.
-
-See:
-
-[Firmware Updates](firmware-update.md)
-
-for the complete update procedure.
-
----
-
-# Recommended installation workflow
-
-For a new installation, configure Zigbee in this order:
-
-```text
-1. Pair all required Zigbee devices
-        ↓
-2. Refresh the paired-device list
-        ↓
-3. Identify each physical device
-        ↓
-4. Identify the correct endpoint
-        ↓
-5. Test ON / OFF
-        ↓
-6. Create the MycoBox binding
-        ↓
-7. Test the binding again
-        ↓
-8. Enable automatic control
-```
-
-Do not enable unattended automatic control before all actuator assignments have been verified.
-
----
-
-# Example complete configuration
-
-A typical installation may use separate Zigbee smart plugs:
-
-```text
-SCD4x / SHT3x
-      │
-      ▼
-   MycoBox
-      │
-      └── Zigbee
-            │
-            ├── Smart Plug A
-            │      └── Humidifier
-            │
-            ├── Smart Plug B
-            │      └── Ventilation Fan
-            │
-            ├── Smart Plug C
-            │      └── Light
-            │
-            └── Smart Plug D
-                   └── Heating Mat
-```
-
-or one compatible multi-outlet device:
-
-```text
-MycoBox
-   │
-   └── Zigbee Power Strip
-          ├── Endpoint 1 → Humidifier
-          ├── Endpoint 2 → Fan
-          ├── Endpoint 3 → Light
-          └── Endpoint 4 → Heatpad
-```
-
-Once the bindings are configured, the MycoBox control logic operates logical functions instead of directly addressing physical devices.
-
----
-
-# Troubleshooting Zigbee
-
-Common problems include:
-
-* a device not entering pairing mode,
-* the device using an unexpected endpoint,
-* a multi-outlet device exposing outlets differently than expected,
-* the device being paired but not assigned to a MycoBox function,
-* an unsupported Zigbee switch implementation.
-
-Start by checking whether the device can be operated manually from the Zigbee page.
-
-If manual ON/OFF control does not work, troubleshoot the Zigbee device or endpoint before investigating automatic environmental-control settings.
-
-For additional troubleshooting, see:
-
-[Troubleshooting](troubleshooting.md)
-
----
-
-# Related documentation
-
-* [Getting Started](getting-started.md)
-* [Hardware Overview](hardware-overview.md)
-* [Firmware Updates](firmware-update.md)
-* [Troubleshooting](troubleshooting.md)
-* [Safety](safety.md)
+[Getting Started](getting-started.md) · [Compatibility](compatibility.md) · [Firmware Updates](firmware-update.md) · [Troubleshooting](troubleshooting.md) · [Safety](safety.md)

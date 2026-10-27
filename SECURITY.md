@@ -6,6 +6,28 @@ Security reports are taken seriously, especially when a vulnerability could affe
 
 ---
 
+## Local network access
+
+The web interface uses **HTTP Basic authentication over HTTP on port 80**. MycoBox does not provide built-in HTTPS. A login prompt restricts access, but HTTP does not encrypt credentials or page traffic.
+
+Use MycoBox on a trusted, protected local network. Do not expose its HTTP port directly to the internet or allow untrusted clients onto the controller's access point. Any remote access needs a separately secured network connection; the controller does not provide a cloud account or remote-access service.
+
+Change the factory administrator credentials from **System → Account** during setup. Protect the configured Wi-Fi network with its own strong password. The web account controls equipment, settings and firmware updates, so share it only with people authorized to perform those operations. On a shared computer, do not assume that closing a tab clears credentials retained by the browser.
+
+The controller's access point uses the fixed password `12345678`. Changing the administrator account or saved Wi-Fi password does not change this access-point password. Treat the AP as a setup and recovery connection and restrict access to the controller and its radio range.
+
+Saved passwords are not displayed in the account and network forms. This is not a claim that HTTP traffic, browser storage or every diagnostic export is safe to publish.
+
+## Firmware and physical access
+
+Download updates from the official [MycoBox Releases](https://github.com/Moffefe/MycoBox/releases) page. Use the file for the correct controller and follow [Firmware Updates](docs/firmware-update.md), including checksum verification when supplied.
+
+The Main Controller validates its dedicated encrypted OTA package. Firmware encryption does not encrypt the local web connection and is not a guarantee that all software or physical attacks are prevented. Do not substitute a plain application, recovery image or firmware for another device.
+
+Keep physical access to the controller, service connections and powered actuators limited to trusted people. Pair the intended Zigbee device during the pairing window, then identify and test its detected outputs. Pairing and an ON/OFF acknowledgement do not establish that connected equipment is physically safe or operating correctly.
+
+---
+
 ## Supported versions
 
 Security fixes are normally targeted at the latest public MycoBox release.
@@ -16,7 +38,7 @@ Security fixes are normally targeted at the latest public MycoBox release.
 | Older releases | Best effort only |
 | Development or unofficial builds | No guarantee |
 
-Users should update to the latest stable release before reporting a problem that may already have been fixed.
+Check the release notes for fixes and compatibility requirements, and include the installed version in a report. Do not delay reporting a suspected vulnerability merely because the affected installation runs an older release.
 
 ---
 
@@ -35,10 +57,10 @@ Please include, when applicable:
 - expected security boundary,
 - actual behavior,
 - potential impact,
-- logs or screenshots with secrets removed,
+- a short, relevant event excerpt or screenshot with sensitive information removed,
 - whether the issue requires local network access, physical access or authentication.
 
-Do not include real Wi-Fi passwords, authentication credentials, firmware encryption keys, tokens or other secrets.
+Do not include real Wi-Fi passwords, authentication credentials, firmware encryption keys, tokens, browser authentication headers or other secrets. Review screenshots and event details for network names, device addresses and other identifying information before sharing. Do not upload complete memory dumps, browser captures or unreviewed diagnostic archives to a public issue.
 
 If private vulnerability reporting is not available, do not post exploit details publicly. Open a minimal public issue requesting a private contact path, without including technical details that would enable exploitation.
 
@@ -54,7 +76,7 @@ Examples of security-relevant reports include:
 - unsafe firmware-update validation,
 - unintended firmware installation,
 - network-access vulnerabilities,
-- remote control of Zigbee-bound equipment without authorization,
+- control of Zigbee-assigned equipment without authorization,
 - injection or cross-site scripting in the web interface,
 - vulnerabilities that can persist across reboot or configuration changes.
 

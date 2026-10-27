@@ -9,14 +9,16 @@ body:
       value: |
         Thanks for reporting a problem. Please provide enough detail to reproduce it.
 
-        If the report contains passwords, keys, credentials or other sensitive information, do not include them in a public issue.
+        Do not include passwords, keys, authentication headers or other sensitive information in a public issue. Share only short, reviewed event excerpts or cropped screenshots.
+
+        For a suspected security vulnerability, follow the [Security Policy](https://github.com/Moffefe/MycoBox/blob/main/SECURITY.md) instead of posting exploit details here.
 
   - type: input
     id: version
     attributes:
       label: MycoBox firmware version
-      description: "Example: 1.619.EN"
-      placeholder: 1.619.EN
+      description: Copy the version and build from System → Main Controller firmware. For Zigbee issues, also include Zigbee → Advanced firmware information.
+      placeholder: "Main Controller: version / build; Zigbee Controller: version / build"
     validations:
       required: true
 
@@ -25,15 +27,18 @@ body:
     attributes:
       label: Affected area
       options:
-        - Web interface
-        - Sensors
-        - Environmental control
-        - Zigbee / ESP32-H2
+        - Web interface / navigation
+        - Overview / Growbox warnings
+        - Measurements / SHT41
+        - Cycle & automation
+        - Zigbee / Zigbee Controller
+        - Activity log
         - Wi-Fi / networking
         - Time / RTC / NTP
         - Firmware update
         - Cluster
         - Local display / joystick
+        - Documentation
         - Other
     validations:
       required: true
@@ -42,11 +47,13 @@ body:
     id: hardware
     attributes:
       label: Hardware / setup
-      description: Include relevant sensor models, Zigbee device models, endpoints and controller setup.
+      description: Include the relevant sensor, exact model of the paired Zigbee outlet or power strip, detected output and assignment. Do not include credentials or full device addresses.
       placeholder: |
-        Sensor: SCD4x
+        Sensor: SHT41
         Zigbee device: manufacturer + exact model
-        Endpoint: 1
+        Detected output: Output 1
+        Assignment: Humidifier / Fan / Light / Heat
+        Mode: Fruiting / Incubation; Timer / Adaptive
     validations:
       required: false
 
@@ -79,8 +86,8 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Logs / screenshots
-      description: Remove passwords, tokens, keys and other secrets before posting.
+      label: Relevant events / screenshots
+      description: Include the relevant Activity log description and, if useful, reviewed Technical details or a cropped screenshot. Remove passwords, keys, authentication headers, network names and identifying addresses. Do not attach complete dumps or unreviewed logs.
       render: shell
     validations:
       required: false
@@ -90,7 +97,7 @@ body:
     attributes:
       label: Browser / client
       description: Relevant for web-interface issues.
-      placeholder: Chrome 140 / Firefox 142 / Android / Windows
+      placeholder: Browser name and version / phone or computer / operating system
     validations:
       required: false
 

@@ -1,6 +1,6 @@
 # Roadmap
 
-This page describes planned MycoBox development areas beyond the capabilities available in the current public firmware.
+This page separates the capabilities already present in MycoBox from planned improvements.
 
 The roadmap is directional rather than a release schedule. Priorities may change as hardware is tested and the control architecture evolves.
 
@@ -8,13 +8,31 @@ The roadmap is directional rather than a release schedule. Priorities may change
 
 ---
 
+# Available now
+
+MycoBox already provides:
+
+* a responsive local web interface with Overview, Measurements, Cycle & automation, Zigbee, Activity log, Cluster and System pages;
+* a Growbox visualization showing recent confirmed output states, measurement freshness and local warnings;
+* SHT41 temperature and relative-humidity measurements, with charts and activity tracks for Humidifier, Fan, Heat and Sensor heater;
+* cycles of up to 32 days with four time points per day, Timer or Adaptive humidification, timed Fan control, heating and a daily Light window;
+* one paired Zigbee outlet or power strip, with discovered ON/OFF outputs assigned separately to Humidifier, Fan, Light and Heat;
+* readable equipment events, sorting of loaded Activity log entries and expandable Technical details;
+* local settings, hardware timekeeping and firmware updates for both controllers through the web interface.
+
+Local warnings assess persistent temperature or humidity deviations, unavailable measurements and sustained lack of response reported by Adaptive humidification. They run on the controller, while the web page shows their status. Warning observations and measurement/activity history are held in memory and start again after a restart.
+
+These functions are a basis for the extensions below. A diagram or confirmed output state does not measure physical airflow, heat or mist, and local warnings do not provide independent equipment protection. See [Web Interface](web-interface.md), [Compatibility](compatibility.md) and [Safety](safety.md).
+
+---
+
 # Planned capabilities
 
 | Area | Extension priority / ID | Planned development |
 | --- | --- | --- |
-| [CO₂ control](#co₂-based-ventilation-control) | — | Use CO₂ concentration as an active input for ventilation control. |
-| [Alarms and warnings](#alarms-and-warnings) | — | Add user-visible warnings and alarms for environmental, sensor and device problems. |
-| [Zigbee scale testing](#zigbee-scale-and-reliability-testing) | — | Validate MycoBox with a larger number of simultaneously paired Zigbee devices. |
+| [CO₂ control](#co₂-based-ventilation-control) | — | Add a verified CO₂ measurement path, then use it as an input for ventilation control. |
+| [Alarms and warnings](#alarms-and-warnings) | — | Extend the existing local warnings with broader fault coverage, retained alarm history and clear recovery behavior. |
+| [Zigbee scale testing](#zigbee-scale-and-reliability-testing) | — | Broaden device and recovery testing; support for multiple paired devices requires an explicit extension beyond the current one-device limit. |
 | [Additional Zigbee sensors and measurement points](#additional-zigbee-environmental-sensors) | P2 / F21: additional measurement points | Add compatible Zigbee environmental sensors and named chamber, ambient and optional substrate measurement points. |
 | [Advanced lighting](#advanced-zigbee-lighting) | P2 / F24: dimming and lighting programs | Extend ON/OFF lighting with dimming, scheduled brightness and optional sunrise/sunset transitions; retain device-dependent color control as a separate planned extension. |
 | [Cultivation log and reports](#cultivation-log-and-reports) | P2 / F19 | Add cycle-specific notes, event summaries and reports using the existing measurement history and environmental profiles. |
@@ -28,9 +46,9 @@ The roadmap is directional rather than a release schedule. Priorities may change
 
 # CO₂-based ventilation control
 
-CO₂ is already available as a monitored environmental parameter when a compatible sensor such as an SCD4x is installed.
+The current sensor is an SHT41, which measures temperature and relative humidity. MycoBox does not currently measure CO₂; Fan control uses configured ON/OFF periods.
 
-A planned development step is to use the measured CO₂ concentration directly in the environmental-control logic.
+CO₂-based ventilation first requires a supported and physically verified CO₂ sensor, clear measurement availability and a corresponding interface. Sensor selection and validation in the intended humidity range are part of that work.
 
 Planned work includes:
 
@@ -47,16 +65,18 @@ The goal is to allow ventilation to respond to the actual conditions inside the 
 
 # Alarms and warnings
 
-MycoBox should be able to distinguish normal environmental variation from conditions that require user attention.
+The existing Growbox warnings already distinguish persistent environmental deviations from short fluctuations. They also show when assessment is paused or unavailable and retain a previously observed warning visibly when fresh status is lost.
 
-Planned alarm and warning support includes:
+Temperature and RH deviations require 30 minutes of observed trouble; unavailable measurements and sustained lack of humidification response require 15 minutes. Recovery must remain stable for five minutes. Planned sensor heating/cooling, maintenance and measurement gaps pause the relevant assessment. Restarting clears these observations; there is no retained alarm history or notification service.
 
-* environmental values remaining outside configured limits,
-* missing, invalid or stale sensor measurements,
-* unavailable or unresponsive Zigbee devices,
-* control actions that do not produce the expected environmental response,
-* configuration problems that prevent a control function from operating correctly,
-* persistent communication or hardware errors.
+Further alarm and warning work includes:
+
+* broader detection of unavailable or unresponsive actuators and persistent communication faults;
+* extending response assessment beyond the existing Adaptive humidification status;
+* clearer recovery, acknowledgement and escalation behavior;
+* retained alarm history linked to the cultivation log and reports;
+* appropriate responses to future leak, water-level and additional sensor signals;
+* configurable limits where they can be defined and validated for the supported control mode.
 
 Warnings should be visible in the local user interface and provide enough context to explain what condition was detected and which part of the system is affected.
 
@@ -66,20 +86,22 @@ Alarm behavior should remain local-first and must not depend on an external clou
 
 # Zigbee scale and reliability testing
 
-Current Zigbee support is being developed and tested with a limited number of physical devices.
+MycoBox currently supports one paired Zigbee switch or power strip. It discovers up to 32 compatible ON/OFF outputs with endpoint numbers from 1 to 240, including nonconsecutive numbering. This is an output limit, not support for 32 separately paired devices.
 
-A planned validation stage is to test MycoBox with a larger Zigbee installation.
+Further validation should broaden the set of physical devices and cover demanding operation within this supported scope. A larger installation with multiple paired devices remains future work and requires changes to device management and assignments before scale testing can establish a supported network size.
 
 Testing should cover:
 
-* multiple paired devices operating at the same time,
+* different verified outlet and power-strip models;
+* discovery of nonconsecutive endpoints and devices exposing more outputs;
 * several independently controlled endpoints,
 * repeated command execution over long-running tests,
 * device rejoin behavior after power loss,
 * coordinator restart and recovery,
 * simultaneous actuator activity,
-* communication reliability as the network grows,
-* behavior when one or more devices become unavailable.
+* communication reliability under repeated use;
+* behavior when the paired device becomes unavailable;
+* multiple paired devices operating together, after multi-device support is implemented.
 
 The results will be used to define practical network-size recommendations and improve recovery behavior where required.
 
@@ -87,7 +109,7 @@ The results will be used to define practical network-size recommendations and im
 
 # Additional Zigbee environmental sensors
 
-Environmental sensors are currently connected directly to the ESP32-S3 Main Controller.
+The SHT41 environmental sensor is currently connected directly to the ESP32-S3 Main Controller. Zigbee environmental sensors are not supported.
 
 A planned extension is support for compatible Zigbee sensor devices.
 

@@ -1,715 +1,218 @@
 # Troubleshooting
 
-This guide covers common problems that may occur while configuring or operating MycoBox.
+Start by checking power, network access, **Overview**, **Measurements** and **Zigbee**. Read the displayed result before repeating a change. If equipment could be in an unsafe state, make it safe independently of the web interface before inspecting it.
 
-Start with the simplest checks first:
+## An operation result is unknown
 
-1. Confirm that the controller has stable power.
-2. Wait for the startup process to complete.
-3. Verify that the expected Wi-Fi network is available.
-4. Check the MycoBox web interface.
-5. Review sensor and Zigbee status.
-6. Restart the controller only if necessary.
+A lost response does not establish whether a save, reset or update succeeded. If MycoBox asks for **Reload configuration** or **Reload settings**, reload and inspect the stored state before another change. Do not repeatedly press Save or Reset to resolve an uncertain result.
 
----
+For an output test, check the actual equipment. An OFF command can be sent again when the output remains available. A **Last test** result is only the last command confirmation; automation may subsequently change the output.
 
-# MycoBox is not available on the network
+For an update, reconnect and check the reported firmware version before retrying. See [Firmware Updates](firmware-update.md).
 
-If the controller cannot be reached from the browser, first determine whether it is connected to the configured Wi-Fi network or operating in Access Point mode.
+## MycoBox is not available on the network
 
----
+Check whether MycoBox is connected to your normal Wi-Fi network or has created its own access point.
 
-## Try the local hostname
+### Try the local hostname
 
-MycoBox normally advertises its configured name using mDNS.
+When connected to your normal network, try `http://<controller-name>.local`. Make sure your phone or computer is on the same network and use HTTP.
 
-Try:
+### .local does not work
 
-```text id="q8luhm"
-http://<controller-name>.local
-```
+Find MycoBox's IP address in your router or on the controller's local display and open it directly, for example `http://192.168.1.120`. A working IP address with a failing hostname points to local discovery or network configuration. Check guest-network/client isolation if devices cannot reach one another.
 
-For example:
+## MycoBox created its own Wi-Fi network
 
-```text id="qsx3gr"
-http://FC123456.local
-```
+Look for `<controller-name>_AP`. Connect using the access-point credentials in [Getting Started](getting-started.md), and keep your phone or computer on that network even if it reports no Internet access.
 
-or, if the controller has been renamed:
+Open the AP address described in Getting Started, or the gateway/IP shown by the connected device or controller. Then open **System → Network** and correct the saved Wi-Fi settings. Do not assume that the normal network hostname or router-assigned IP also works in AP mode.
 
-```text id="poahr7"
-http://GrowRoom.local
-```
+## MycoBox does not connect to Wi-Fi
 
----
+Under **System → Network**, check the selected network and its password. Use **Refresh** to scan. If scanning fails or the network is hidden, choose **Other / hidden network…** and enter its name manually.
 
-## `.local` does not work
+**Keep the password for the saved network** applies to the saved SSID. For a new secured network, enter its password. Saving restarts the controller.
 
-mDNS support depends on the operating system, browser and local network.
+## I changed Wi-Fi settings and lost access
 
-If the `.local` address does not resolve:
+Allow the restart to finish, reconnect your browser device to the same network and try the controller's hostname or new IP. If connection to the configured network fails, check for its `_AP` network and correct the settings there. See [Getting Started](getting-started.md).
 
-1. Find the IP address assigned to MycoBox by your router.
-2. Open that address directly in the browser.
+## I cannot log in
 
-For example:
+Use your configured administrator credentials. For an unchanged installation, refer to the initial credentials in [Getting Started](getting-started.md).
 
-```text id="4g00gh"
-http://192.168.1.120
-```
+The account is configured under **System → Administrator account**; the **Account** shortcut opens that section. After changing credentials, sign in with the new values. If the credentials are lost and normal access cannot be restored, a [Main Controller factory reset](#factory-reset) clears saved configuration; read its consequences first.
 
-A working IP address with a non-working `.local` name usually indicates an mDNS or local network discovery problem rather than a MycoBox control problem.
+## Sensor values are missing
 
----
+Open **Measurements** and read the status beside the values. The installed SHT41 provides temperature and relative humidity.
 
-# MycoBox created its own Wi-Fi network
+| Status | What to check |
+| --- | --- |
+| **Sensor heater active** | Ambient readings are temporarily paused during the sensor's own heating cycle. This is separate from the **Heat** equipment output. |
+| **Sensor cooling after heating** | Wait for ambient readings to resume automatically. |
+| **Reading is out of date** or no fresh reading | Check whether the browser connection is working and whether fresh readings return. |
+| **Sensor communication error** | MycoBox retries automatically. If the condition persists, check sensor power and connections using the hardware guidance. |
 
-If MycoBox cannot connect to the configured Wi-Fi network, it can return to Access Point mode.
+Make equipment safe before opening the enclosure or checking wiring. Do not treat an old chart value as a current measurement. See [Hardware Overview](hardware-overview.md) and [Compatibility](compatibility.md).
 
-Look for a network named:
+## Sensor values look incorrect
 
-```text id="90ushh"
-<controller-name>_AP
-```
+Check the sensor's placement. Direct humidifier mist, condensation, a nearby heater or concentrated fan airflow can make its reading unrepresentative of the growing space. Compare conditions after a fresh ambient reading, rather than during sensor heating or cooling.
 
-For example:
+## CO₂ is not shown
 
-```text id="otuc3m"
-FC123456_AP
-```
+The SHT41 configuration measures temperature and humidity, not CO₂. **Fan** uses its configured ON/OFF timing; it does not regulate CO₂ concentration.
 
-Default Access Point password:
+## Humidity oscillates around the target
 
-```text id="1skj21"
-12345678
-```
+Open **Measurements** and compare the humidity curve with the **Humidifier** and **Fan** event tracks. Air exchange can lower humidity, and moisture can continue affecting a chamber after the humidifier switches off.
 
-Connect to the access point and open the MycoBox interface.
+Under **Cycle & automation**, check whether **Timer** or **Adaptive** humidification is selected. Timer uses ON/OFF durations; Adaptive uses the humidity target and fresh measurements. Review sensor placement, water supply, the connected humidifier and the selected settings before making repeated adjustments.
 
-Then go to:
+Observe the chamber’s own readings and equipment response before adjusting the settings again.
 
-**System → Network**
+## Humidifier does not switch on
 
-and verify the Wi-Fi configuration.
+1. On **Zigbee**, check that the device is available and **Humidifier** has the intended distinct output saved.
+2. Check for maintenance, an assignment conflict or an unknown operation result. During maintenance, follow the [assignment restoration procedure](zigbee.md#restoring-assignments-after-maintenance) first; disabled **Turn ON** is expected until a new assignment is saved.
+3. Identify the output with **Test output** and confirm physical **Turn ON / Turn OFF** operation.
+4. Check the selected humidification mode and active time point under **Cycle & automation**.
+5. For Adaptive mode, check that fresh measurements are available and allow time for the chamber to respond between corrections.
 
----
+Manual testing can operate real equipment. A successful test does not replace checking the automatic mode and the physical water supply.
 
-# MycoBox does not connect to Wi-Fi
+## Fan, light or heating does not switch
 
-Open:
+First check the saved **Fan**, **Light** or **Heat** assignment and test its detected output on **Zigbee**. A role without an assignment cannot operate equipment. If maintenance is active, restore an initial assignment safely before ON tests as described below.
 
-**System → Network**
+If manual switching works, inspect **Cycle & automation** and **Overview**:
 
-Check:
+- **Incubation** keeps Fan and Light OFF and uses a fixed heating range instead of the daily temperature target.
+- In **Fruiting**, Fan follows its timing settings. Light also needs its schedule enabled and the current time to be inside the light window.
+- Heating depends on the current measurement and the applicable thresholds shown in Overview.
 
-* Wi-Fi network name,
-* Wi-Fi password,
-* whether the selected network is currently available,
-* whether the controller is within reasonable Wi-Fi range.
+Check the controller's local time and timezone if equipment follows the wrong part of the schedule.
 
-You can use the network scan to confirm that the access point is visible.
+## Zigbee device does not appear
 
-If necessary, enter the SSID manually.
+Open **Zigbee**, wait for **Zigbee controller available**, select **Start pairing**, then put the device in pairing mode. The window lasts 120 seconds and can be closed using **Cancel pairing**.
 
-After saving network settings, MycoBox restarts and attempts to connect using the new configuration.
+Select **Refresh** to read the device again. If pairing or discovery fails, follow the message, check the device's manufacturer's pairing/reset procedure and try nearer the controller. MycoBox accepts one compatible ON/OFF switch or power strip, not several separate plugs or Zigbee sensors.
 
-If the connection cannot be established, the controller can return to Access Point mode.
+If a device is already paired, a second cannot be added. Replacing it requires the intentional [Zigbee network reset](zigbee.md#forgetting-all-zigbee-devices), including successful OFF preparation.
 
----
+## Zigbee device appears but cannot be controlled
 
-# I changed Wi-Fi settings and lost access
+Use **Test output → Output** to select a detected output, then **Turn ON** and **Turn OFF**. During maintenance, disabled **Turn ON** is expected; restore an initial intended assignment before testing, with the loads kept safe. Do not guess endpoint 1 or a fixed range: MycoBox discovers up to 32 ON/OFF outputs with endpoint numbers 1–240, which may be nonconsecutive.
 
-This is expected while the controller restarts and reconnects.
+Check the physical equipment and read the confirmation. If output discovery is unavailable or a command is not confirmed, restore communication and investigate compatibility before changing the automation settings. Expand **Technical details** if offered and keep the error for a problem report.
 
-Wait for the restart to complete.
+See [Zigbee Setup](zigbee.md) and [Compatibility](compatibility.md).
 
-Then try:
+## A multi-outlet Zigbee device controls the wrong outlet
 
-```text id="ivb7zk"
-http://<controller-name>.local
-```
+The device manufacturer determines endpoint numbering. Test each detected output to identify its actual socket, finish with confirmed OFF, then select that output in the appropriate role's **Assigned output** list and **Save**.
 
-or use the new IP address assigned by the router.
+## An assignment cannot be saved or removed
 
-If the configured Wi-Fi network cannot be reached, look for:
+Each role needs a different detected output on the paired device. An output assigned elsewhere cannot be reused by another role.
 
-```text id="a9ddzg"
-<controller-name>_AP
-```
+Changing or removing an assignment requires confirmed OFF on its previous output. A new output must also confirm OFF before being saved. If the old device/output cannot be reached, restore communication before retrying. Selecting **Not assigned** does not bypass the OFF requirement.
 
-and correct the network settings from Access Point mode.
+If the save result is unknown, use **Reload settings** and read the stored assignment before another attempt.
 
----
+## Zigbee maintenance remains active
 
-# I cannot log in
+A network reset or H2 update can clear assignments and leave maintenance active. New ON commands remain blocked until the first new assignment is successfully saved. This state survives a Main Controller restart.
 
-A new controller uses:
+Reload **Zigbee** and check the device and firmware state. Keep the controlled loads independently isolated or use harmless test loads, pair again if needed, and save an actual detected output for an intended role. Unchanged **Not assigned** selections cannot release maintenance. Only then perform ON/OFF tests, identify the mapping and finish the other distinct assignments. Automation can resume immediately after that first save.
 
-```text id="yshcz0"
-Username: admin
-Password: admin
-```
+Follow [Restoring assignments after maintenance](zigbee.md#restoring-assignments-after-maintenance). Do not use repeated resets or a Main Controller factory reset to bypass the pause.
 
-If the credentials were changed, use the configured username and password.
+## A Zigbee device disappeared after an H2 firmware update
 
-Authentication settings are available under:
+A full H2 update replaces the Zigbee network state and clears assignments during preparation. Use **Start pairing** to pair the device again, then safely save an initial intended detected assignment before ON tests. Identify/check the outputs and complete the remaining distinct assignments. See [Firmware Updates](firmware-update.md#pair-zigbee-devices-again).
 
-**System → Authorization**
+<a id="forget-paired-devices-was-used-accidentally"></a>
+## Reset network was used accidentally
 
-If the configured credentials are no longer known, a factory reset may be required.
+**Zigbee → Advanced → Reset network** removes the paired device and clears assignments after OFF preparation. Pair the device again and recreate the required assignments. It does not restore itself after a restart, and it is separate from an S3 factory reset.
 
-> A Main Controller factory reset clears stored ESP32-S3 configuration.
+## Main Controller firmware update failed
 
----
+Check the displayed error, correct S3 OTA release file and checksum. If the Main Controller still starts normally, reconnect and retry using **System → Main Controller firmware**. A rejected or incomplete upload does not by itself establish that full recovery is required.
 
-# Sensor values are missing
+If the result is unknown, check the running **Version / Build** and reload before another upload. Do not repeatedly remove power while the installation state is uncertain. See [Firmware Updates](firmware-update.md#updating-the-main-controller).
 
-Open:
+## Zigbee Controller firmware update failed
 
-**Sensors**
+Check the error under **Zigbee → Advanced** and verify the H2 file is the correct encrypted release image, exactly 2 MiB.
 
-Current MycoBox firmware supports sensors from the:
+If preparation could not confirm outputs OFF, the updater blocks programming. Restore communication and resolve that condition. If preparation succeeded but a later stage failed, assignments may already be cleared and maintenance remains active.
 
-* Sensirion SCD4x family,
-* Sensirion SHT3x family.
+An interrupted H2 update may leave the Zigbee Controller unavailable. Reload the page to read the state; a retry may be possible from retained maintenance. If the panel blocks recovery or H2 remains unavailable, contact the maintainer rather than bypassing the checks. See [Firmware Updates](firmware-update.md#updating-the-zigbee-controller).
 
-Depending on the installed hardware, expected measurements may include:
+## Firmware file is rejected
 
-* temperature,
-* relative humidity,
-* CO₂ concentration.
+Use the release's encrypted **S3 OTA** file for the Main Controller or its **H2** file for the Zigbee Controller. Check the checksum and hardware/version compatibility. Do not upload a full S3 recovery image, plain development binary or a renamed file through the S3 web updater.
 
-If a value is missing:
+## The controller restarted during normal use
 
-1. Check that the expected sensor is physically connected.
-2. Restart MycoBox and check the Sensors page again.
-3. Verify that the sensor type is supported.
-4. Check whether other values from the same sensor are also unavailable.
+Wait for network access to return, then check fresh measurements, Zigbee status, assignments and actual equipment. Unsaved cycle changes are lost at restart. If unexpected restarts repeat, note when they occur and review **Activity log** and **System → Diagnostics**, together with power-supply stability.
 
-Do not enable automatic environmental control based on a sensor that is not reporting valid measurements.
+## The displayed time is incorrect
 
----
+Open **System → Time and timezone**. Check the selected timezone and **Controller local time**. The timezone applies to display and automation in both time modes.
 
-# Sensor values look incorrect
+**Automatic (NTP)** needs network access to the configured time servers. In **Manual** mode, **Date and time (UTC)** expects UTC; **Use computer time** performs that conversion for you. Do not enter local clock time into the UTC field. Save the intended settings and verify the resulting controller local time before relying on schedules.
 
-Allow the sensor some time to stabilize after startup.
+## A schedule activates at the wrong time
 
-Compare the reading with the actual environment.
+Check the controller local time, timezone, active cycle day and time point, light window and growing mode. A correct schedule can still run at the wrong local time if the clock or timezone is wrong.
 
-Large differences may indicate:
+## Configuration changes appear to have no effect
 
-* sensor placement near a humidifier outlet,
-* sensor placement near a heater,
-* direct airflow from a fan,
-* condensation on or around the sensor,
-* an unsuitable mounting position.
+Wait for a confirmed save, then reload and read the stored value. If the result is uncertain, read it back before another change.
 
-For useful environmental control, the sensor should measure conditions representative of the controlled space rather than conditions directly beside one actuator.
+Cycle edits take effect in memory but require **Save cycle** to survive restart. Mode changes are saved immediately. Network/account changes and automatic time settings can restart the controller, so save pending cycle edits before making them. Zigbee assignments have their own **Save** buttons and must be verified separately.
 
----
+## Factory reset
 
-# CO₂ is displayed but ventilation does not react to it
+A **Main Controller factory reset** clears saved S3 configuration, including network, account, time, cycle and Zigbee assignments. It does not perform the H2 Zigbee network reset. Use it only when normal configuration recovery is not possible, and make connected equipment safe independently first.
 
-This is expected with the current firmware.
+1. Restart the Main Controller normally, without holding BOOT during power-on/reset.
+2. During its approximately seven-second factory-reset countdown, press the **Main Controller's BOOT** button. The local display identifies this window with **BOOT = Factory reset**.
+3. Release the button when the factory-reset notice appears and allow the reset/restart to complete.
+4. Repeat [initial setup](getting-started.md).
 
-CO₂ is currently available as a monitored environmental parameter.
+Holding BOOT before the normal firmware starts can select programming mode instead of this application reset procedure. Do not confuse the Main Controller's button with the Zigbee Controller's BOOT button.
 
-Ventilation operates according to its configured ON and OFF timing settings rather than directly regulating CO₂ concentration.
+## After a Main Controller factory reset
 
-Use the sensor history to observe CO₂ behavior and adjust ventilation timing if necessary.
+Reconnect using the initial-setup instructions; the default name may differ from the name you previously chose. Restore network, account, time and cycle settings, then read **Zigbee**.
 
----
+The H2 device may still be paired, but the S3 assignments were cleared. Check what is present before deciding to pair again. Identify/test the outputs and save the required roles. Observe the equipment before returning to automatic operation.
 
-# Humidity oscillates around the target
+## Main Controller factory reset vs. Zigbee reset
 
-Some humidity variation is normal.
+| Operation | S3 configuration | Zigbee device and assignments |
+| --- | --- | --- |
+| Main Controller factory reset | Saved S3 configuration cleared | H2 network is not reset; S3 assignments must be recreated |
+| Zigbee **Reset network** | Network/account/cycle settings retained | Paired device and assignments cleared; pairing and assignments must be restored |
+| H2 firmware update | Other saved S3 settings retained | Full H2 network state replaced; pair again and save assignments |
 
-The response of a controlled environment depends on factors such as:
+## Before leaving the system unattended
 
-* enclosure volume,
-* humidifier output,
-* airflow,
-* ventilation rate,
-* sensor position,
-* temperature.
+Check fresh measurements, correct local time, the required saved assignments and physical ON/OFF operation. Observe heating, humidity and ventilation after any reset, update or configuration change. See [Safety](safety.md).
 
-MycoBox provides both fixed-cycle and adaptive humidification control.
+## Still having problems?
 
-If humidity changes too aggressively, review the humidification configuration and observe how the environment reacts after the humidifier switches off.
+Include the Main Controller **Version / Build**, Zigbee **Firmware / Build**, device model, exact error or **Technical details**, steps to reproduce and relevant activity entries. Explain what changed immediately before the problem began.
 
-A strong humidifier in a small enclosure can continue increasing humidity after power has already been removed.
+Remove passwords, Wi-Fi credentials, private network details and service/provisioning material before sharing a report. See the [Security Policy](../SECURITY.md).
 
----
+## Related documentation
 
-# Humidifier does not switch on
-
-Check:
-
-1. The Zigbee device is paired.
-2. The correct device is assigned to **Humidifier**.
-3. The correct endpoint is configured.
-4. The outlet can be switched manually from the Zigbee page.
-5. Humidification control is enabled.
-6. The current conditions actually require humidification.
-
-Always test the Zigbee outlet manually before troubleshooting the automatic control logic.
-
----
-
-# Fan, light or heating does not switch
-
-The same basic procedure applies to all Zigbee-controlled equipment.
-
-Open:
-
-**System → Zigbee**
-
-Verify:
-
-* the device is paired,
-* the expected IEEE address is selected,
-* the correct endpoint is configured,
-* manual **ON** and **OFF** tests operate the intended equipment,
-* the correct MycoBox function is bound.
-
-Current bindings include:
-
-* Humidifier,
-* FAE / Fan,
-* Light,
-* Heatpad.
-
-If manual switching works but automatic control does not, review the control configuration for that function.
-
----
-
-# Zigbee device does not appear
-
-Open:
-
-**System → Zigbee**
-
-Then:
-
-1. Press **Open Zigbee Network**.
-2. Put the Zigbee device into pairing mode.
-3. Wait for pairing.
-4. Press **Refresh paired devices**.
-
-The MycoBox pairing window remains open for:
-
-```text id="c4qk81"
-120 seconds
-```
-
-If the device still does not appear:
-
-* move it closer to MycoBox,
-* factory-reset the Zigbee device,
-* reopen the Zigbee network,
-* try pairing again.
-
-The exact pairing or reset procedure depends on the Zigbee device manufacturer.
-
----
-
-# Zigbee device appears but cannot be controlled
-
-The current MycoBox interface supports switch-type Zigbee devices.
-
-First test:
-
-```text id="8x98up"
-Endpoint 1
-```
-
-which is commonly used by simple smart plugs.
-
-For multi-outlet devices, individual outlets may use different endpoints.
-
-Test available endpoints one by one.
-
-The current Zigbee switch controller actively handles:
-
-```text id="cmdevj"
-Endpoints 1 through 6
-```
-
-If no supported endpoint operates the device, the Zigbee implementation used by that device may not currently be compatible with MycoBox.
-
----
-
-# A multi-outlet Zigbee device controls the wrong outlet
-
-Endpoint numbers are determined by the Zigbee device manufacturer.
-
-Do not assume that:
-
-```text id="br5zwb"
-Endpoint 1 = Outlet 1
-Endpoint 2 = Outlet 2
-```
-
-Use manual ON/OFF tests to identify each physical outlet.
-
-Then save the correct endpoint in the appropriate MycoBox binding.
-
----
-
-# Zigbee quick test controls the wrong endpoint
-
-The quick ON/OFF controls in the paired-device list currently test:
-
-```text id="v7zzpu"
-Endpoint 1
-```
-
-To test another endpoint, use the test controls inside the appropriate binding section.
-
----
-
-# A Zigbee device disappeared after an H2 firmware update
-
-Updating the ESP32-H2 Zigbee Controller resets the Zigbee network state.
-
-Previously paired devices must therefore be paired again.
-
-After an H2 update:
-
-1. Open the Zigbee network.
-2. Pair the devices again.
-3. Refresh the paired-device list.
-4. Verify each endpoint.
-5. Review all bindings.
-6. Test every actuator manually.
-
-See:
-
-[Zigbee Setup](zigbee.md)
-
-and:
-
-[Firmware Updates](firmware-update.md)
-
----
-
-# Forget paired devices was used accidentally
-
-The **Forget paired devices** operation resets the Zigbee network maintained by the ESP32-H2.
-
-Previously paired devices must then be paired again.
-
-This operation is different from:
-
-* removing a single MycoBox binding,
-* performing a Main Controller factory reset.
-
-After a Zigbee network reset:
-
-1. Pair the required devices again.
-2. Identify their endpoints.
-3. Review MycoBox bindings.
-4. Test all connected equipment.
-
----
-
-# Main Controller firmware update failed
-
-If an ESP32-S3 firmware update reports an error:
-
-1. Do not repeatedly power-cycle the controller.
-2. Read the error shown in the web interface.
-3. Verify that the selected file is the correct MycoBox S3 OTA package.
-4. Check that the downloaded file is complete.
-5. Retry the update using a stable network connection.
-
-A failed upload does not necessarily mean that recovery is required.
-
-The S3 updater writes the new firmware to the inactive OTA partition and validates the package before selecting it for the next boot.
-
-If the controller still starts normally, use the existing firmware and retry the update.
-
-See:
-
-[Firmware Updates](firmware-update.md)
-
----
-
-# Zigbee Controller firmware update failed
-
-The ESP32-H2 update rewrites the Zigbee Controller firmware.
-
-If the update fails:
-
-* do not repeatedly interrupt power,
-* check the error displayed by MycoBox,
-* verify that the selected file is the correct H2 firmware,
-* verify that the file size is exactly 2 MiB.
-
-An interrupted H2 update may require firmware recovery.
-
-Normal recovery images and production tooling are not distributed as standard public firmware assets.
-
-See:
-
-[Firmware Updates](firmware-update.md)
-
----
-
-# Firmware file is rejected
-
-Make sure the correct firmware file is being used for the correct controller.
-
-For the Main Controller use a file such as:
-
-```text id="670u42"
-MycoBox-S3-OTA-vX.XXX.EN.bin
-```
-
-For the Zigbee Controller use:
-
-```text id="1v0p5p"
-MycoBox-H2-vX.XXX.EN.bin
-```
-
-Do not interchange the two files.
-
-Do not use development firmware or recovery images through the normal web updater.
-
----
-
-# The controller restarted during normal use
-
-A restart can temporarily interrupt:
-
-* web access,
-* Zigbee control,
-* environmental automation.
-
-After the restart:
-
-1. Wait for MycoBox to become available.
-2. Check sensor values.
-3. Check Zigbee Controller status.
-4. Confirm that important actuator bindings are still present.
-5. Observe the system before returning it to unattended operation.
-
-If unexpected restarts repeat, review the controller logs and power supply stability.
-
----
-
-# The displayed time is incorrect
-
-Open:
-
-**System → Time & Localization**
-
-Check:
-
-* timezone,
-* time settings,
-* whether network time synchronization is configured as expected.
-
-MycoBox can use NTP when network time is available and a DS3231 RTC as an offline fallback.
-
-Incorrect time can affect:
-
-* schedules,
-* environmental profiles,
-* historical data,
-* day transitions.
-
-Correct the time before relying on time-based automation.
-
----
-
-# A schedule activates at the wrong time
-
-Verify:
-
-1. Controller local time.
-2. Configured timezone.
-3. The schedule itself.
-4. Any time-dependent environmental profile.
-
-A correct schedule with an incorrect system timezone will still operate at the wrong local time.
-
----
-
-# Configuration changes appear to have no effect
-
-After saving a setting:
-
-1. Verify that the web interface confirms the change.
-2. Reload the relevant page.
-3. Confirm that the stored value is shown correctly.
-4. Check whether the function is currently enabled.
-5. Check whether another automatic mode is controlling the same function.
-
-For actuator-related settings, also verify the Zigbee binding.
-
----
-
-# MycoBox cannot control equipment after configuration changes
-
-Check the control path in this order:
-
-```text id="puwu37"
-Sensor / schedule
-        ↓
-MycoBox control logic
-        ↓
-Zigbee binding
-        ↓
-Device endpoint
-        ↓
-Smart plug / relay
-        ↓
-Connected equipment
-```
-
-Manual testing from the Zigbee page is useful for separating control-logic problems from device or endpoint problems.
-
-If the outlet cannot be controlled manually, troubleshoot Zigbee first.
-
----
-
-# Factory reset
-
-A Main Controller factory reset clears the stored ESP32-S3 configuration.
-
-Use it only when normal configuration recovery is not possible.
-
-To perform the current factory-reset procedure:
-
-1. Restart or power on MycoBox.
-2. During the first approximately 7 seconds of startup, press and hold the **BOOT** button.
-3. Keep it pressed until the controller detects the reset request and begins restarting.
-4. MycoBox erases its stored Main Controller configuration and restarts.
-
-After a factory reset, the Main Controller must be configured again.
-
-This may include:
-
-* network configuration,
-* authorization settings,
-* time and localization settings,
-* environmental-control settings,
-* schedules and profiles,
-* stored Zigbee bindings.
-
-> The Main Controller factory reset is separate from **Forget paired devices** on the Zigbee page.
-
-A Main Controller factory reset does not represent the same operation as resetting the Zigbee network maintained by the ESP32-H2.
-
-If the Zigbee network itself must be rebuilt, use the dedicated Zigbee reset procedure.
-
----
-
-# After a Main Controller factory reset
-
-Expect to repeat the initial setup.
-
-1. Look for:
-
-```text id="g7okti"
-<controller-name>_AP
-```
-
-2. Connect using the default Access Point password:
-
-```text id="6oeihg"
-12345678
-```
-
-3. Log in with:
-
-```text id="mpf6qc"
-Username: admin
-Password: admin
-```
-
-4. Configure Wi-Fi.
-5. Configure time and localization.
-6. Verify sensors.
-7. Review Zigbee configuration.
-8. Reconfigure environmental control.
-9. Recreate any required Zigbee bindings.
-10. Test all controlled equipment.
-
-See:
-
-[Getting Started](getting-started.md)
-
----
-
-# Main Controller factory reset vs. Zigbee reset
-
-The two reset operations affect different parts of MycoBox.
-
-| Operation                     | Controller | Main configuration                | Zigbee network               |
-| ----------------------------- | ---------- | --------------------------------- | ---------------------------- |
-| Main Controller factory reset | ESP32-S3   | Cleared                           | Not the same reset operation |
-| Forget paired devices         | ESP32-H2   | Does not perform S3 factory reset | Reset                        |
-
-Use **Main Controller factory reset** when the ESP32-S3 configuration needs to be restored to defaults.
-
-Use **Forget paired devices** only when you intentionally want to rebuild the Zigbee network.
-
-After either operation, review MycoBox bindings before returning to unattended operation.
-
----
-
-# Before leaving the system unattended
-
-After troubleshooting or changing configuration, verify:
-
-* sensors report reasonable values,
-* all required Zigbee devices are available,
-* each actuator controls the intended equipment,
-* heating equipment operates safely,
-* humidification behaves as expected,
-* ventilation follows the configured timing,
-* schedules use the correct local time.
-
-Observe the controlled environment before relying on fully unattended operation.
-
-See:
-
-[Safety](safety.md)
-
-for additional precautions.
-
----
-
-# Still having problems?
-
-When diagnosing a problem, collect the following information:
-
-* MycoBox firmware version,
-* Zigbee Controller firmware version,
-* problem description,
-* whether the problem is reproducible,
-* which sensor or Zigbee device is involved,
-* relevant controller logs,
-* what changed immediately before the problem appeared.
-
-Avoid posting:
-
-* passwords,
-* Wi-Fi credentials,
-* private network information,
-* encryption material,
-* provisioning files.
-
-When reporting a problem, include only the information required to reproduce the issue.
-
----
-
-# Related documentation
-
-* [Getting Started](getting-started.md)
-* [Hardware Overview](hardware-overview.md)
-* [Zigbee Setup](zigbee.md)
-* [Firmware Updates](firmware-update.md)
-* [Safety](safety.md)
+[Getting Started](getting-started.md) · [Zigbee Setup](zigbee.md) · [Firmware Updates](firmware-update.md) · [Hardware Overview](hardware-overview.md) · [Compatibility](compatibility.md) · [Safety](safety.md)

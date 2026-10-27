@@ -9,6 +9,8 @@ body:
       value: |
         Thanks for suggesting an improvement. Please describe the problem or use case first, then the proposed solution.
 
+        Check the [Roadmap](https://github.com/Moffefe/MycoBox/blob/main/docs/roadmap.md) for related plans. Do not include passwords, keys, credentials or identifying device information in examples or screenshots.
+
   - type: textarea
     id: problem
     attributes:
@@ -22,10 +24,12 @@ body:
     attributes:
       label: Area
       options:
-        - Web interface
-        - Sensors
-        - Environmental control
-        - Zigbee / ESP32-H2
+        - Web interface / navigation
+        - Overview / Growbox warnings
+        - Measurements / sensor support
+        - Cycle & automation
+        - Zigbee / Zigbee Controller
+        - Activity log / reports
         - Wi-Fi / networking
         - Time / RTC / NTP
         - Firmware update
@@ -56,7 +60,7 @@ body:
     id: context
     attributes:
       label: Additional context
-      description: Screenshots, hardware examples, diagrams or links can be useful here.
+      description: Screenshots, exact hardware models, diagrams, roadmap feature IDs or links can be useful. Remove credentials, authentication headers and identifying information before sharing.
     validations:
       required: false
 
@@ -66,4 +70,6 @@ body:
       label: Checks
       options:
         - label: I have searched existing issues for similar requests.
+          required: true
+        - label: I have removed passwords, tokens, encryption keys and other secrets from this request.
           required: true

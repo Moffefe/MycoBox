@@ -8,7 +8,7 @@ Before using the system, make sure the connected hardware is suitable for the in
 
 # Electrical safety
 
-MycoBox may control mains-powered equipment through Zigbee smart plugs, relay modules or power strips.
+MycoBox may control mains-powered equipment through one compatible paired Zigbee outlet or power strip. Separate detected outputs can be assigned to **Humidifier**, **Fan**, **Light** and **Heat**.
 
 Typical connected equipment may include:
 
@@ -58,8 +58,8 @@ Heating devices require particular care because incorrect configuration or faile
 
 Before enabling automatic heating:
 
-1. Verify the correct Zigbee device.
-2. Verify the correct endpoint.
+1. Verify the paired Zigbee device.
+2. Verify the detected output assigned to **Heat**.
 3. Test manual ON/OFF control.
 4. Confirm that the heater is suitable for the intended environment.
 5. Observe the system while testing automatic control.
@@ -67,6 +67,10 @@ Before enabling automatic heating:
 Whenever practical, use heating equipment with its own independent over-temperature protection.
 
 MycoBox should not be the only protection against unsafe heating conditions.
+
+In **Fruiting**, heating uses the active scheduled temperature: ON below that value and OFF above it by 0.3 °C. **Incubation** uses a fixed 23.5–23.8 °C range and turns Fan and Light OFF. Confirm that these behaviors suit the installation before changing growing mode.
+
+Heat requests OFF when no usable temperature reading is available or the reading is below 5 °C. This does not make MycoBox frost protection: lost communication, a stuck outlet or failed equipment can prevent a requested state from taking physical effect.
 
 ---
 
@@ -76,7 +80,7 @@ A humidifier can change conditions rapidly inside a small enclosure.
 
 Before unattended operation:
 
-* verify the correct Zigbee binding,
+* verify the correct **Humidifier** assignment,
 * confirm that the humidifier switches on and off correctly,
 * observe how humidity continues to change after the humidifier stops,
 * avoid directing mist directly at sensors or electrical equipment.
@@ -84,6 +88,10 @@ Before unattended operation:
 A powerful humidifier in a small enclosure may cause significant humidity overshoot.
 
 Sensor placement and humidifier position can strongly affect control behavior.
+
+**Timer** runs the configured ON/OFF periods; the RH target does not regulate its output. **Adaptive** uses measurements and controlled pulses, with at least four minutes between pulse starts. This limits switching, but does not guarantee a particular humidity band or prevent all overshoot. The learned response is held in memory and is learned again after a restart.
+
+Adaptive stops an active pulse when usable ambient readings become unavailable. This behavior and the sensor's heating/cooling pauses should be checked with the actual enclosure and humidifier. Keep any independent dry-run or water-level protection supplied with the equipment; MycoBox has no water-level or leak sensor in the current configuration.
 
 ---
 
@@ -112,17 +120,21 @@ Disconnect or safely isolate equipment before working on moving components.
 
 Zigbee ON/OFF tests physically switch connected equipment.
 
-Before pressing **ON**, confirm:
+Before pressing **Turn ON**, confirm:
 
-* which Zigbee device is selected,
-* which endpoint is selected,
+* which Zigbee device is paired,
+* which detected output is selected,
 * what equipment is connected to that outlet.
 
 For multi-outlet Zigbee devices, do not assume that endpoint numbering matches physical outlet numbering.
 
-Test each endpoint individually.
+Test each detected output individually. The interface lists discovered outputs; endpoint numbers need not be consecutive and may not match the physical outlet labels.
 
 Whenever possible, identify endpoints using a harmless low-power load before connecting higher-power equipment.
+
+A confirmed ON/OFF result means the controller received the expected output-state confirmation. It does not prove that the connected heater, fan or humidifier is physically operating or that a relay will remain in that state. **Unknown** is not confirmation of OFF. The quick test shows its last command result; automation may change the output again.
+
+Changing an assignment, resetting Zigbee or preparing an H2 update requires confirmed OFF states. A failure can block the operation. Do not bypass that condition by assuming an unresponsive outlet is safe; isolate the load if necessary.
 
 See:
 
@@ -137,7 +149,7 @@ Do not immediately leave a new or modified installation unattended.
 After:
 
 * installing equipment,
-* changing Zigbee bindings,
+* changing Zigbee assignments,
 * changing environmental-control settings,
 * changing schedules,
 * changing environmental profiles,
@@ -161,7 +173,7 @@ An interrupted update may leave one of the controllers unable to start normally.
 
 The ESP32-H2 Zigbee Controller requires particular care because its update procedure rewrites the complete firmware image.
 
-After an ESP32-H2 update, Zigbee devices must be paired again and actuator bindings should be verified before unattended operation resumes.
+After an ESP32-H2 update, pair the device again, save new assignments and test every required output before unattended operation resumes. The H2 update clears assignments and keeps new ON commands blocked until assignments are saved again.
 
 See:
 
@@ -178,7 +190,7 @@ After changing important settings, verify:
 * environmental targets,
 * schedules,
 * environmental profiles,
-* Zigbee bindings,
+* Zigbee assignments,
 * actuator behavior.
 
 A configuration that appears correct in the web interface should still be physically verified before unattended operation.
@@ -200,6 +212,22 @@ Avoid placing environmental sensors:
 Poor sensor placement can cause the controller to react to local conditions that do not represent the overall controlled environment.
 
 Where possible, place sensors where they measure conditions representative of the space occupied by the plants, fungi, animals or other monitored subjects.
+
+The current SHT41 measures temperature and relative humidity. It does not measure CO₂, air quality, airflow, water level or whether a load is operating. Fan timing is not evidence that a safe atmosphere has been achieved.
+
+The SHT41 has an automatic heater operation followed by a cooling interval. The interface shows heating or cooling while ambient measurements are paused. These operations are intended to manage sensor exposure; they do not guarantee accuracy at saturation or remove the need to check placement and compare readings with a suitable reference. Persistent high humidity and condensation require observation with the actual hardware.
+
+---
+
+# Growbox warnings and activity history
+
+Growbox evaluates conditions locally even when the browser is closed. Its warnings are informational, not an independent thermostat, smoke alarm, leak alarm or emergency shutdown system.
+
+Temperature and RH deviation warnings require 30 minutes of observed trouble. Unavailable measurements and a sustained lack of response reported by Adaptive humidification require 15 minutes. Recovery must remain stable for five minutes. A brief hazardous condition can therefore occur without a warning.
+
+Assessment can pause during sensor heating/cooling, maintenance or missing measurements. **Assessment paused** and **Previously observed** do not describe a current all-clear. Warning observations are in memory and start again after a restart; there is no retained alarm history or remote notification service.
+
+Growbox animations and chart activity tracks show recent confirmed output states or recorded commands. They do not independently measure heat, mist or airflow. Missing history, an uncertain state or an interval without a retained end must not be treated as proof that equipment was OFF.
 
 ---
 
@@ -296,11 +324,11 @@ After either operation, verify:
 * network configuration,
 * environmental-control settings,
 * Zigbee device availability,
-* Zigbee bindings,
+* Zigbee assignments,
 * actuator endpoints,
 * automatic equipment behavior.
 
-Do not assume that previous actuator assignments remain valid after rebuilding the Zigbee network.
+Resetting the Zigbee network removes the paired device and clears assignments. Pair again, save the required assignments and test outputs before returning to automatic operation. A Main Controller factory reset is a separate operation; follow its instructions rather than assuming it also resets H2.
 
 See:
 
@@ -315,8 +343,8 @@ Verify:
 ```text
 [ ] Sensors report reasonable values
 [ ] System time and timezone are correct
-[ ] Zigbee devices are correctly identified
-[ ] Endpoints have been tested
+[ ] The paired Zigbee device is correctly identified
+[ ] Detected outputs and assignments have been tested
 [ ] Heating switches off correctly
 [ ] Humidification behaves as expected
 [ ] Fans operate safely
@@ -335,7 +363,7 @@ If the system behaves unexpectedly:
 1. Disable or disconnect the affected equipment if it can be done safely.
 2. Do not continue unattended operation.
 3. Check sensor readings.
-4. Check Zigbee bindings and endpoints.
+4. Check Zigbee assignments and detected outputs.
 5. Check control settings and schedules.
 6. Review controller logs.
 7. Restart equipment only after identifying the likely cause.
