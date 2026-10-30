@@ -32,6 +32,9 @@ defaults:
       path: "README.md"
     values:
       layout: guide
+include:
+  - README.md
+  - docs/README.md
 exclude:
   - media/web-ui/README.md
   - site/README.md

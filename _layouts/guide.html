@@ -42,7 +42,7 @@
       <article class="guide-content">
         {% assign readme_url = '/README.html' | relative_url %}
         {% assign home_url = '/' | relative_url %}
-        {{ content | replace: readme_url, home_url }}
+        {{ content | replace: readme_url, home_url | replace: 'id="co-based-ventilation-control"', 'id="co₂-based-ventilation-control"' | replace: 'id="co-is-not-shown"', 'id="co₂-is-not-shown"' }}
       </article>
       <nav class="guide-pagination" aria-label="Previous and next guide">
         {% for guide in site.data.guides %}
