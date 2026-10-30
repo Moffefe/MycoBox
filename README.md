@@ -16,13 +16,29 @@ MycoBox brings environmental monitoring and equipment control to one web interfa
   <img src="media/web-ui/dashboard.png" alt="MycoBox Overview with Growbox visualization, current readings and cycle settings" width="1000">
 </p>
 
-- <a id="measurements-and-activity"></a><a id="activity-log"></a>**Monitor conditions:** temperature, humidity, equipment states and local warnings, with charts and activity history.
-- <a id="cycle-and-automation"></a>**Plan growing routines:** schedule humidification, ventilation, heating and lighting, using Timer or Adaptive humidification.
+- <a id="activity-log"></a>**Monitor conditions:** temperature, humidity, equipment states and local warnings, with charts and activity history.
+- **Plan growing routines:** schedule humidification, ventilation, heating and lighting, using Timer or Adaptive humidification.
 - <a id="zigbee-equipment"></a>**Connect equipment:** identify and assign outputs on a compatible Zigbee outlet or power strip.
 - <a id="backup-and-restore"></a>**Keep your configuration:** export settings and diagnostics or restore selected settings.
 - <a id="multiple-controllers"></a>**Manage controller groups:** copy modes or a growing cycle to other MycoBox units.
 
 The [web interface guide](docs/web-interface.md) explains the panels and controls. Features depend on installed firmware; check the release notes when updating.
+
+## Measurements and activity
+
+<p align="center">
+  <img src="media/web-ui/measurements.png" alt="MycoBox Measurements with temperature and humidity charts and equipment activity tracks" width="1000">
+</p>
+
+Read each sample in the context of equipment activity. [Explore measurements and charts](docs/web-interface.md#measurements).
+
+## Cycle and automation
+
+<p align="center">
+  <img src="media/web-ui/cultivation-cycle.png" alt="MycoBox Cycle and automation editor with growing modes and daily time points" width="1000">
+</p>
+
+Build a daily profile and adjust it as your growing cycle progresses. [Explore cycle settings](docs/web-interface.md#cycle-and-automation).
 
 <a id="documentation"></a>
 
