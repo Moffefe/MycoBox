@@ -17,8 +17,6 @@ MycoBox brings environmental monitoring and equipment control to one web interfa
 
 ## Your growbox at a glance
 
-Interface screenshots include earlier captures and examples with sample data.
-
 <p align="center">
   <img src="media/web-ui/dashboard.png" alt="MycoBox Overview with Growbox visualization, current readings and cycle settings" width="1000">
 </p>
@@ -29,7 +27,7 @@ Interface screenshots include earlier captures and examples with sample data.
 - <a id="backup-and-restore"></a>**Keep your configuration:** export settings and diagnostics or restore selected settings.
 - <a id="multiple-controllers"></a>**Manage controller groups:** copy modes or a growing cycle to other MycoBox units.
 
-The [web interface guide](docs/web-interface.md) explains the panels and controls. Features depend on installed firmware; check the release notes when updating.
+The [web interface guide](docs/web-interface.md) explains the panels and controls.
 
 ## Measurements and activity
 

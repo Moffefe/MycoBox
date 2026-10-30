@@ -4,7 +4,7 @@ This roadmap describes planned work, not a release schedule. Priorities may chan
 
 ## Available now
 
-MycoBox provides local climate automation, measurements, schedules, Zigbee control and maintenance tools. See the [project overview](../README.md) and [Web interface](web-interface.md) for current behavior. Availability depends on the installed firmware; check its release notes.
+MycoBox provides local climate automation, measurements, schedules, Zigbee control and maintenance tools. See the [project overview](../README.md) and [Web interface](web-interface.md) for current behavior.
 
 ## Planned capabilities
 

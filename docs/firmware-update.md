@@ -84,7 +84,7 @@ Open **Zigbee → Advanced → Zigbee Controller · ESP32-H2**, or follow **Zigb
 ### H2 update procedure
 
 1. Check that the required S3 update is installed, and keep the paired outlet or power strip powered.
-2. Select the matching **H2-OTA** release file in **Zigbee Controller OTA package (.bin)**. Older screenshots or firmware may show the former full-image field.
+2. Select the matching **H2-OTA** release file in **Zigbee Controller OTA package (.bin)**.
 3. Select **Update Zigbee Controller** and confirm. MycoBox closes pairing, confirms the necessary outputs OFF and saves preparation before programming. If preparation fails, programming is blocked and assignments are retained.
 4. Wait through transfer, H2 restart and verification. After writing, the panel checks the expected firmware, saved device/outputs and confirmed OFF. **Automation stays paused until verification finishes.**
 5. Verify the installed version and retained assignments, then check [equipment operation](safety.md#before-leaving-the-system-unattended).

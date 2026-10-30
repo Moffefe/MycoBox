@@ -1,6 +1,6 @@
 # Backup and restore
 
-Open **System → Backup & restore** to download settings or diagnostics and import selected configuration. Operations work locally, including through the access point without internet. If this section is absent, install [firmware that supports it](firmware-update.md) according to its release notes.
+Open **System → Backup & restore** to download settings or diagnostics and import selected configuration. Operations work locally, including through the access point without internet.
 
 ## Export settings
 

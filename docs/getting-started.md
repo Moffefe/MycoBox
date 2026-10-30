@@ -139,7 +139,7 @@ Use [Overview](web-interface.md#overview-and-growbox), Measurements and Activity
 
 ### Save a settings backup
 
-After checking the setup, use **System → Backup & restore → Export settings** to keep a copy. Read [Backup and restore](backup-restore.md) for file contents, supported firmware and selective import. Exporting a copy does not replace **Save cycle** on the controller.
+After checking the setup, use **System → Backup & restore → Export settings** to keep a copy. Read [Backup and restore](backup-restore.md) for file contents and selective import. Exporting a copy does not replace **Save cycle** on the controller.
 
 **Setup complete:** the intended equipment responds correctly through scheduled transitions and you have downloaded a settings copy.
 
