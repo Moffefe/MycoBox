@@ -15,14 +15,19 @@ MycoBox already provides:
 * a responsive local web interface with Overview, Measurements, Cycle & automation, Zigbee, Activity log, Cluster and System pages;
 * a Growbox visualization showing recent confirmed output states, measurement freshness and local warnings;
 * SHT41 temperature and relative-humidity measurements, with charts and activity tracks for Humidifier, Fan, Heat and Sensor heater;
-* cycles of up to 32 days with four time points per day, Timer or Adaptive humidification, timed Fan control, heating and a daily Light window;
+* cycles of up to 32 days with four time points per day, Timer or Adaptive V1.4 humidification, timed Fan control, heating and a daily Light window;
 * one paired Zigbee outlet or power strip, with discovered ON/OFF outputs assigned separately to Humidifier, Fan, Light and Heat;
 * readable equipment events, sorting of loaded Activity log entries and expandable Technical details;
-* local settings, hardware timekeeping and firmware updates for both controllers through the web interface.
+* local settings, hardware timekeeping and firmware updates for both controllers through the web interface;
+* compatible H2 application OTA that preserves Zigbee pairing and output assignments while keeping automation paused through post-update checks;
+* settings JSON export, selective settings import and a diagnostic ZIP of currently retained measurements, events and system information;
+* confirmed group actions to copy control modes, copy and save a cycle, or restart discovered remote MycoBox controllers on the same network.
 
 Local warnings assess persistent temperature or humidity deviations, unavailable measurements and sustained lack of response reported by Adaptive humidification. They run on the controller, while the web page shows their status. Warning observations and measurement/activity history are held in memory and start again after a restart.
 
-These functions are a basis for the extensions below. A diagram or confirmed output state does not measure physical airflow, heat or mist, and local warnings do not provide independent equipment protection. See [Web Interface](web-interface.md), [Compatibility](compatibility.md) and [Safety](safety.md).
+Adaptive V1.4 learns the enclosure's humidification response with at least five minutes between starts and a 120-second single-run limit. The SHT41 also reports planned heating/cooling and possible sensor wetting; these states are distinguished from communication errors. Hardware and long-term environmental validation remain important, and available firmware does not establish performance for every enclosure.
+
+These functions are a basis for the extensions below. A diagram or confirmed output state does not measure physical airflow, heat or mist, and local warnings do not provide independent equipment protection. See [Web Interface](web-interface.md), [Backup and restore](backup-restore.md), [Compatibility](compatibility.md) and [Safety](safety.md). Features require firmware that includes them; follow the notes for the installed release.
 
 ---
 
@@ -169,7 +174,7 @@ Support will depend on the capabilities exposed by each Zigbee device. A light t
 
 **Priority: P2 / F19**
 
-MycoBox already provides measurement history and time-dependent environmental profiles. The planned extension is a record of a specific cultivation run that connects those capabilities.
+MycoBox already provides measurement history, time-dependent environmental profiles and a downloadable diagnostic archive of currently retained data. The archive is a troubleshooting snapshot, not a persistent cultivation log. The planned extension is a record of a specific cultivation run that connects those capabilities.
 
 Planned work includes:
 

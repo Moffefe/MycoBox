@@ -8,7 +8,7 @@ A lost response does not establish whether a save, reset or update succeeded. If
 
 For an output test, check the actual equipment. An OFF command can be sent again when the output remains available. A **Last test** result is only the last command confirmation; automation may subsequently change the output.
 
-For an update, reconnect and check the reported firmware version before retrying. See [Firmware Updates](firmware-update.md).
+For an update, reconnect and check the reported firmware version and update status before retrying. H2 may still be verifying after the firmware is written; automation stays paused until that finishes. See [Firmware Updates](firmware-update.md).
 
 ## MycoBox is not available on the network
 
@@ -71,12 +71,12 @@ Open **Measurements** and compare the humidity curve with the **Humidifier** and
 
 Under **Cycle & automation**, check whether **Timer** or **Adaptive** humidification is selected. Timer uses ON/OFF durations; Adaptive uses the humidity target and fresh measurements. Review sensor placement, water supply, the connected humidifier and the selected settings before making repeated adjustments.
 
-Observe the chamber’s own readings and equipment response before adjusting the settings again.
+Adaptive V1.4 allows at least five minutes between humidifier starts and at most 120 seconds per run. Timer retains its configured ON/OFF timing. Observe the chamber’s readings and equipment response before adjusting settings again.
 
 ## Humidifier does not switch on
 
 1. On **Zigbee**, check that the device is available and **Humidifier** has the intended distinct output saved.
-2. Check for maintenance, an assignment conflict or an unknown operation result. During maintenance, follow the [assignment restoration procedure](zigbee.md#restoring-assignments-after-maintenance) first; disabled **Turn ON** is expected until a new assignment is saved.
+2. Check for maintenance, an assignment conflict or an unknown operation result. After a network reset, follow the [assignment restoration procedure](zigbee.md#restoring-assignments-after-maintenance). If H2 OTA is pending, let verification finish or retry the complete package; disabled **Turn ON** is expected.
 3. Identify the output with **Test output** and confirm physical **Turn ON / Turn OFF** operation.
 4. Check the selected humidification mode and active time point under **Cycle & automation**.
 5. For Adaptive mode, check that fresh measurements are available and allow time for the chamber to respond between corrections.
@@ -85,7 +85,7 @@ Manual testing can operate real equipment. A successful test does not replace ch
 
 ## Fan, light or heating does not switch
 
-First check the saved **Fan**, **Light** or **Heat** assignment and test its detected output on **Zigbee**. A role without an assignment cannot operate equipment. If maintenance is active, restore an initial assignment safely before ON tests as described below.
+First check the saved **Fan**, **Light** or **Heat** assignment and test its detected output on **Zigbee**. A role without an assignment cannot operate equipment. If maintenance is active, read the [maintenance guidance](#zigbee-maintenance-remains-active) before ON tests.
 
 If manual switching works, inspect **Cycle & automation** and **Overview**:
 
@@ -105,7 +105,7 @@ If a device is already paired, a second cannot be added. Replacing it requires t
 
 ## Zigbee device appears but cannot be controlled
 
-Use **Test output → Output** to select a detected output, then **Turn ON** and **Turn OFF**. During maintenance, disabled **Turn ON** is expected; restore an initial intended assignment before testing, with the loads kept safe. Do not guess endpoint 1 or a fixed range: MycoBox discovers up to 32 ON/OFF outputs with endpoint numbers 1–240, which may be nonconsecutive.
+Use **Test output → Output** to select a detected output, then **Turn ON** and **Turn OFF**. During maintenance, disabled **Turn ON** is expected; read the [maintenance guidance](#zigbee-maintenance-remains-active) first and keep loads safe. Do not guess endpoint 1 or a fixed range: MycoBox discovers up to 32 ON/OFF outputs with endpoint numbers 1–240, which may be nonconsecutive.
 
 Check the physical equipment and read the confirmation. If output discovery is unavailable or a command is not confirmed, restore communication and investigate compatibility before changing the automation settings. Expand **Technical details** if offered and keep the error for a problem report.
 
@@ -125,15 +125,17 @@ If the save result is unknown, use **Reload settings** and read the stored assig
 
 ## Zigbee maintenance remains active
 
-A network reset or H2 update can clear assignments and leave maintenance active. New ON commands remain blocked until the first new assignment is successfully saved. This state survives a Main Controller restart.
+A network reset clears assignments and leaves maintenance active until the first new assignment is saved. An incomplete current H2 application OTA instead retains assignments and blocks new ON commands until firmware, saved device/output and OFF verification completes. Both pauses survive a Main Controller restart.
 
-Reload **Zigbee** and check the device and firmware state. Keep the controlled loads independently isolated or use harmless test loads, pair again if needed, and save an actual detected output for an intended role. Unchanged **Not assigned** selections cannot release maintenance. Only then perform ON/OFF tests, identify the mapping and finish the other distinct assignments. Automation can resume immediately after that first save.
+For a pending H2 update, keep the paired switch powered. Allow verification to finish or follow the [H2 retry procedure](firmware-update.md#if-an-h2-update-is-interrupted). Assignment changes, pairing and network reset are blocked during this update; saving assignments is not its recovery procedure.
 
-Follow [Restoring assignments after maintenance](zigbee.md#restoring-assignments-after-maintenance). Do not use repeated resets or a Main Controller factory reset to bypass the pause.
+After a network reset or older full-image update that cleared assignments, follow [Restoring assignments after maintenance](zigbee.md#restoring-assignments-after-maintenance). Keep loads isolated or use harmless test loads, pair if needed and save an actual detected output for an intended role. Unchanged **Not assigned** selections cannot release that pause. Automation can resume after the first successful save, so identify/test outputs and finish the other distinct assignments under supervision. Do not use repeated resets or a Main Controller factory reset to bypass either pause.
 
 ## A Zigbee device disappeared after an H2 firmware update
 
-A full H2 update replaces the Zigbee network state and clears assignments during preparation. Use **Start pairing** to pair the device again, then safely save an initial intended detected assignment before ON tests. Identify/check the outputs and complete the remaining distinct assignments. See [Firmware Updates](firmware-update.md#pair-zigbee-devices-again).
+Current H2 application OTA preserves compatible pairing and assignments. Check that the original switch is powered and reachable, then read update status. If verification is waiting for the saved device or outputs, restore communication and wait; missing equipment does not mean its settings were erased. Retry the complete matching OTA package if instructed. Do not reset the network to bypass verification.
+
+An older full-image update or full H2 recovery replaces Zigbee data and requires pairing again. Follow [Firmware Updates](firmware-update.md#pair-zigbee-devices-again) for that case.
 
 <a id="forget-paired-devices-was-used-accidentally"></a>
 ## Reset network was used accidentally
@@ -148,15 +150,23 @@ If the result is unknown, check the running **Version / Build** and reload befor
 
 ## Zigbee Controller firmware update failed
 
-Check the error under **Zigbee → Advanced** and verify the H2 file is the correct encrypted release image, exactly 2 MiB.
+Check the error under **Zigbee → Advanced** and verify the file is the correct encrypted **H2-OTA** package. Install the required S3 update first. The current form rejects complete 2 MiB H2 recovery images.
 
-If preparation could not confirm outputs OFF, the updater blocks programming. Restore communication and resolve that condition. If preparation succeeded but a later stage failed, assignments may already be cleared and maintenance remains active.
+If preparation could not confirm outputs OFF or save update preparation, programming is blocked and assignments are retained. Restore communication and resolve the error. After writing, keep the paired switch powered and wait for firmware, saved device/output and confirmed OFF verification.
 
-An interrupted H2 update may leave the Zigbee Controller unavailable. Reload the page to read the state; a retry may be possible from retained maintenance. If the panel blocks recovery or H2 remains unavailable, contact the maintainer rather than bypassing the checks. See [Firmware Updates](firmware-update.md#updating-the-zigbee-controller).
+An interrupted H2 application write can leave H2 unavailable. Reload to read the state and retry the complete matching OTA package when the panel allows it. Valid prior preparation can permit retry even after an S3 restart or with H2 unavailable; a generic maintenance pause is insufficient. If retry is blocked or H2 remains unavailable, contact the maintainer. Do not erase settings or bypass verification. See [Firmware Updates](firmware-update.md#updating-the-zigbee-controller).
 
 ## Firmware file is rejected
 
-Use the release's encrypted **S3 OTA** file for the Main Controller or its **H2** file for the Zigbee Controller. Check the checksum and hardware/version compatibility. Do not upload a full S3 recovery image, plain development binary or a renamed file through the S3 web updater.
+Use the release's encrypted **S3-OTA** package for the Main Controller or **H2-OTA** package for the current Zigbee updater. Check the checksum, required update order and compatibility. Full recovery images, plain development binaries and renamed files do not become OTA packages.
+
+## A settings import stopped or failed
+
+Open **System → Backup & restore** and review which steps were confirmed. Import can apply only part of the selected configuration before an error; it does not undo completed writes. Reload and inspect the current settings before retrying an uncertain operation.
+
+Save pending cycle edits before import, using **Save current cycle and continue** if offered. A new secured Wi-Fi network needs its password; a backup does not contain it. Zigbee assignments can be restored only to the currently paired matching device and outputs, and import is blocked while H2 OTA is incomplete.
+
+After all selected sections are saved, import requests a restart. If only restart confirmation failed, **Retry restart** retries that request without writing the settings again. See [Backup & restore](backup-restore.md).
 
 ## The controller restarted during normal use
 
@@ -193,7 +203,7 @@ Holding BOOT before the normal firmware starts can select programming mode inste
 
 Reconnect using the initial-setup instructions; the default name may differ from the name you previously chose. Restore network, account, time and cycle settings, then read **Zigbee**.
 
-The H2 device may still be paired, but the S3 assignments were cleared. Check what is present before deciding to pair again. Identify/test the outputs and save the required roles. Observe the equipment before returning to automatic operation.
+The H2 device may still be paired, but the S3 assignments were cleared. Check what is present before deciding to pair again. A compatible [settings backup](backup-restore.md) can restore selected configuration and matching assignments; it cannot recreate H2 pairing. Otherwise identify/test the outputs and save the required roles. Observe equipment before returning to automatic operation.
 
 ## Main Controller factory reset vs. Zigbee reset
 
@@ -201,7 +211,8 @@ The H2 device may still be paired, but the S3 assignments were cleared. Check wh
 | --- | --- | --- |
 | Main Controller factory reset | Saved S3 configuration cleared | H2 network is not reset; S3 assignments must be recreated |
 | Zigbee **Reset network** | Network/account/cycle settings retained | Paired device and assignments cleared; pairing and assignments must be restored |
-| H2 firmware update | Other saved S3 settings retained | Full H2 network state replaced; pair again and save assignments |
+| Current H2 application OTA | Saved S3 settings retained | Compatible pairing and assignments preserved; automation waits for verification |
+| Full H2 recovery or older full-image update | Follow the matching service/release procedure | Zigbee data replaced; pair again and verify/recreate assignments |
 
 ## Before leaving the system unattended
 
@@ -209,7 +220,7 @@ Check fresh measurements, correct local time, the required saved assignments and
 
 ## Still having problems?
 
-Include the Main Controller **Version / Build**, Zigbee **Firmware / Build**, device model, exact error or **Technical details**, steps to reproduce and relevant activity entries. Explain what changed immediately before the problem began.
+Include the Main Controller **Version / Build**, Zigbee **Firmware / Build**, device model, exact error or **Technical details**, steps to reproduce and relevant activity entries. Explain what changed immediately before the problem began. **System → Backup & restore → Export diagnostics** can collect retained measurements, events and a system report in one ZIP; review it for private details before sharing.
 
 Remove passwords, Wi-Fi credentials, private network details and service/provisioning material before sharing a report. See the [Security Policy](../SECURITY.md).
 

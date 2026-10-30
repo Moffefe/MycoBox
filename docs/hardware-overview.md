@@ -137,9 +137,9 @@ See [Getting Started](getting-started.md#network-recovery) and [Troubleshooting]
 | Controller | Update location | Important effect |
 | --- | --- | --- |
 | ESP32-S3 Main Controller | **System → Main Controller firmware** | The encrypted S3 OTA package preserves saved S3 settings. |
-| ESP32-H2 Zigbee Controller | **Zigbee → Advanced** | After updating, pair the switching device again and save its assignments. |
+| ESP32-H2 Zigbee Controller | **Zigbee → Advanced** | The current H2 application OTA package preserves compatible pairing and assignments; automation waits for verification. |
 
-Use compatible controller firmware as directed by the release notes. A full S3 recovery image is for the USB recovery procedure, not the browser OTA form; it overwrites settings.
+Use compatible controller firmware as directed by the release notes, updating S3 first when introducing H2 application OTA. Full recovery images do not belong in the current web OTA forms. Full S3 recovery overwrites S3 settings; full H2 recovery replaces Zigbee data and requires pairing again.
 
 See [Firmware Updates](firmware-update.md) before choosing a file or starting an update.
 

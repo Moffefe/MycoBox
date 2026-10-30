@@ -18,11 +18,15 @@ The controller's access point uses the fixed password `12345678`. Changing the a
 
 Saved passwords are not displayed in the account and network forms. This is not a claim that HTTP traffic, browser storage or every diagnostic export is safe to publish.
 
+**System → Backup & restore** exports settings without saved passwords or keys, and diagnostics without passwords. These files can still include network names, account names, device addresses, measurements and configuration details. Store them privately and review them before sharing. Import only settings files from a source you trust, check the selected sections and remember that applying them can operate equipment. See [Backup & restore](docs/backup-restore.md).
+
 ## Firmware and physical access
 
 Download updates from the official [MycoBox Releases](https://github.com/Moffefe/MycoBox/releases) page. Use the file for the correct controller and follow [Firmware Updates](docs/firmware-update.md), including checksum verification when supplied.
 
 The Main Controller validates its dedicated encrypted OTA package. Firmware encryption does not encrypt the local web connection and is not a guarantee that all software or physical attacks are prevented. Do not substitute a plain application, recovery image or firmware for another device.
+
+The current Zigbee updater accepts the matching H2 application OTA package after the required S3 update. A full H2 recovery image is a different format and is rejected by the current web form. The H2 package's integrity checks do not by themselves authenticate its publisher; obtain it from the official release and verify the published checksum.
 
 Keep physical access to the controller, service connections and powered actuators limited to trusted people. Pair the intended Zigbee device during the pairing window, then identify and test its detected outputs. Pairing and an ON/OFF acknowledgement do not establish that connected equipment is physically safe or operating correctly.
 

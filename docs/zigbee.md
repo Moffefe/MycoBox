@@ -47,7 +47,7 @@ Under **Test output**:
 
 The test controls act on the selected output, not a fixed endpoint. A successful result confirms that particular command. **Last test** is not a continuous reading, and automation may change an assigned output again after the test.
 
-During maintenance after a network reset or H2 update, **Turn ON** is disabled until a new assignment is saved. This is expected, not a pairing failure. Follow [Restoring assignments after maintenance](#restoring-assignments-after-maintenance) before ON tests.
+After a network reset, **Turn ON** is disabled until a new assignment is saved. During an incomplete H2 application update, ON remains blocked until update verification completes; do not change assignments to release that pause. See [Restoring assignments after maintenance](#restoring-assignments-after-maintenance) and [Firmware Updates](firmware-update.md#updating-the-zigbee-controller).
 
 If a test is not confirmed, investigate the device and communication before assigning the output. If its result is unknown after a connection interruption, check the equipment; an OFF command can be sent again. See [Troubleshooting](troubleshooting.md#zigbee-device-appears-but-cannot-be-controlled).
 
@@ -84,7 +84,9 @@ If an old output is unreachable, restore its communication before retrying the c
 
 ## Restoring assignments after maintenance
 
-After a Zigbee network reset or H2 update, pairing alone does not release maintenance. **Turn ON** remains disabled until the first new assignment is successfully saved.
+After a Zigbee network reset or an older full-image H2 update that cleared assignments, pairing alone does not release maintenance. **Turn ON** remains disabled until the first new assignment is successfully saved.
+
+Current H2 application OTA preserves pairing and assignments. Its update pause is released by verification of the firmware, saved device/outputs and confirmed OFF, not by saving a new assignment. If that update is pending, follow [Firmware Updates](firmware-update.md#if-an-h2-update-is-interrupted) instead of the steps below.
 
 1. Keep the controlled loads independently isolated or use a harmless test load while restoring the mapping. Saving an assignment can allow automation to operate it immediately.
 2. Check the paired-device status. If no device is paired, use **Start pairing** to pair the switch or power strip. Wait for its detected outputs to appear.
@@ -123,7 +125,11 @@ This is separate from removing one assignment or performing a [Main Controller f
 
 The H2 firmware controls are under **Zigbee → Advanced → Zigbee Controller · ESP32-H2**. Use **Update Zigbee Controller** only with the correct release file.
 
-An H2 update requires OFF preparation, clears assignments and replaces the Zigbee network state. Afterwards, pair the device again and restore an initial assignment before ON tests, then complete and verify the remaining assignments. Interrupted updates may require recovery; keep the page open and power connected until installation is confirmed.
+Current H2 application OTA preserves the existing compatible Zigbee network, paired device and assignments. Install the required Main Controller update first, then use the release's **H2-OTA** package in **Zigbee Controller OTA package (.bin)**. Full recovery images are rejected by this form.
+
+The updater closes pairing and confirms the necessary outputs OFF before programming. After the upload, automation waits for verification of the firmware, saved device/outputs and confirmed OFF. Keep MycoBox and the paired switch powered until verification completes. Check retained assignments and physical operation afterwards; normal application OTA does not require pairing again.
+
+An interrupted update can be retried with the complete matching OTA package when valid preparation was saved, even if H2 no longer answers. While it is pending, ON, pairing, network reset and assignment changes stay blocked. Do not reset the network or erase settings to bypass verification.
 
 Follow [Firmware Updates](firmware-update.md#updating-the-zigbee-controller) for the complete procedure.
 

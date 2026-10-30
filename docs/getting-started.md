@@ -93,7 +93,7 @@ Open **Measurements** and confirm that the SHT41 provides reasonable **Temperatu
 
 The current sensor configuration measures temperature and relative humidity. It has no CO₂ reading or altitude setting.
 
-The interface distinguishes **Sensor heater active**, **Sensor cooling after heating** and a communication error. Ambient readings pause during sensor heating and cooling. An old reading is not presented as a fresh measurement. Correct persistent sensor errors before enabling measurement-dependent control.
+The interface distinguishes **Sensor heater active**, **Sensor cooling after heating**, possible sensor wetting and a communication error. Ambient readings pause during sensor heating and cooling. An old reading is not presented as a fresh measurement. Possible wetting is an observation, not proof of condensation. Correct persistent sensor errors before enabling measurement-dependent control.
 
 Measurements contains up to 288 five-minute history samples, approximately 24 hours of continuous operation. History is held in memory and begins again after a restart. See [Compatibility](compatibility.md#environmental-sensors) for the supported sensor and its limitations.
 
@@ -110,7 +110,9 @@ MycoBox pairs with **one compatible switching device**: a smart outlet or a powe
 
 Each role needs a different output from the paired device. Do not infer output numbers from the physical outlet labels, and leave unused roles unassigned. Changing an assignment requires the old and new outputs to confirm OFF.
 
-After a network reset or H2 update, maintenance can keep **Turn ON** disabled until a new assignment is saved. Restoring an assignment can resume automation immediately, so keep equipment isolated while recovering an unknown mapping. Follow [maintenance recovery](zigbee.md#restoring-assignments-after-maintenance) rather than repeating the initial test steps above.
+After a network reset, maintenance can keep **Turn ON** disabled until a new assignment is saved. Restoring an assignment can resume automation immediately, so keep equipment isolated while recovering an unknown mapping. Follow [maintenance recovery](zigbee.md#restoring-assignments-after-maintenance) rather than repeating the initial test steps above.
+
+A compatible H2 application OTA update preserves pairing and assignments. Update the Main Controller to firmware supporting that package first, then follow the [firmware guide](firmware-update.md). Wait for post-update verification before relying on automation.
 
 ## 10. Configure environmental control
 
@@ -130,6 +132,8 @@ Choose the modes that fit your setup:
 Start with a simple daily schedule. One day with a single time point at **00:00** is enough for unchanged settings. A cycle can contain up to **32 days**, with up to **four time points per day**. Each day also has a light window; its ON hour must be earlier than its OFF hour.
 
 Edits applied in the cycle editor become active in memory. Choose **Save cycle** to retain them after a restart. Mode changes are saved separately when changed. **Restart cycle** changes the cycle's start time and also needs a subsequent **Save cycle**.
+
+Adaptive V1.4 waits at least five minutes between starts and limits a single run to 120 seconds. Its first run after a restart also waits for five minutes of controller uptime. It learns from the enclosure's response; it does not need a chamber-volume or humidifier-output setting. Timer mode keeps its own configured ON/OFF timing.
 
 ## 11. Test every controlled device
 
@@ -153,6 +157,16 @@ Use **Overview** to check the Growbox diagram, measurement freshness, active cyc
 Confirm that the physical equipment responds correctly and conditions move in the intended direction. Observe the enclosure through its scheduled transitions before unattended operation.
 
 Local warnings describe persistent problems. They are informational and do not replace independent protection or regular checks.
+
+## 13. Save a settings backup
+
+Open **System → Backup & restore → Export settings** and keep the downloaded JSON after confirming your setup. It contains the growing profile and configuration, including active unsaved schedule edits, but no saved passwords, firmware or Zigbee network keys. It does not replace **Save cycle** on the controller.
+
+**Import settings** lets you choose sections to restore or reuse on another controller. Zigbee assignments require the matching device to be paired already; a settings file cannot recreate pairing. See [Backup and restore](backup-restore.md) before importing. If the section is absent, install firmware supporting Backup & restore according to the release instructions.
+
+## More than one controller
+
+The **Cluster** page discovers other MycoBox controllers on the same local network. It can copy control modes, copy a complete cycle or restart the listed recipients. Each action shows the recipients and replacement scope before confirmation. Recipients need the same administrator login and password; Zigbee assignments remain local to each controller. See [Group actions](web-interface.md#cluster) before using this with connected equipment.
 
 ## Network recovery
 
@@ -179,4 +193,4 @@ This is different from **Zigbee → Advanced → Reset network**, which removes 
 
 ## Next steps
 
-[Web interface](web-interface.md) · [Hardware Overview](hardware-overview.md) · [Compatibility](compatibility.md) · [Zigbee Setup](zigbee.md) · [Firmware Updates](firmware-update.md) · [Troubleshooting](troubleshooting.md) · [Safety](safety.md)
+[Web interface](web-interface.md) · [Backup and restore](backup-restore.md) · [Hardware Overview](hardware-overview.md) · [Compatibility](compatibility.md) · [Zigbee Setup](zigbee.md) · [Firmware Updates](firmware-update.md) · [Troubleshooting](troubleshooting.md) · [Safety](safety.md)

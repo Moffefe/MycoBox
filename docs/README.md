@@ -10,6 +10,7 @@ Use these guides to set up MycoBox, understand the local interface and maintain 
 | Understand the controller hardware | [Hardware overview](hardware-overview.md) |
 | Pair a device, assign outputs or reset Zigbee | [Zigbee setup](zigbee.md) |
 | Choose and install firmware | [Firmware updates](firmware-update.md) |
+| Export settings or diagnostics and restore selected settings | [Backup and restore](backup-restore.md) |
 | Investigate an error or unexpected result | [Troubleshooting](troubleshooting.md) |
 | Review equipment and environmental precautions | [Safety](safety.md) |
 | Protect the local interface or report a vulnerability | [Security policy](../SECURITY.md) |
@@ -22,5 +23,7 @@ Start with [Getting started](getting-started.md), check [Compatibility](compatib
 ## Updates and recovery
 
 Read the [firmware guide](firmware-update.md) and the notes for the release you intend to install. The Main Controller and Zigbee Controller use different files and have different effects on saved settings and pairing.
+
+Use [Backup and restore](backup-restore.md) to keep a settings copy or export currently retained diagnostics. A settings backup does not contain passwords, firmware or the Zigbee network itself. Compatible H2 application OTA preserves pairing and assignments; full recovery has different effects.
 
 [MycoBox overview](../README.md) · [Firmware releases](https://github.com/Moffefe/MycoBox/releases)

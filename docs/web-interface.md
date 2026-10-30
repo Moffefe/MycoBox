@@ -14,7 +14,7 @@ The interface and its assets are stored on the controller. An internet connectio
 | **Zigbee** | Pairing, output assignments, manual tests and Zigbee Controller maintenance |
 | **Activity log** | Recorded events for Heat, Light, Fan and Humidifier |
 | **Cluster** | Discovered controllers and group actions |
-| **System** | Network, time, administrator account and Main Controller updates |
+| **System** | Network, time, administrator account, backup and restore, and Main Controller updates |
 
 **Diagnostics** is available from System and the page footer.
 
@@ -70,6 +70,8 @@ Measurement and activity histories are held in memory and start again after a re
 
 **Sensor heater active** and **Sensor cooling after heating** are temporary sensor states. Fresh ambient readings are paused while the SHT41 heats and cools; the interface resumes them after a valid ambient measurement is available. These messages do not by themselves mean the sensor has failed.
 
+The automatic heater policy uses a one-second pulse followed by three minutes of cooling. Normal heating requires a current reading above 90% RH and at least three hours since startup or the previous heater command. Sustained readings near saturation can show possible sensor wetting and allow a shorter, one-hour minimum interval while RH remains at least 99%. Possible wetting is an observation, not proof of condensation. These statuses do not add a manual heater control.
+
 See [Troubleshooting](troubleshooting.md) if readings remain unavailable or a communication error persists.
 
 ## Cycle and automation
@@ -91,6 +93,8 @@ A cycle contains up to **32 days**, each with up to **four time points**. The fi
 | **Light schedule** | Enables or disables the daily light window |
 
 Humidification keeps its selected mode when changing between Fruiting and Incubation. Timer mode does not regulate humidity to the Adaptive target.
+
+Adaptive V1.4 learns the response of the humidifier and enclosure during operation. Adaptive starts are separated by at least **five minutes**, and a single run is limited to **120 seconds**; a required OFF is not delayed by the start interval. The first Adaptive run after restart also waits for at least five minutes of controller uptime. The learned response is held in memory and must be learned again after restart. Observe actual humidity and equipment response: the controller cannot guarantee a target band for every enclosure or actuator.
 
 Mode changes are saved immediately. Schedule edits follow the separate save process below.
 
@@ -114,7 +118,9 @@ The Zigbee page manages one paired switching device and its discovered outputs. 
 
 Use the [Zigbee guide](zigbee.md) for pairing, assignments, confirmed-state requirements and maintenance.
 
-After a network reset or Zigbee Controller update, maintenance blocks manual **Turn ON** until a new assignment is saved. Saving can resume automation immediately. Follow the [maintenance recovery sequence](zigbee.md#restoring-assignments-after-maintenance) when recovering assignments or identifying unknown outputs.
+After a network reset, maintenance blocks manual **Turn ON** until a new assignment is saved. Saving can resume automation immediately. Follow the [maintenance recovery sequence](zigbee.md#restoring-assignments-after-maintenance) when recovering assignments or identifying unknown outputs.
+
+A compatible H2 application OTA update preserves pairing and assignments. Automation remains paused until the updated controller, paired device and outputs have been checked and the required outputs confirm OFF. Read the [firmware guide](firmware-update.md) before updating; the current panel accepts an H2 application OTA package, not a full recovery image.
 
 ## Activity log
 
@@ -126,21 +132,29 @@ A confirmed output command and a successful environmental response are different
 
 ## Cluster
 
-Cluster lists other discovered MycoBox controllers. **Refresh discovery** updates the search. Group actions apply to the currently discovered remote nodes:
+Cluster lists other discovered MycoBox controllers on the local Wi-Fi network. **Refresh discovery** updates the search. Each group action opens a confirmation showing the source controller, recipients and settings that will be replaced:
 
-- **Synchronize settings** copies the light override, humidification mode and growing mode.
-- **Synchronize cycle** replaces the remote schedule with the source controller's cycle and requests its persistent save.
-- **Restart all nodes** restarts the discovered remote controllers.
+- **Copy settings…** replaces and saves the light-schedule enable setting, humidification mode and growing mode.
+- **Copy cycle…** replaces, activates and saves the complete schedule and cycle start time. It includes active, unsaved schedule changes on the source.
+- **Restart recipients…** restarts the listed remote controllers, losing their unsaved cycle changes.
 
-Review the node list and each growbox's equipment before confirming a group action. Synchronizing a cycle does not copy Zigbee assignments. If the result is incomplete or unknown, inspect each recipient instead of assuming that every controller received the change.
+The source controller is excluded from recipients. Recipients must use the same administrator login and password as the source. If the discovered list changes before confirmation, refresh and review it again; the command is rejected until the list matches. Once accepted, a command keeps its chosen recipients even if discovery later changes.
+
+Review the node list and each growbox's equipment before confirming a group action. Copying a cycle does not copy Zigbee assignments. A group command can succeed on some recipients and fail on others. If the result is incomplete or unknown, inspect each recipient before retrying.
 
 ## System
 
-System groups **Network**, **Time**, **Account**, **Updates** and **Diagnostics**.
+System groups **Network**, **Time**, **Account**, **Updates**, **Backup & restore** and **Diagnostics**.
 
 Network and account saves restart the controller. After a network change, reconnect to the controller's network and open its current address. Password fields allow keeping the existing password; an empty new-password field is not a way to display the saved password.
 
 The selected timezone applies to local display and schedules in both time modes. In Manual mode the entry field uses **UTC**; **Use computer time** converts the computer's current time to UTC. Check the displayed local time after saving.
+
+### Backup and restore
+
+Use **System → Backup & restore** to download a settings JSON, export the available diagnostics as a ZIP or choose settings sections to import. The settings file omits passwords, Zigbee network keys, firmware and the learned Adaptive model. Export includes active unsaved schedule edits; import requires the destination's current cycle to be saved first.
+
+Import defaults to the growing profile and control settings. Cycle progress, system, Wi-Fi, account and Zigbee assignments are separate choices. Preview and validation do not apply settings. Confirmed import writes the selected sections and requests a restart; a failed import can leave completed steps applied. Read [Backup and restore](backup-restore.md) for the full procedure and recovery from a partial result.
 
 Use the [firmware guide](firmware-update.md) to choose the right file and update procedure. For connection, sensor or control problems, see [Troubleshooting](troubleshooting.md).
 

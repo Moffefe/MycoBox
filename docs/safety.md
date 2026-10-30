@@ -89,7 +89,7 @@ A powerful humidifier in a small enclosure may cause significant humidity oversh
 
 Sensor placement and humidifier position can strongly affect control behavior.
 
-**Timer** runs the configured ON/OFF periods; the RH target does not regulate its output. **Adaptive** uses measurements and controlled pulses, with at least four minutes between pulse starts. This limits switching, but does not guarantee a particular humidity band or prevent all overshoot. The learned response is held in memory and is learned again after a restart.
+**Timer** runs the configured ON/OFF periods; the RH target does not regulate its output. **Adaptive** uses measurements and controlled pulses, with at least five minutes between pulse starts and at most 120 seconds per run. These limits do not guarantee a particular humidity band or prevent all overshoot. The learned response is held in memory and is learned again after a restart.
 
 Adaptive stops an active pulse when usable ambient readings become unavailable. This behavior and the sensor's heating/cooling pauses should be checked with the actual enclosure and humidifier. Keep any independent dry-run or water-level protection supplied with the equipment; MycoBox has no water-level or leak sensor in the current configuration.
 
@@ -171,9 +171,9 @@ Do not disconnect power while firmware is being updated.
 
 An interrupted update may leave one of the controllers unable to start normally.
 
-The ESP32-H2 Zigbee Controller requires particular care because its update procedure rewrites the complete firmware image.
+Current ESP32-H2 web OTA writes an application package and preserves compatible Zigbee pairing and assignments. Install the required S3 update first. Full H2 recovery replaces Zigbee data and is a separate service procedure.
 
-After an ESP32-H2 update, pair the device again, save new assignments and test every required output before unattended operation resumes. The H2 update clears assignments and keeps new ON commands blocked until assignments are saved again.
+For H2 application OTA, keep the paired switch powered and wait for firmware, device/output and confirmed OFF verification. New ON commands remain blocked until verification completes. An interrupted update requires retrying the complete matching OTA package or service recovery; do not bypass the pause by resetting or erasing settings. Verify assignments and physical operation before unattended use. Pairing again is required after full H2 recovery or an older full-image update.
 
 See:
 
@@ -194,6 +194,8 @@ After changing important settings, verify:
 * actuator behavior.
 
 A configuration that appears correct in the web interface should still be physically verified before unattended operation.
+
+Importing settings can change automation immediately, before the final restart. It can also stop after partially applying the selected sections. Review confirmed changes and the current configuration before retrying, then verify the equipment. See [Backup & restore](backup-restore.md).
 
 ---
 

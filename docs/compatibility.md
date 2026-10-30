@@ -77,7 +77,7 @@ No particular output number is implied by this table. The numbers reported by th
 
 Before enabling control, test ON and OFF on each output, identify the physical outlet, save its assignment and verify the connected equipment. Assignment changes require confirmation that the old and new outputs are OFF. Independent switching must be checked with the actual device.
 
-If maintenance is active after a network reset or H2 update, manual ON testing stays blocked until a new assignment is saved. Keep equipment isolated while restoring assignments for unknown outputs, since automation can resume after a successful save. Use the [maintenance recovery sequence](zigbee.md#restoring-assignments-after-maintenance).
+After a network reset, manual ON testing stays blocked until a new assignment is saved. Keep equipment isolated while restoring unknown assignments, since automation can resume after a successful save. Use the [maintenance recovery sequence](zigbee.md#restoring-assignments-after-maintenance). A pending current H2 application update instead waits for firmware, saved device/output and OFF verification; saving assignments does not release that pause.
 
 ## Verified device models
 
@@ -95,7 +95,7 @@ The firmware's limits of 32 outputs and endpoint numbers up to 240 are not a cla
 
 Check the release notes for the firmware installed on both controllers. Releases can change sensor requirements, output recognition, stored settings and update procedures.
 
-Keep the Main Controller and Zigbee Controller versions compatible as directed by the release. Updating H2 requires pairing the switching device again and saving its assignments. See [Firmware Updates](firmware-update.md).
+Keep the Main Controller and Zigbee Controller versions compatible as directed by the release. Current H2 application OTA preserves pairing and assignments with the existing compatible setup; install the required S3 update first. Older full-image H2 updates and full H2 recovery replace Zigbee data and require pairing again. The current web updater accepts H2 OTA packages, not full recovery images. See [Firmware Updates](firmware-update.md).
 
 ## Reporting compatibility results
 

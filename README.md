@@ -46,6 +46,8 @@ Build a cycle of up to **32 days**, with up to **four time points per day**. Use
 
 Schedule changes take effect in memory. Use **Save cycle** to keep them after a restart.
 
+Adaptive V1.4 learns the response of the growing space and humidifier. It allows at least **five minutes between starts** and limits each run to **two minutes**. Timer mode keeps its configured ON/OFF periods.
+
 ## Zigbee equipment
 
 <p align="center">
@@ -72,6 +74,22 @@ The web interface and its assets are stored on MycoBox. Normal control works wit
 
 A working, initialized hardware RTC keeps local time available without internet. NTP synchronization is optional. Basic status is also available on the controller's display.
 
+## Backup and restore
+
+Use **System → Backup & restore** to export settings as JSON, download a diagnostics ZIP or restore selected settings from a previous copy.
+
+This requires firmware with the **Backup & restore** section. If it is absent, check the release notes for a version that supports it.
+
+Choose which sections to import and review the changes before applying them. Backups include the active cycle, even with unsaved edits, but exclude passwords, firmware, the learned humidity model and Zigbee network pairing. Importing assignments requires the same compatible paired device. An import can stop after some sections have been saved; review its result before retrying. A completed import restarts the controller.
+
+[Backup and restore guide](docs/backup-restore.md)
+
+## Multiple controllers
+
+The **Cluster** page finds other MycoBox controllers on the local network. **Copy settings…** copies the light-schedule enable setting, humidification mode and growing mode. **Copy cycle…** replaces and saves recipients' schedules and start dates, including the source controller's unsaved cycle edits.
+
+Review the listed recipients before confirming. Recipients need the same administrator login and password. Check each controller after an incomplete group operation.
+
 ## Firmware updates
 
 <p align="center">
@@ -80,7 +98,9 @@ A working, initialized hardware RTC keeps local time available without internet.
 
 Update the **ESP32-S3 Main Controller** from **System → Main Controller firmware** and the **ESP32-H2 Zigbee Controller** from the **Zigbee** page.
 
-S3 OTA preserves saved settings. After an H2 update, pair the Zigbee device again, save its assignments and test each output. Follow the release notes to select compatible firmware.
+S3 OTA preserves saved settings. The current H2 application OTA package preserves the Zigbee network, paired device and saved assignments on compatible hardware. **Update S3 to a version supporting that package first**, then update H2 and wait for verification to finish before checking the outputs.
+
+The full H2 image supplied with older releases is a different format and replaces Zigbee data. The current web updater accepts only an H2 OTA package. Follow the release notes to select compatible firmware and the correct update order.
 
 [Download firmware](https://github.com/Moffefe/MycoBox/releases) · [Update instructions](docs/firmware-update.md)
 
@@ -91,6 +111,8 @@ S3 OTA preserves saved settings. After an H2 update, pair the Zigbee device agai
 - [Compatibility](docs/compatibility.md)
 - [Zigbee setup](docs/zigbee.md)
 - [Firmware updates](docs/firmware-update.md)
+- [Backup and restore](docs/backup-restore.md)
+- [Web interface and controller groups](docs/web-interface.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [Roadmap](docs/roadmap.md)
 - [Safety](docs/safety.md)
