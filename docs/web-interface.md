@@ -54,7 +54,7 @@ Warnings indicate observed conditions, not a diagnosis of an empty reservoir or 
 ## Measurements
 
 <p align="center">
-  <img src="../media/web-ui/measurements.png" alt="A full day of MycoBox temperature and humidity readings with equipment activity tracks" width="1000">
+  <img src="../media/web-ui/measurements.png?v=163a1c18" alt="A full day of MycoBox temperature and humidity readings with equipment activity tracks" width="1000">
 </p>
 
 The SHT41 supplies ambient temperature and relative-humidity samples every **five seconds**, except during measurement pauses. Current readings include their age. Missing or stale readings are not presented as fresh measurements.

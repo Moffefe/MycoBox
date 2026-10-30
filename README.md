@@ -34,7 +34,7 @@ The [web interface guide](docs/web-interface.md) explains the panels and control
 ## Measurements and activity
 
 <p align="center">
-  <img src="media/web-ui/measurements.png" alt="MycoBox Measurements with temperature and humidity charts and equipment activity tracks" width="1000">
+  <img src="media/web-ui/measurements.png?v=163a1c18" alt="MycoBox Measurements with temperature and humidity charts and equipment activity tracks" width="1000">
 </p>
 
 Read each sample in the context of equipment activity. [Explore measurements and charts](docs/web-interface.md#measurements).
