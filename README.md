@@ -1,5 +1,10 @@
 <p align="center">
-  <img src="media/mycobox-hero.png" alt="MycoBox logo and project name" width="360">
+  <img src="media/mycobox-icon.webp" width="64" height="64" alt="">
+  &nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="media/mycobox-wordmark.svg">
+    <img src="media/mycobox-wordmark-on-light.svg" width="271" height="64" alt="MycoBox">
+  </picture>
 </p>
 
 **Local climate automation for your growing space.**
@@ -11,6 +16,8 @@ MycoBox brings environmental monitoring and equipment control to one web interfa
 [Explore the website](https://moffefe.github.io/MycoBox/) · [Get started](docs/getting-started.md) · [Download firmware](https://github.com/Moffefe/MycoBox/releases)
 
 ## Your growbox at a glance
+
+Interface examples below use sample data.
 
 <p align="center">
   <img src="media/web-ui/dashboard.png" alt="MycoBox Overview with Growbox visualization, current readings and cycle settings" width="1000">
