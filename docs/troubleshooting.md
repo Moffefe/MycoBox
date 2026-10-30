@@ -1,164 +1,194 @@
 # Troubleshooting
 
-Start with power, network access and the status shown in **Overview**, **Measurements** and **Zigbee**. Read the reported result before repeating a change. Make potentially unsafe equipment safe independently of the web interface before inspection.
+Find the symptom below and start with its checks. If equipment behaves unexpectedly, disconnect it before inspecting it.
 
 ## Find your symptom
 
 | What you see | Start here |
 | --- | --- |
-| The panel will not open, Wi-Fi changed or `.local` fails | [Network access](#network-access-problems) |
+| The panel will not open or Wi-Fi changed | [Network access](#network-access-problems) |
 | The panel opens but login fails | [Account access](#i-cannot-log-in) |
-| Readings are missing, incorrect or humidity keeps oscillating | [Missing readings](#sensor-values-are-missing) · [Incorrect readings](#sensor-values-look-incorrect) · [Humidity response](#humidity-oscillates-around-the-target) |
-| An appliance does not run or the wrong socket switches | [Output operation](#an-output-does-not-operate) · [Output assignment](#an-assignment-is-wrong-or-cannot-be-saved) |
-| Zigbee pairing fails or maintenance stays active | [Pairing](#zigbee-device-does-not-appear) · [Unconfirmed control](#zigbee-device-appears-but-cannot-be-controlled) · [Maintenance pause](#zigbee-maintenance-remains-active) |
-| A firmware update fails or its file is rejected | [Main Controller](#main-controller-firmware-update-failed) · [Zigbee Controller](#zigbee-controller-firmware-update-failed) · [Rejected file](#firmware-file-is-rejected) |
+| Readings are missing, seem wrong or humidity swings | [Missing readings](#sensor-values-are-missing) · [Incorrect readings](#sensor-values-look-incorrect) · [Humidity](#humidity-oscillates-around-the-target) |
+| Equipment does not run or the wrong socket switches | [Output operation](#an-output-does-not-operate) · [Assignments](#an-assignment-is-wrong-or-cannot-be-saved) |
+| Zigbee pairing fails or maintenance stays active | [Pairing](#zigbee-device-does-not-appear) · [Control](#zigbee-device-appears-but-cannot-be-controlled) · [Maintenance](#zigbee-maintenance-remains-active) |
+| An update fails or its file is rejected | [Main Controller](#main-controller-firmware-update-failed) · [Zigbee Controller](#zigbee-controller-firmware-update-failed) · [Rejected file](#firmware-file-is-rejected) |
 | A save, import or reset has an unclear result | [Unknown result](#an-operation-result-is-unknown) · [Import](#a-settings-import-stopped-or-failed) · [After a reset](#diagnose-configuration-after-a-reset) |
-| Timing is wrong, changes disappear or restarts repeat | [Time and schedule](#time-or-scheduled-transitions-are-wrong) · [Saved settings](#configuration-changes-appear-to-have-no-effect) · [Restarts](#the-controller-restarted-during-normal-use) |
+| Timing is wrong, changes disappear or restarts repeat | [Time](#time-or-scheduled-transitions-are-wrong) · [Saved settings](#configuration-changes-appear-to-have-no-effect) · [Restarts](#the-controller-restarted-during-normal-use) |
 
 ## An operation result is unknown
 
-A lost response does not establish whether a save, reset or update succeeded. Use **Reload configuration** or **Reload settings** when offered and inspect the stored state before another change.
+The browser lost confirmation of the result. Choose **Reload configuration** or **Reload settings**, then check what was saved before trying again.
 
-For output tests, check the equipment: **Last test** is a command confirmation, not a continuous reading. An OFF command can be sent again. For updates, read the running version and update status using the [firmware guide](firmware-update.md#version-verification).
+For an output test, check the appliance itself; you can send OFF again. For an update, check the [installed version and update status](firmware-update.md#version-verification).
 
 <a id="mycobox-is-not-available-on-the-network"></a>
 <a id="mycobox-created-its-own-wi-fi-network"></a>
 <a id="mycobox-does-not-connect-to-wi-fi"></a>
 <a id="i-changed-wi-fi-settings-and-lost-access"></a>
+
 ## Network access problems
 
-Check the controller's **Network** display to determine whether it joined your router or started its access point. Your browser device must be on the same network. After a settings change, allow the restart and network connection attempts to finish; the previous address may no longer apply.
+1. Check the IP address on the controller's **Network** display.
+2. Connect your phone or computer to the same network.
+3. Open the displayed address in your browser.
 
-An access point appearing after connection attempts indicates that MycoBox could not join the saved network. A hidden SSID or failed scan does not by itself prove the network is unavailable. Use the [Wi-Fi configuration](getting-started.md#4-configure-wi-fi) and [network recovery instructions](getting-started.md#network-recovery) for reconnection, credentials and manual SSID entry.
+After changing Wi-Fi settings, allow several minutes for reconnection. If MycoBox starts its own access point, follow [Network recovery](getting-started.md#network-recovery) to correct the network name or password. You can [enter a hidden network manually](getting-started.md#4-configure-wi-fi).
 
 <a id="try-the-local-hostname"></a>
+
 ### .local does not work
 
-If the controller's IP address opens but its `.local` hostname does not, investigate local discovery. If neither works, check the address, browser-device network and router guest-network/client isolation. See [Opening MycoBox on your network](getting-started.md#5-open-mycobox-on-your-local-network).
+Use the IP address from the **Network** display. If the IP works, you can keep using it.
+
+If neither address works, check that both devices are on the same network. A router's guest-network or device-isolation setting can block access between them. See [Opening MycoBox](getting-started.md#5-open-mycobox-on-your-local-network).
 
 ## I cannot log in
 
-Check whether the administrator credentials changed and whether the browser retained an older login. The Wi-Fi password and web account are separate. Use the [login instructions](getting-started.md#3-log-in); if credentials cannot be recovered, read the [factory-reset procedure and data effects](getting-started.md#factory-reset).
+Use the administrator account, which is separate from the Wi-Fi password. Check whether it was changed or your browser is using an old saved login.
+
+Follow the [login steps](getting-started.md#3-log-in). If you cannot recover the account, the [factory-reset guide](getting-started.md#factory-reset) explains how to start again and which settings are removed.
 
 ## Sensor values are missing
 
-Read the status in **Measurements**. Planned sensor heating or cooling pauses ambient samples; a communication error or an out-of-date reading needs investigation. See [sensor status meanings](web-interface.md#sensor-heating-and-cooling).
+Check the message in **Measurements**. **Sensor cooling after heating** normally lasts three minutes; readings return afterwards.
 
-If the page is updating but fresh samples do not return, check sensor power and connections against the [hardware requirements](compatibility.md#environmental-sensors). If all page data is stale, investigate the browser/network connection first. An old chart point is not a current reading.
+If the page updates but readings remain missing, check sensor power and connections. If the whole page has stopped updating, reconnect to MycoBox first.
+
+See [sensor states](web-interface.md#sensor-heating-and-cooling) and [supported sensors](compatibility.md#environmental-sensors).
 
 ## Sensor values look incorrect
 
-Compare a fresh ambient reading with a suitable reference. Direct mist, condensation, a nearby heater or concentrated airflow can make the sensor unrepresentative of the chamber. Check [sensor placement](safety.md#sensor-placement) before changing control targets.
+Check that the reading is fresh, then compare it with another suitable thermometer or humidity meter.
+
+Move the sensor away from direct mist, heaters and concentrated airflow. Follow [sensor placement](safety.md#sensor-placement) before changing your targets.
 
 ## CO₂ is not shown
 
-The configured sensor does not measure CO₂. See [supported sensors](compatibility.md#environmental-sensors); fan activity alone does not indicate CO₂ concentration.
+The SHT41 measures temperature and humidity. CO₂ measurement is a [planned addition](roadmap.md#co₂-based-ventilation-control).
 
 ## Humidity oscillates around the target
 
-Compare RH with **Humidifier** and **Fan** activity in Measurements. Air exchange can lower RH, while moisture can continue affecting the chamber after the humidifier stops.
+Compare humidity with the **Humidifier** and **Fan** tracks in Measurements. Ventilation can lower humidity, and mist can keep raising it for a while after the humidifier stops.
 
-Check the active [humidification mode and its limits](web-interface.md#choose-the-modes), sensor placement, water supply and the humidifier's actual response. Observe the chamber before making repeated adjustments.
+Check the humidifier's water supply, sensor position and [selected humidification mode](web-interface.md#choose-the-modes). Change one setting at a time and watch the response before adjusting again.
 
 <a id="humidifier-does-not-switch-on"></a>
 <a id="fan-light-or-heating-does-not-switch"></a>
+
 ## An output does not operate
 
-Check the saved role assignment, assignment conflicts, communication status and any [maintenance pause](#zigbee-maintenance-remains-active). A role with no assignment cannot operate equipment.
+1. In **Zigbee**, check that the role has a saved output and no assignment conflict or [maintenance pause](#zigbee-maintenance-remains-active).
+2. Run an [ON/OFF test](zigbee.md#testing-a-device).
+3. If the socket switches but the appliance does not run, check its own controls, power and water supply.
+4. If the manual test works, check the active day, time point, local time and mode in **Overview**.
 
-Use the [output test procedure](zigbee.md#testing-a-device) to distinguish switching/communication problems from automation settings. A confirmed output does not prove that an appliance has water, resumes after power switching or physically operates.
-
-If manual switching works, compare **Overview** with the active mode, cycle day, time point and local time. Incubation, disabled lighting, unavailable measurements or an Adaptive waiting period can explain an inactive output; see [Cycle and automation](web-interface.md#cycle-and-automation).
+Incubation keeps Fan and Light OFF. Disabled lighting, missing readings or Adaptive's waiting period can also explain a stopped output. See [Cycle and automation](web-interface.md#cycle-and-automation).
 
 ## Zigbee device does not appear
 
-Distinguish **controller unavailable**, a pairing failure and an output-discovery failure. Check the switch's power, distance and manufacturer's pairing state. A device that joined but could not be read is different from one reported as incompatible.
+Check that the plug or strip is powered and near MycoBox. Start pairing in the panel, then put the device into its own pairing mode.
 
-Check [device compatibility](compatibility.md#zigbee-actuator-compatibility) and follow [pairing](zigbee.md#pairing-a-new-zigbee-device). An existing paired device occupies the available slot; replacing it requires the intentional [network reset](zigbee.md#resetting-the-zigbee-network).
+A **discovery error** means MycoBox could not read its outputs; retry after checking power and range. **Incompatible device** means no supported outputs were found.
+
+Use [Pairing](zigbee.md#pairing-a-new-zigbee-device) and [Compatibility](compatibility.md#zigbee-actuator-compatibility). If another device is already paired, [reset the network](zigbee.md#resetting-the-zigbee-network) before replacing it.
 
 ## Zigbee device appears but cannot be controlled
 
-Check whether the intended output was discovered and whether the [test result](zigbee.md#testing-a-device) is confirmed. Disabled **Turn ON** may indicate maintenance, rather than a failed switch.
+Select a detected output and run an [ON/OFF test](zigbee.md#testing-a-device). If commands are not confirmed, check the device's power, distance and compatibility.
 
-If discovery is incomplete or commands remain unconfirmed, investigate device power, range and compatibility before changing automation settings. Keep the page's **Technical details** for a report.
+If **Turn ON** is disabled, check [maintenance status](#zigbee-maintenance-remains-active). Keep the displayed error and **Technical details** if you need help.
 
 <a id="a-multi-outlet-zigbee-device-controls-the-wrong-outlet"></a>
 <a id="an-assignment-cannot-be-saved-or-removed"></a>
+
 ## An assignment is wrong or cannot be saved
 
-A printed socket number may differ from its detected endpoint. Check the [identified output mapping](zigbee.md#understanding-endpoints).
+Socket labels can differ from the panel's output numbers. [Test the mapping](zigbee.md#understanding-endpoints) and give each role a different detected output.
 
-A rejected save can mean a duplicate role output, an undetected output, an unreachable old assignment or unconfirmed OFF. Read the error and compare the stored assignment with the paired device. Use the [assignment procedure](zigbee.md#binding-devices-to-mycobox-functions), including its OFF requirements. If the result is uncertain, reload settings before another save.
+Changing an assignment requires OFF confirmation from its old and new outputs. Restore power or communication to an unreachable switch, then retry. For an unknown result, reload settings first.
+
+Follow [Saving assignments](zigbee.md#binding-devices-to-mycobox-functions).
 
 ## Zigbee maintenance remains active
 
-Read the update status and assignment state to identify the pause:
+Open **Zigbee** and check what needs finishing:
 
-| Observed state | Next guide |
+| Status | What to do |
 | --- | --- |
-| Network reset completed; assignments cleared | [Restore assignments after maintenance](zigbee.md#restoring-assignments-after-maintenance) |
-| H2 update interrupted or still verifying | [Complete or retry H2 OTA](firmware-update.md#if-an-h2-update-is-interrupted) |
+| Network reset completed; assignments cleared | [Restore an assignment](zigbee.md#restoring-assignments-after-maintenance) |
+| H2 update interrupted or still verifying | [Complete the update](firmware-update.md#if-an-h2-update-is-interrupted) |
 
-A restart does not release either pause. Do not use repeated resets or erase settings to bypass it.
+Both pauses remain after a restart. Complete the indicated step to resume automation.
 
 <a id="a-zigbee-device-disappeared-after-an-h2-firmware-update"></a>
+
 ## Zigbee Controller firmware update failed
 
-Check the error and update phase. A preparation failure means programming was blocked. **Firmware written** can still mean verification is waiting for the original switch or its outputs; check that it is powered and reachable rather than assuming its settings were erased.
+Read the update status. If preparation failed, installation has not started. If firmware was written but verification is waiting, check that the original plug or strip is powered and reachable.
 
-An interrupted write can leave H2 unavailable. Read the [H2 completion and retry conditions](firmware-update.md#if-an-h2-update-is-interrupted) before another upload. If the installation used an older full-image update or recovery, check the [data effects](firmware-update.md#what-happens-to-settings) instead.
+Follow [H2 update recovery](firmware-update.md#if-an-h2-update-is-interrupted). For an older full-image update, check [whether pairing needs restoring](firmware-update.md#what-happens-to-settings).
 
 ## Main Controller firmware update failed
 
-Record the error and whether S3 still starts normally. A rejected or incomplete upload alone does not establish that recovery is required. Follow [S3 update failure guidance](firmware-update.md#if-the-main-controller-update-fails).
+If the panel opens, note the error and follow [Main Controller update checks](firmware-update.md#if-the-main-controller-update-fails). For an unknown result, check the installed version before another upload.
 
 ## Firmware file is rejected
 
-Compare the file's intended controller, package format, checksum and required updater version with the [firmware file guide](firmware-update.md#firmware-files). Renaming the file does not change its format.
+Check that you chose the correct **S3-OTA** or **H2-OTA** file and downloaded it completely. Compare its checksum and the required versions with the [firmware guide](firmware-update.md#firmware-files).
 
 ## A settings import stopped or failed
 
-Read which sections the dialog confirmed. A failed import can leave completed writes applied; it is not evidence that all changes were rolled back.
+Check which sections were saved. Completed sections stay applied.
 
-The error may identify unsaved local cycle edits, missing credentials, mismatched Zigbee assignments or pending H2 OTA. Use [import failure and unknown-result guidance](backup-restore.md#if-import-stops-or-the-result-is-unknown) before retrying.
+Choose **Read current settings** and correct the reported problem, such as a missing password, unmatched Zigbee assignment or unfinished update. Then follow [Import recovery](backup-restore.md#if-import-stops-or-the-result-is-unknown).
 
 ## The controller restarted during normal use
 
-Once access returns, inspect fresh measurements, Zigbee status, saved settings and equipment. If unexpected restarts repeat, note their timing, check supply stability and review **Activity log** and **System → Diagnostics**. Distinguish an expected settings/import restart from an unexplained one.
+Some settings changes and imports restart MycoBox automatically.
+
+For unexpected or repeated restarts, check the power supply and note when they happen. Once the panel opens, review **Activity log**, **System → Diagnostics**, readings and saved settings.
 
 <a id="the-displayed-time-is-incorrect"></a>
 <a id="a-schedule-activates-at-the-wrong-time"></a>
+
 ## Time or scheduled transitions are wrong
 
-Compare **Controller local time**, timezone, active cycle day, time point and light window. A correct schedule can run at the wrong time if the clock or timezone is wrong.
+Check **Controller local time**, timezone, active cycle day and time point.
 
-If automatic synchronization is selected, check time-server reachability. For manual entry, check whether local time was mistakenly entered as UTC. Use [time configuration](getting-started.md#7-configure-time-and-localization) to correct it.
+In Automatic mode, check the network connection to the time server. In Manual mode, use **Use computer time** to avoid entering local time in the UTC field. Follow [Clock setup](getting-started.md#7-configure-time-and-localization).
 
 ## Configuration changes appear to have no effect
 
-Read back the stored value after a confirmed save. Compare saved and pending cycle state, and check whether a subsequent restart discarded an unsaved edit. Use [cycle editing and saving](web-interface.md#edit-and-save-a-schedule) or [assignment saves](zigbee.md#binding-devices-to-mycobox-functions), as appropriate.
+For a schedule, **Apply changes** updates the running cycle, while **Save cycle** keeps it after restart. For an output assignment, use that role's own **Save** button.
+
+Reload the panel and check the stored values. See [Saving a cycle](web-interface.md#edit-and-save-a-schedule) or [Saving assignments](zigbee.md#binding-devices-to-mycobox-functions).
 
 <a id="factory-reset"></a>
 <a id="after-a-main-controller-factory-reset"></a>
 <a id="main-controller-factory-reset-vs-zigbee-reset"></a>
 <a id="forget-paired-devices-was-used-accidentally"></a>
 <a id="reset-network-was-used-accidentally"></a>
+
 ## Diagnose configuration after a reset
 
-Check which reset occurred before rebuilding configuration. An S3 factory reset can leave the H2 device paired while S3 assignments are missing; a Zigbee network reset requires network and assignment restoration. A restart alone does not undo either reset.
+- **Main Controller factory reset:** repeat [initial setup](getting-started.md#factory-reset). The switch may still be paired; restore its assignments.
+- **Zigbee network reset:** [pair the switch and restore assignments](zigbee.md#restoring-assignments-after-maintenance).
+- **Ordinary restart:** saved configuration stays in place; unsaved cycle edits are lost.
 
-Use the [Main Controller reset and setup instructions](getting-started.md#factory-reset) or [Zigbee restoration procedure](zigbee.md#restoring-assignments-after-maintenance). A [settings backup](backup-restore.md) can help restore selected S3 configuration, but cannot recreate H2 pairing.
+A [settings backup](backup-restore.md) helps restore configuration and assignments once the matching switch is paired.
 
 <a id="before-leaving-the-system-unattended"></a>
+
 ## Still having problems?
 
-Complete the [equipment checks](safety.md#before-leaving-the-system-unattended) before returning to unattended use.
+[Report a bug](https://github.com/Moffefe/MycoBox/issues/new?template=bug-report.yml), [ask about setup](https://github.com/Moffefe/MycoBox/issues/new?template=setup-question.yml), or [suggest a guide correction](https://github.com/Moffefe/MycoBox/issues/new?template=documentation-feedback.yml).
 
-[Report a bug](https://github.com/Moffefe/MycoBox/issues/new?template=bug-report.yml) or [ask about setup and compatibility](https://github.com/Moffefe/MycoBox/issues/new?template=setup-question.yml). For a guide correction, use [Documentation feedback](https://github.com/Moffefe/MycoBox/issues/new?template=documentation-feedback.yml).
+Include the two firmware versions, switch model, error message, what you did and what happened. [Export diagnostics](backup-restore.md#export-diagnostics) can collect useful information before a restart.
 
-For a report, include both controllers' version/build, switching-device model, exact error or **Technical details**, reproduction steps and what changed immediately beforehand. [Export diagnostics](backup-restore.md#export-diagnostics) can collect retained evidence in one ZIP.
+Remove private details before sharing. For a security issue, use the [private reporting steps](../SECURITY.md#reporting-a-vulnerability).
 
-Review the report for private information before sharing; follow the [security policy](../SECURITY.md) for sensitive reports.
+Once the problem is resolved, check [equipment operation](safety.md#before-leaving-the-system-unattended) before leaving MycoBox running.
 
 <a id="related-documentation"></a>
+
 [Documentation](README.md) · [Web interface](web-interface.md) · [Safety](safety.md)

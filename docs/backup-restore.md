@@ -1,64 +1,68 @@
 # Backup and restore
 
-Open **System → Backup & restore** to download settings or diagnostics and import selected configuration. Operations work locally, including through the access point without internet.
+Use **System → Backup & restore** to save a copy of your settings, restore selected sections or download information for troubleshooting. All three work without internet.
 
 ## Export settings
 
-Choose **Export settings** and check browser downloads for `mycobox-settings.json`.
+Choose **Export settings**. Your browser downloads `mycobox-settings.json`.
 
-| Section | Included settings |
+| Section | What it saves |
 | --- | --- |
 | Growing profile | Daily schedule, time points and light windows |
-| Control settings | Growing mode, humidification mode and light-schedule enable setting |
+| Control settings | Growing mode, humidification mode and light-schedule setting |
 | Cycle progress | Cycle start time |
 | System | Controller name, time mode and timezone |
-| Wi-Fi network | Saved SSID |
+| Wi-Fi network | Network name |
 | Administrator account | Login name |
-| Zigbee assignments | All four equipment assignments |
+| Zigbee assignments | The four equipment assignments |
 
-The file captures current configuration, including active **unsaved schedule edits**, marked in its information. Export does not save those edits on the controller; use **Save cycle** to retain them after restart.
+The copy includes active schedule edits, even if you have not saved them yet. Use **Save cycle** as well to keep those edits on MycoBox after a restart.
 
-Settings omit Zigbee network keys, firmware and the learned Adaptive model. Import does not restore controller security or recover an interrupted update.
+Passwords, Zigbee pairing, firmware and Adaptive's learned response are not included.
 
 ## Export diagnostics
 
-Choose **Export diagnostics** to download `mycobox-diagnostics.zip`. The browser creates it locally from one controller snapshot.
+Choose **Export diagnostics** to download `mycobox-diagnostics.zip`. It collects the currently available history and system information in one file.
 
 | File | Contents |
 | --- | --- |
-| `manifest.json` | Source information, retained ranges, history limits and current warnings |
-| `measurements.csv` | Retained historical measurements and recent control samples |
-| `events.csv` | Retained Humidifier, Fan, Light, Heat and sensor events |
-| `report.txt` | System report |
+| `manifest.json` | What the export covers and any current warnings |
+| `measurements.csv` | Measurements and recent control samples |
+| `events.csv` | Equipment and sensor events |
+| `report.txt` | System information |
 
-This is a snapshot of currently retained memory, not a permanent growing-cycle record. Restart clears history; full buffers replace their oldest records. A diagnostic ZIP cannot be imported as settings.
+Download this before restarting if you need to investigate a problem: a restart clears history, and older records are replaced as memory fills. Use the settings JSON, rather than this ZIP, when restoring settings.
 
-Neither export includes saved passwords. Both can reveal controller identity, network/account names, device addresses or configuration: store them privately and review before sharing.
+Exports omit saved passwords but include names, addresses and configuration. Keep them private and review them before sharing.
 
 ## Import selected settings
 
-Keep equipment supervised: each successful step can affect operation before the final restart.
+Stay nearby during import, as saved changes can affect equipment immediately.
 
-1. Choose **Import settings** and select a supported MycoBox settings JSON, up to **32 KiB**. Review its source, firmware and export information.
-2. Select sections from the settings table above. **Growing profile** and **Control settings** are selected by default; others require separate selection. Unselected sections keep local values.
-3. Supply required passwords. A new SSID needs a password or an explicit open-network choice; a blank password for the same saved SSID keeps this controller's existing password. Keep or replace the administrator password separately.
-4. Save any unsaved cycle on the destination first. **Save current cycle and continue** explicitly saves it and returns to validation, without confirming import. You can cancel instead.
-5. Choose **Review selected settings**. Preview and validation do not write imported settings.
-6. After validation, select **Import these sections and restart the controller**, then **Import and restart**.
-7. Wait for the result, reconnect and read back configuration. Changed network, controller name or account may require another address or login.
+1. Choose **Import settings** and open your MycoBox settings JSON file, up to **32 KiB**.
+2. Select what to restore. **Growing profile** and **Control settings** are selected initially. Everything you leave unchecked keeps its current value.
+3. Enter passwords where requested. A new Wi-Fi network needs its password, or the open-network option. For the same saved network, a blank password keeps the existing one. Choose separately whether to keep or replace the administrator password.
+4. If prompted about unsaved cycle edits, choose **Save current cycle and continue** to keep them, or cancel.
+5. Choose **Review selected settings** and check the preview.
+6. Select **Import these sections and restart the controller**, then **Import and restart**.
+7. Wait for the restart and reconnect. Use the new address or login if you restored a different controller name, network or account.
 
-Confirmation writes all selected sections, even values already matching. **System** restores time mode and timezone while keeping the current clock. **Cycle progress** restores the cycle start time; leave it unselected when reusing a profile without its progress.
+To reuse a growing profile from Day 1 of a new run, leave **Cycle progress** unchecked and set the new cycle start separately. **System** restores the time mode and timezone; it keeps the current clock time.
 
 ### Zigbee assignments
 
-The matching switching device must already be paired with matching identity and outputs. Import validates and saves the complete assignment set together, requiring affected outputs to confirm OFF. It cannot recreate the Zigbee network or pairing; use [Zigbee setup](zigbee.md) first for a replacement controller.
+The original switch must already be paired, with the same outputs available. MycoBox checks the assignments and turns affected outputs OFF before saving them.
 
-An unfinished H2 update blocks import while exports remain available. Resolve it through [Firmware updates](firmware-update.md).
+On a replacement controller, [pair the switch first](zigbee.md). A settings file does not restore pairing.
+
+If an unfinished Zigbee Controller update blocks import, [complete that update](firmware-update.md#if-an-h2-update-is-interrupted) first. You can still export settings and diagnostics.
 
 ## If import stops or the result is unknown
 
-A failed step stops later steps; completed writes stay applied, without automatic rollback. The dialog lists confirmed saves, the current result and remaining operations. Read current configuration before reviewing another import. Use **Read current settings** when offered, or reconnect and reload if instructed after an uncertain result.
+Check the dialog to see which sections were saved. Those changes stay in place even if a later step fails.
 
-Successful writes to every selected section trigger one restart request. Earlier failure does not restart automatically. If only restart failed or was unconfirmed, **Retry restart** sends that request alone, without repeating writes. If restart already occurred, reconnect and reload instead.
+Choose **Read current settings**, or reconnect and reload the panel, before trying again. Correct the reported problem and review the sections you still want to import.
 
-After reconnecting, check configuration and physical operation using the [unattended-operation checklist](safety.md#before-leaving-the-system-unattended).
+If the settings were saved but the restart failed, choose **Retry restart**. If MycoBox already restarted, just reconnect.
+
+Finally, check the restored settings and [equipment operation](safety.md#before-leaving-the-system-unattended).

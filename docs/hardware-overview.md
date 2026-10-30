@@ -4,7 +4,7 @@
 
 [MycoBox home](../README.md) · [Documentation](README.md) · [Getting started](getting-started.md)
 
-MycoBox separates environmental automation on an **ESP32-S3 Main Controller** from Zigbee communication on an **ESP32-H2 Zigbee Controller**. Normal operation runs locally.
+MycoBox uses a main controller to read conditions and run your schedule, plus a Zigbee controller to switch connected equipment.
 
 ## System architecture
 
@@ -19,64 +19,65 @@ flowchart LR
     STRIP --> EQUIPMENT["Humidifier / Fan / Light / Heat"]
 ```
 
-These are functional connections, not a wiring plan. Board wiring, power supplies and module connections must match the intended controller hardware.
+The diagram shows how the parts work together. For wiring, use the instructions for your controller hardware.
 
 ## ESP32-S3 Main Controller
 
-The S3 reads the environmental sensor, runs automation and schedules, stores configuration and maintains measurement/event histories. It provides Wi-Fi and the local web interface, drives the display and joystick, and manages firmware updates.
+The Main Controller reads temperature and humidity, runs automation and stores your settings. It also provides Wi-Fi, the web panel, measurement history and the local display.
 
-Mains-powered loads connect to the external switching device, rather than directly to S3 GPIOs.
+Connect appliances to the smart plug or strip, not directly to the controller.
 
 ## ESP32-H2 Zigbee Controller
 
-The H2 is the Zigbee coordinator. It discovers switching outputs, sends commands and returns output-state confirmations to the S3 over SPI. Both controllers and the paired device must remain operational for output control.
+The Zigbee Controller connects MycoBox to the paired plug or strip. It finds the available outputs, sends ON/OFF commands and checks their state.
 
 ## Environmental sensors
 
-The SHT41 connects to the S3 over I²C and supplies temperature and relative humidity. Its built-in sensor heater is separate from the **Heat** output used for enclosure heating.
+The **SHT41** measures temperature and humidity. Its small built-in heater helps manage the sensor during prolonged high humidity; it is separate from the **Heat** output for your enclosure.
 
-See [Compatibility](compatibility.md#environmental-sensors) for supported sensor hardware, [Web interface](web-interface.md#sensor-heating-and-cooling) for measurement states and [Safety](safety.md#sensor-placement) for placement.
+See [supported sensors](compatibility.md#environmental-sensors), [sensor placement](safety.md#sensor-placement) and [heating/cooling messages](web-interface.md#sensor-heating-and-cooling).
 
 ## Real-time clock
 
-The DS3231 supplies time without internet when connected and initialized with a valid time. NTP can synchronize it when a time server is reachable. See [time setup](getting-started.md#7-configure-time-and-localization) for timezone and clock configuration.
+The **DS3231** keeps time offline once the clock is set. MycoBox can also set it from a network time server. Follow [Clock setup](getting-started.md#7-configure-time-and-localization) to choose the time mode and timezone.
 
 ## Local user interface
 
-The SSD1306 128 × 32 display and joystick provide basic status, network information and local controls. Detailed configuration uses a browser.
+The **SSD1306 display and joystick** show basic status and network information. Use the web panel for detailed settings.
 
 <a id="network-operation"></a>
 
 ## Wi-Fi and web interface
 
-The S3 stores and serves the interface and its assets. Wi-Fi connects a phone or computer for access; a permanently connected computer, cloud account and internet connection are not required for normal automation.
+Connect a phone or computer through Wi-Fi to open the panel. MycoBox runs automation locally, so you can close the browser and disconnect your computer afterwards.
 
-[Getting started](getting-started.md) covers first connection and network recovery. [Web interface](web-interface.md) describes the screens and controls; the [security policy](../SECURITY.md) describes network protection.
+A cloud account or internet connection is not needed for normal operation. See [Getting started](getting-started.md) for connecting and [Security](../SECURITY.md) for protecting access.
 
 <a id="multi-outlet-zigbee-devices"></a>
 
 ## Zigbee actuators
 
-The external outlet or strip provides switched power for the four equipment roles. Supported device classes, output limits and tested models are listed in [Compatibility](compatibility.md#zigbee-actuator-compatibility); setup belongs in [Zigbee](zigbee.md).
+A smart plug or strip supplies switched power to **Humidifier**, **Fan**, **Light** and **Heat**.
+
+Choose hardware using [Compatibility](compatibility.md#zigbee-actuator-compatibility), then follow [Zigbee setup](zigbee.md) to test and assign its sockets.
 
 ## Example installations
 
 | Installation | Example use |
 | --- | --- |
-| <a id="indoor-growing-enclosure"></a>Indoor growing enclosure | Temperature/RH monitoring with light, ventilation and humidification; heating where needed |
-| <a id="mushroom-fruiting-chamber"></a>Mushroom fruiting chamber | Humidification and timed ventilation alongside scheduled light and heating |
-| <a id="terrarium-or-vivarium"></a>Terrarium or vivarium | The available measurements and switching roles configured for the enclosure's requirements |
+| <a id="indoor-growing-enclosure"></a>Indoor growing enclosure | Temperature, humidity, lighting and ventilation |
+| <a id="mushroom-fruiting-chamber"></a>Mushroom fruiting chamber | Humidification, timed ventilation, light and heating |
+| <a id="terrarium-or-vivarium"></a>Terrarium or vivarium | Monitoring and equipment control for the enclosure |
 
-An installation may use only some roles. These examples do not establish suitability for a particular species or environment; see [Safety](safety.md#suitable-applications).
+Use only the roles you need, with settings and equipment suited to what you grow or keep. See [Suitable applications](safety.md#suitable-applications).
 
 ## Control path
 
-A measurement or schedule determines a role's requested state. Its saved assignment selects an output; the S3 requests the change through H2 and checks the output confirmation. This confirmation describes the switching output, while the equipment and environmental response need physical observation.
+A reading or scheduled time tells MycoBox what to do. MycoBox sends the command to the assigned socket and checks its response. You can follow this in **Overview** and compare it with the appliance's effect in **Measurements**.
 
 <a id="firmware-components"></a>
-
 <a id="safety-considerations"></a>
 
 ## Maintenance references
 
-Use [Firmware updates](firmware-update.md) for the separate S3/H2 packages and recovery, [Zigbee](zigbee.md) for assignments and network maintenance, and [Safety](safety.md) before servicing connected equipment.
+[Firmware updates](firmware-update.md) · [Zigbee setup](zigbee.md) · [Safety](safety.md)

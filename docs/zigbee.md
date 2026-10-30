@@ -1,93 +1,97 @@
 # Zigbee Setup
 
-Use **Zigbee** to pair a switching device, identify its outputs and assign them to automation. MycoBox supports one paired outlet or multi-output strip; a separate output is needed for each function you use.
+Open **Zigbee** to connect a smart plug or strip and choose which socket controls each appliance. MycoBox supports **one paired switching device**, with a separate output for each function you use.
 
 <a id="currently-supported-devices"></a>
-Check [supported devices and output limits](compatibility.md#zigbee-actuator-compatibility) before choosing hardware. A product's Zigbee label alone does not establish compatibility.
+
+Before choosing a device, check [compatibility](compatibility.md#zigbee-actuator-compatibility).
 
 ![Zigbee page with assignments and output tests](../media/web-ui/zigbee-settings.png)
 
 ## Pairing a new Zigbee device
 
 1. Wait for **Zigbee controller available**.
-2. Select **Start pairing** to open a 120-second window.
-3. Put the outlet or strip into pairing mode using its manufacturer's instructions.
-4. Wait for pairing and output discovery. Successful pairing closes the window automatically.
-5. Use **Refresh** to read the device again if needed. **Device information** shows its address and detected output numbers.
+2. Select **Start pairing**.
+3. Within two minutes, put your plug or strip into pairing mode using its instructions.
+4. Wait for MycoBox to find the device and its outputs. Pairing closes automatically when it succeeds.
+5. Open **Device information** to see the detected outputs. Use **Refresh** if needed.
 
-**Cancel pairing** closes the window early. A discovery error means the device could not be checked; an incompatible-device result means it exposed no supported outputs.
+Choose **Cancel pairing** to stop early. If pairing fails, use [Troubleshooting](troubleshooting.md#zigbee-device-does-not-appear).
 
-If another device is already paired, use the [network reset procedure](#resetting-the-zigbee-network) before replacing it.
+To replace an already paired device, [reset the Zigbee network](#resetting-the-zigbee-network) first.
 
 ## Understanding endpoints
 
-An endpoint identifies an output on the paired device. **Output 3** need not be the socket labelled “3”; numbering can be nonconsecutive.
+An **endpoint** is the number MycoBox uses for a switchable output. The panel calls it **Output**.
+
+These numbers may skip values or differ from the socket labels. For example, **Output 3** might switch a socket labelled “2”.
 
 <a id="current-endpoint-support"></a>
-The panel offers only discovered outputs. An output absent from that list cannot be tested or assigned. Identify physical sockets with the test procedure below instead of guessing their numbers.
+
+Use the detected output list and test each socket before assigning it.
 
 ## Testing a device
 
-Under **Test output**:
+Use a small lamp or another simple test load to identify sockets. Under **Test output**:
 
-1. Select a detected **Output** and check which equipment is connected.
-2. Select **Turn ON**, wait for confirmation and check the equipment.
-3. Select **Turn OFF**, wait for confirmation and check that it stopped.
-4. Repeat for each output you intend to use.
+1. Select an **Output**.
+2. Choose **Turn ON**, wait for confirmation and check which socket switched on.
+3. Choose **Turn OFF** and check that it stopped.
+4. Write down the mapping and repeat for the other outputs.
 
-Use harmless test loads where possible. **Last test** confirms one command, not continuous operation; automation may subsequently change an assigned output. If a response is lost, inspect the equipment; an OFF command can be sent again.
+**Last test** shows the result of your last command. Automation can change an assigned output afterwards. If OFF is not confirmed, check the appliance and send OFF again.
 
-If **Turn ON** is disabled, check whether you need [assignment restoration after a reset](#restoring-assignments-after-maintenance) or [completion of an H2 update](firmware-update.md#updating-the-zigbee-controller).
+If **Turn ON** is disabled, check for [a reset awaiting assignment restoration](#restoring-assignments-after-maintenance) or [an unfinished H2 update](firmware-update.md#if-an-h2-update-is-interrupted).
 
 ## Binding devices to MycoBox functions
 
-Pairing establishes communication; assignments connect outputs to the **Humidifier**, **Fan**, **Light** and **Heat** roles.
-
-Every assigned role must use a different output on the same paired device. Unused roles can remain **Not assigned**.
+Assign outputs to **Humidifier**, **Fan**, **Light** and **Heat**. Each role needs a different output. Leave unused roles as **Not assigned**.
 
 ### Creating a binding
 
-1. Identify the output with [Test output](#testing-a-device), finishing with confirmed OFF.
-2. Review the intended [growing mode and schedule](web-interface.md#cycle-and-automation).
-3. Choose its **Assigned output**, select the role's **Save** button and wait for success.
-4. Check **Saved** and **Saved: output …**.
+1. [Identify the socket](#testing-a-device) and finish the test with it OFF.
+2. Check your [growing mode and schedule](web-interface.md#cycle-and-automation).
+3. Select the role's **Assigned output**, then choose its **Save** button.
+4. Wait for **Saved** and **Saved: output …**.
 
-Changing an assignment requires confirmed OFF on both its previous and new outputs. An unconfirmed OFF blocks the save. Once saved, automation may operate that role immediately.
-
-Save each role separately; these saves are independent of **Save cycle**.
+Save each role separately. MycoBox needs OFF confirmation from the old and new outputs before changing an assignment. Once saved, the role can start working immediately.
 
 ### Removing a binding
 
-Choose **Not assigned** and select the role's **Save** button. Its old output must confirm OFF; the device remains paired.
+Choose **Not assigned**, then the role's **Save** button. MycoBox turns its old output OFF; the switch stays paired.
 
-If an old output is unreachable, restore communication before retrying a change or removal. If the result is unknown, use **Reload settings** to read the stored assignment before another attempt.
+If the old output cannot be reached, restore its power or connection and retry. For an unknown result, choose **Reload settings** before saving again.
 
 <a id="forgetting-all-zigbee-devices"></a>
+
 ## Resetting the Zigbee network
 
-Use **Zigbee → Advanced → Reset Zigbee network → Reset network** only to remove the paired device and rebuild its assignments.
+A network reset removes the paired device and clears its assignments. Use it when replacing the switch or starting pairing again.
 
-MycoBox blocks new ON commands and confirms OFF on affected outputs, including relevant manual activity. Failure to confirm OFF blocks the reset. Successful preparation clears assignments; an uncertain response does not mean nothing changed. Use **Reload settings** to inspect the result before another operation.
+1. Open **Zigbee → Advanced → Reset Zigbee network**.
+2. Choose **Reset network**.
+3. Wait while MycoBox turns affected outputs OFF and resets the network.
+4. Follow [Restoring assignments after maintenance](#restoring-assignments-after-maintenance).
 
-After a confirmed reset, wait for the controller to become available and follow [Restoring assignments after maintenance](#restoring-assignments-after-maintenance). This pause survives an S3 restart.
+If an output does not confirm OFF, restore its connection before retrying. If the result is unknown, use **Reload settings** to check what changed.
 
-A network reset is separate from removing one assignment or performing a [Main Controller factory reset](getting-started.md#factory-reset).
+Automation stays paused until an assignment is restored, even after a restart. To remove just one role, use [Removing a binding](#removing-a-binding) instead. A [Main Controller factory reset](getting-started.md#factory-reset) is a separate operation.
 
 ## Restoring assignments after maintenance
 
-Use this sequence after a network reset or an older full-image update that cleared assignments. Pairing alone does not release this pause: the first new assignment must save successfully.
+After a network reset or an older full-image update that cleared assignments, the first successful assignment save releases the maintenance pause. **Manual ON tests become available after that save.**
 
-For a pending current H2 update, use the [H2 completion and retry procedure](firmware-update.md#if-an-h2-update-is-interrupted) instead.
+1. Disconnect controlled appliances from the sockets, or use simple test loads. Saving the first assignment can start automation.
+2. Check whether the switch is paired. If not, [pair it](#pairing-a-new-zigbee-device) and wait for its outputs.
+3. Choose a detected output for one role and **Save**. Use your recorded socket mapping if you have one; leaving every role **Not assigned** keeps the pause active.
+4. [Test the sockets](#testing-a-device) and correct that first assignment if needed.
+5. Assign the remaining roles, reconnect the appliances to the matching sockets and [check operation](safety.md#before-leaving-the-system-unattended).
 
-1. Isolate controlled loads independently or use harmless test loads. The first successful assignment save can resume automation immediately.
-2. Check the paired device. If none is present, follow [Pairing a new device](#pairing-a-new-zigbee-device) and wait for discovered outputs.
-3. Select an actual detected output for one intended role and **Save**, using your recorded mapping if available. Unchanged **Not assigned** choices cannot release the pause.
-4. After success, use [Test output](#testing-a-device) to identify/check sockets, keeping other loads isolated while their mapping is uncertain.
-5. Complete or correct the distinct assignments, then check the [installation before unattended use](safety.md#before-leaving-the-system-unattended).
+For an unfinished current H2 update, use the [update completion steps](firmware-update.md#if-an-h2-update-is-interrupted) instead.
 
 ## Using multi-outlet power strips
 
-A four-output strip can serve all four roles. For example:
+One strip with four independent outputs can handle all four roles. For example:
 
 | Detected output | Role |
 | --- | --- |
@@ -96,15 +100,17 @@ A four-output strip can serve all four roles. For example:
 | Output 5 | Light |
 | Output 8 | Heat |
 
-This is an example mapping, not a required layout. Use your device's detected outputs and the physical sockets identified in testing.
+Use the numbers you found when testing your own strip.
 
 <a id="zigbee-controller-firmware"></a>
 <a id="troubleshooting-zigbee"></a>
+
 ## Updates and problem reports
 
-The H2 updater is under **Advanced → Zigbee Controller · ESP32-H2**. Current application OTA preserves compatible pairing and assignments; follow [Firmware Updates](firmware-update.md#updating-the-zigbee-controller) for files, preparation, verification and retry.
+For H2 firmware, open **Advanced → Zigbee Controller · ESP32-H2** and follow [Firmware updates](firmware-update.md#updating-the-zigbee-controller).
 
-For failed discovery, unconfirmed tests or rejected assignment saves, read the page's result and **Technical details** before resetting anything. Use the [Zigbee diagnostics](troubleshooting.md#zigbee-device-appears-but-cannot-be-controlled) to investigate.
+If pairing, tests or assignment saves fail, start with [Zigbee troubleshooting](troubleshooting.md#zigbee-device-appears-but-cannot-be-controlled). Keep the displayed error and **Technical details** to include if you ask for help.
 
 <a id="related-documentation"></a>
+
 [Documentation](README.md) · [Compatibility](compatibility.md) · [Safety](safety.md)

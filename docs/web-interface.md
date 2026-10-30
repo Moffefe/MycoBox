@@ -1,20 +1,20 @@
 # Web interface
 
-Open the controller's local address in a browser and sign in with your administrator account. The interface and its assets are stored on MycoBox and work without internet. For first access, see [Getting started](getting-started.md).
+Open MycoBox's local address in your browser and sign in. The panel works without internet. For your first connection, follow [Getting started](getting-started.md).
 
 ## Navigation
 
-| Page | Main purpose |
+| Page | Use it to… |
 | --- | --- |
-| [**Overview**](#overview-and-growbox) | Current conditions, Growbox states, warnings, active cycle and assignments |
-| [**Measurements**](#measurements) | Temperature and humidity history, activity tracks and recorded readings |
-| [**Cycle & automation**](#cycle-and-automation) | Growing mode, humidification mode, light schedule and daily time points |
-| [**Zigbee**](#zigbee) | Pairing, output assignments, manual tests and Zigbee Controller maintenance |
-| [**Activity log**](#activity-log) | Recorded events for Heat, Light, Fan and Humidifier |
-| [**Cluster**](#cluster) | Discovered controllers and group actions |
-| [**System**](#system) | Network, time, administrator account, backup and restore, and Main Controller updates |
+| [**Overview**](#overview-and-growbox) | See current conditions, equipment states and the active cycle |
+| [**Measurements**](#measurements) | Explore temperature, humidity and equipment activity |
+| [**Cycle & automation**](#cycle-and-automation) | Set growing modes and the daily schedule |
+| [**Zigbee**](#zigbee) | Pair a switch, test sockets and assign equipment |
+| [**Activity log**](#activity-log) | Review recent equipment events |
+| [**Cluster**](#cluster) | Manage several MycoBox controllers |
+| [**System**](#system) | Change connection and account settings, back up or update MycoBox |
 
-**Diagnostics** is available from System and the page footer.
+You can open **Diagnostics** from System or the page footer.
 
 ## Overview and Growbox
 
@@ -22,32 +22,34 @@ Open the controller's local address in a browser and sign in with your administr
   <img src="../media/web-ui/dashboard.png" alt="MycoBox Overview with the Growbox diagram, confirmed output states and current cycle" width="1000">
 </p>
 
-The Growbox diagram shows **Light**, **Fan**, **Humidifier**, **Heat** and the climate sensor. Select a device to open its associated settings; the sensor opens Measurements, while an unassigned output directs you to Zigbee.
+The Growbox diagram shows **Light**, **Fan**, **Humidifier**, **Heat** and the climate sensor. Select a device to open its settings. Select the sensor to open Measurements, or an unassigned output to set it up in Zigbee.
 
-- **ON / OFF · Confirmed** represents a recently confirmed output state.
-- **Unknown** means a fresh state cannot currently be confirmed.
-- **Not assigned** means the function has no usable output assignment.
-- **Assignment conflict** means the assignments need correction in Zigbee before normal control can resume.
-- **Paused · Maintenance** means Zigbee maintenance is blocking normal operation; follow the instructions on the Zigbee page.
-- **Needs attention** highlights a condition that deserves inspection.
+| Status | Meaning |
+| --- | --- |
+| **ON / OFF · Confirmed** | MycoBox recently confirmed the output's state |
+| **Unknown** | MycoBox is waiting for a fresh confirmation |
+| **Not assigned** | Choose an output for this function in Zigbee |
+| **Assignment conflict** | Correct the assignments in Zigbee |
+| **Paused · Maintenance** | Open Zigbee to finish the maintenance steps |
+| **Needs attention** | Open the message for suggested checks |
 
-The diagram is a status view, not a physical measurement of airflow, mist or heat. Check the actual equipment when an output is confirmed ON but the expected environmental response is missing.
+If an output is ON but the appliance produces no airflow, mist or heat, check the appliance itself.
 
-The Current cycle card shows the active day, effective heating thresholds, humidity target and scheduled light window. Automation settings show which modes are active. The light window is a schedule; it does not mean the light is currently ON.
+The **Current cycle** card shows the active day, heating thresholds, humidity target and light window. **Automation settings** shows the selected modes. Check the Light status for whether it is ON now; the light window shows its schedule.
 
 ### Warnings
 
-Warnings are assessed on the controller, including when the browser is closed. Expand a warning beside a device to read the condition and suggested checks.
+Open a warning beside a device to see what MycoBox noticed and what to check. Monitoring continues when you close the browser.
 
-| Condition | Required observation |
+| Condition | When a warning appears |
 | --- | --- |
-| Temperature or humidity outside the monitoring band | 30 minutes |
-| No usable measurements or sustained lack of response reported by Adaptive | 15 minutes |
-| Return to normal | Five stable minutes |
+| Temperature or humidity outside the monitoring band | After 30 minutes |
+| Missing readings or no sustained humidity response in Adaptive | After 15 minutes |
+| Conditions return to normal | The warning clears after five stable minutes |
 
-Planned sensor heating/cooling, maintenance and measurement gaps pause the relevant assessment. **Assessment paused** or **Previously observed** means a warning is awaiting fresh evidence; it is not a new confirmation of the condition. Observations are held in memory and clear after restart. There is no retained alarm history or notification service.
+Sensor cooling, maintenance or missing data can pause an assessment. **Assessment paused** and **Previously observed** mean MycoBox is waiting for fresh readings.
 
-Warnings indicate observed conditions, not a diagnosis of an empty reservoir or failed appliance. They do not replace independent equipment protection.
+Warnings and observations clear after a restart. They appear in the local panel; MycoBox does not send notifications.
 
 ## Measurements
 
@@ -55,30 +57,21 @@ Warnings indicate observed conditions, not a diagnosis of an empty reservoir or 
   <img src="../media/web-ui/measurements.png?v=163a1c18" alt="A full day of MycoBox temperature and humidity readings with equipment activity tracks" width="1000">
 </p>
 
-The SHT41 supplies ambient temperature and relative-humidity samples every **five seconds**, except during measurement pauses. Current readings include their age. Missing or stale readings are not presented as fresh measurements.
+Temperature and humidity normally refresh every **five seconds**. Check the age beside a reading to see how recent it is.
 
-Measurements shows up to **288 samples at five-minute intervals**, approximately a day of continuous operation. Open **Readings as text** to inspect the values as text. Charts may connect valid points across missing samples; this does not create additional measurements.
+The chart holds up to **288 readings**, spaced five minutes apart: about one day. Select a point to inspect it, or open **Readings as text**. Lines may join points across a gap; the text view shows which readings were recorded.
 
-Use the chart points to inspect individual readings. Four activity tracks share the time axis:
+The **Humidifier**, **Fan**, **Heat** and **Sensor heater** tracks help you compare activity with changes in temperature and humidity. **Events** and the category buttons change what appears on the chart.
 
-| Track | What it records |
-| --- | --- |
-| **Humidifier** | Recorded humidifier output activity |
-| **Fan** | Recorded ventilation output activity |
-| **Heat** | Recorded heating output activity |
-| **Sensor heater** | Sensor-heater commands and cooling information |
-
-The **Events** control and category buttons change the displayed annotations, not the automation. Recorded output activity is based on commands and confirmations, rather than an independent measurement of equipment operation. Unknown or incomplete portions of history must not be treated as confirmed OFF periods.
-
-Measurement and activity histories are held in memory and start again after a restart. A short history can also mean that the oldest records have been replaced in a bounded buffer.
+History starts again after a restart. As it fills, older records are replaced. To keep a copy, [export diagnostics](backup-restore.md#export-diagnostics) before restarting.
 
 ### Sensor heating and cooling
 
-**Sensor heater active** and **Sensor cooling after heating** are temporary sensor states. Fresh ambient readings are paused while the SHT41 heats and cools; the interface resumes them after a valid ambient measurement is available. These messages do not by themselves mean the sensor has failed.
+The SHT41 occasionally heats itself during prolonged high humidity. **Sensor heater active** is followed by **Sensor cooling after heating**, which normally lasts three minutes.
 
-The automatic heater policy uses a one-second pulse followed by three minutes of cooling. Normal heating requires a current reading above 90% RH and at least three hours since startup or the previous heater command. Sustained readings near saturation can show possible sensor wetting and allow a shorter, one-hour minimum interval while RH remains at least 99%. Possible wetting is an observation, not proof of condensation. These statuses do not add a manual heater control.
+Ambient readings pause during this process and return afterwards. This is automatic and separate from the **Heat** output that warms your growing space.
 
-See [Troubleshooting](troubleshooting.md) if readings remain unavailable or a communication error persists.
+If fresh readings do not return, follow [Missing sensor values](troubleshooting.md#sensor-values-are-missing).
 
 ## Cycle and automation
 
@@ -86,75 +79,81 @@ See [Troubleshooting](troubleshooting.md) if readings remain unavailable or a co
   <img src="../media/web-ui/cultivation-cycle.png" alt="MycoBox growing modes, cycle save status and daily time points" width="1000">
 </p>
 
-A cycle contains up to **32 days**, each with up to **four time points**. The first point stays at **00:00**. The active point supplies that part of the day's temperature, fan and humidification settings. Days advance relative to the cycle start time; after the last configured day, the cycle repeats from Day 1.
+Create up to **32 days**, each with up to **four time points**. The first point starts at **00:00**. Each point sets temperature, fan timing and humidification for that part of the day.
+
+Days advance from the cycle start time. After the last day, the schedule repeats from Day 1.
 
 ### Choose the modes
 
-| Setting | Behavior |
+| Setting | What it does |
 | --- | --- |
-| **Fruiting** | Uses scheduled temperature and fan timing; the light follows its window when enabled |
-| **Incubation** | Sets Fan and Light to OFF and uses the fixed heating range shown by the interface |
-| **Timer** | Uses the configured humidifier ON/OFF periods |
-| **Adaptive** | Uses humidity readings and the target to control humidification pulses |
+| **Fruiting** | Uses scheduled temperature and fan timing, plus the light window when enabled |
+| **Incubation** | Keeps Fan and Light OFF and uses a fixed heating range of 23.5–23.8 °C |
+| **Timer** | Runs the humidifier for the chosen ON/OFF periods |
+| **Adaptive** | Adjusts humidification pulses using humidity readings and your target |
 | **Light schedule** | Enables or disables the daily light window |
 
-Humidification keeps its selected mode when changing between Fruiting and Incubation. Timer mode does not regulate humidity to the Adaptive target.
+Changing between Fruiting and Incubation keeps your chosen humidification mode. In Timer mode, the ON/OFF periods control humidity; the Adaptive target is unused.
 
-In Fruiting, Heat turns ON below the active temperature target and OFF above target + 0.3 °C. Incubation uses 23.5–23.8 °C. Between thresholds, heating keeps its previous decision. Heat requests OFF if the temperature reading is unusable or below 5 °C; this is not frost protection or a guarantee of physical OFF.
+In Fruiting, heating starts below the temperature target and stops above target + 0.3 °C. Between these thresholds, it keeps its previous state. With an unusable reading or a temperature below 5 °C, MycoBox requests heating OFF. Use separate frost protection if needed.
 
-Adaptive V1.4 learns the response of the humidifier and enclosure during operation. Adaptive starts are separated by at least **five minutes**, and a single run is limited to **120 seconds**; a required OFF is not delayed by the start interval. It stops an active pulse when usable ambient readings become unavailable. The first Adaptive run after restart also waits for at least five minutes of controller uptime. The learned response is held in memory and must be learned again after restart. Observe actual humidity and equipment response: the controller cannot guarantee a target band for every enclosure or actuator.
+Adaptive learns how your humidifier and enclosure respond. It waits at least **five minutes** between starts, runs each pulse for no more than **120 seconds**, and stops a pulse if ambient readings become unavailable. After a restart, it waits five minutes before the first run and learns the response again.
 
-Mode changes are saved immediately. Schedule edits follow the separate save process below.
+Mode changes save immediately. Save schedule edits separately as described below.
 
 ### Edit and save a schedule
 
 1. Select a day under **Edit day**.
-2. Use **Edit time point** or **Add time point** to set its start hour and environmental settings.
-3. Choose **Apply changes** to apply the edited point. Closing or cancelling the form discards that form's edits.
-4. Use **Edit light** to set the daily window. The ON hour must be earlier than the OFF hour.
-5. Check the resulting schedule and choose **Save cycle**.
+2. Choose **Edit time point** or **Add time point**, then set the time and conditions.
+3. Choose **Apply changes**. Cancelling the form discards its edits.
+4. Use **Edit light** to set the daily light window, with the ON time earlier than the OFF time.
+5. Review the schedule and choose **Save cycle**.
 
-Applied schedule edits affect the running cycle in memory. **Save cycle** keeps them after a restart. Check that the save confirmation succeeds; an active but unsaved schedule is not a persistent backup.
+**Apply changes** updates the running schedule. **Save cycle** keeps it after a restart.
 
-**Duplicate day** copies the selected day, while **Add day** extends the cycle. The Advanced cycle actions include removing a day and **Restart cycle**. Restart cycle changes the cycle start time and keeps the schedule; save afterwards to retain the new start time.
+Use **Duplicate day** to copy a day, or **Add day** to extend the cycle. In Advanced cycle actions, you can remove a day or use **Restart cycle** to begin again with the same schedule. Save afterwards to keep the new start time.
 
-If a write reports an unknown result, reload the configuration and inspect its actual state before making more changes. Repeating a state-changing action immediately can make the outcome harder to establish.
+If a save reports an unknown result, reload the configuration and check it before editing again.
 
 ## Zigbee
 
-Use the [Zigbee guide](zigbee.md) for pairing, output identification, assignments and network maintenance. For controller updates and post-update verification, use [Firmware updates](firmware-update.md).
+Follow [Zigbee setup](zigbee.md) to pair a switch, identify sockets and assign equipment. Use [Firmware updates](firmware-update.md) to update the Zigbee Controller.
 
 ## Activity log
 
-Select **Heat**, **Light**, **Fan** or **Humidifier**. The page normally shows up to 50 recent events in that category; **Show up to 200 events** requests a longer available history.
+Select **Heat**, **Light**, **Fan** or **Humidifier** to see recent events. The page shows up to 50 events; choose **Show up to 200 events** for more.
 
-Each entry includes its time, an event description and a message. Select the column headings to sort the loaded entries. Sorting does not fetch older events. Open **Technical details** for diagnostic codes and original event data.
+Each entry has a time, description and message. Select a column heading to sort the entries. **Technical details** provides extra information for troubleshooting.
 
-For **State not confirmed** and similar messages, use the [Zigbee diagnostic checks](troubleshooting.md#zigbee-device-appears-but-cannot-be-controlled).
+For **State not confirmed**, start with [Zigbee connection checks](troubleshooting.md#zigbee-device-appears-but-cannot-be-controlled).
 
 ## Cluster
 
-Cluster lists other discovered MycoBox controllers on the local Wi-Fi network. **Refresh discovery** updates the search. Each group action opens a confirmation showing the source controller, recipients and settings that will be replaced:
+Use Cluster to find other MycoBox controllers on the same Wi-Fi network. Select **Refresh discovery** to update the list. Controllers receiving a group action must use the same administrator login and password as the source.
 
-- **Copy settings…** replaces and saves the light-schedule enable setting, humidification mode and growing mode.
-- **Copy cycle…** replaces, activates and saves the complete schedule and cycle start time. It includes active, unsaved schedule changes on the source.
-- **Restart recipients…** restarts the listed remote controllers, losing their unsaved cycle changes.
+| Action | What it changes on the selected recipients |
+| --- | --- |
+| **Copy settings…** | Saves the growing mode, humidification mode and light-schedule setting |
+| **Copy cycle…** | Saves and activates the complete schedule and cycle start time, including active unsaved edits from the source |
+| **Restart recipients…** | Restarts the controllers; their unsaved cycle edits are lost |
 
-The source controller is excluded from recipients. Recipients must use the same administrator login and password as the source. If the discovered list changes before confirmation, refresh and review it again; the command is rejected until the list matches. Once accepted, a command keeps its chosen recipients even if discovery later changes.
+Review the recipient list before confirming. The source controller stays unchanged. If the discovered list changes, refresh it and review the action again.
 
-Review the node list and each growbox's equipment before confirming a group action. Copying a cycle does not copy Zigbee assignments. A group command can succeed on some recipients and fail on others. If the result is incomplete or unknown, inspect each recipient before retrying.
+Cycle copying keeps each recipient's Zigbee assignments. Check that its equipment suits the copied schedule.
+
+After a group action, check the result for each recipient. If only some completed it, inspect the others before retrying.
 
 <a id="backup-and-restore"></a>
 
 ## System
 
-Use the following guides for System operations. Save pending cycle edits before a setting change that restarts the controller.
+Save pending cycle edits before a change that restarts MycoBox.
 
-| Section | Guide |
+| I want to… | Guide |
 | --- | --- |
-| **Network**, **Time**, **Account** and controller name | [Connection and initial settings](getting-started.md#3-log-in) |
-| **Updates** | [Firmware files and update procedures](firmware-update.md) |
-| **Backup & restore** | [Settings export, selected import and diagnostic ZIP](backup-restore.md) |
-| **Diagnostics** | [Investigating a problem](troubleshooting.md) |
+| Change Wi-Fi, time, account or controller name | [Getting started](getting-started.md) |
+| Install firmware | [Firmware updates](firmware-update.md) |
+| Save or restore settings | [Backup and restore](backup-restore.md) |
+| Investigate a problem | [Troubleshooting](troubleshooting.md) |
 
 [Documentation](README.md) · [MycoBox overview](../README.md)
