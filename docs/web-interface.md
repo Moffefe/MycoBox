@@ -2,7 +2,7 @@
 
 Open the controller's local address in a browser and sign in with your administrator account. The interface and its assets are stored on MycoBox and work without internet. For first access, see [Getting started](getting-started.md).
 
-Screenshots in these guides use sample data; they illustrate the interface rather than a specific installation.
+Screenshots include earlier captures and examples with sample data; they illustrate the interface rather than a specific installation.
 
 ## Navigation
 

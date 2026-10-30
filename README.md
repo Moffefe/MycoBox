@@ -17,7 +17,7 @@ MycoBox brings environmental monitoring and equipment control to one web interfa
 
 ## Your growbox at a glance
 
-Interface examples below use sample data.
+Interface screenshots include earlier captures and examples with sample data.
 
 <p align="center">
   <img src="media/web-ui/dashboard.png" alt="MycoBox Overview with Growbox visualization, current readings and cycle settings" width="1000">

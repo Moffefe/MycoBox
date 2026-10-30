@@ -1,9 +1,9 @@
 # Interface images
 
-These images show the current MycoBox interface with example data.
+`measurements.png` and `sensors.png` are earlier interface captures, retained to preserve their previous temperature and humidity presentation. Their headers show the earlier branding.
 
-The pages are rendered from the project's production page renderer and local UI assets in Firefox. Host adapters supply deterministic sample measurements, schedules, device assignments and firmware information. The examples do not represent a connected controller or hardware validation.
+The other images are rendered from the project's current page renderer and local UI assets in Firefox. Host adapters supply example measurements, schedules, device assignments and firmware information.
 
-The mobile image shows the responsive interface in a 487 CSS-pixel browsing context. The icon is unchanged; the wordmark uses the same outlined lettering as the public project branding.
+These illustrations do not establish hardware performance. The mobile example uses a 487 CSS-pixel viewport.
 
 For the meaning of the controls and states, see the [interface guide](../../docs/web-interface.md).
