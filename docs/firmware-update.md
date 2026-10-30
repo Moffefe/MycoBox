@@ -1,135 +1,109 @@
 # Firmware Updates
 
-MycoBox has two controllers with separate firmware: the **Main Controller (ESP32-S3)** and **Zigbee Controller (ESP32-H2)**. Both can be updated through the local web interface.
+MycoBox has separate firmware for the **Main Controller (ESP32-S3)** and **Zigbee Controller (ESP32-H2)**. This guide covers their web updates and recovery.
 
 ## Before updating
 
-1. Read the [release notes](https://github.com/Moffefe/MycoBox/releases). Check hardware compatibility, which controller needs updating and the required order.
-2. Use **Save cycle** to retain pending edits. Use **System → Backup & restore → Export settings** for a configuration copy; see [Backup & restore](backup-restore.md) for its scope.
-3. Choose a time when you can supervise equipment and tolerate an interruption of automation.
-4. Keep MycoBox and the paired outlet or power strip powered, use a stable local connection and leave the update page open until installation and verification finish.
+- Read the [release notes](https://github.com/Moffefe/MycoBox/releases) for compatible hardware, required controller versions and any migrations. Update only the controllers the release requires.
+- Save pending cycle edits and [export a settings backup](backup-restore.md#export-settings).
+- Supervise connected equipment during the interruption. Keep MycoBox powered, use a stable local connection and leave the update page open until completion.
 
-A release may require only an S3 update. When it requires both controllers, install the compatible pair in the stated order. An older H2 that cannot report the required outputs may prevent a newer S3 from controlling or assigning them.
+<a id="updating-both-controllers"></a>
+H2 application OTA requires an S3 version that supports its format. For [v1.666.EN](https://github.com/Moffefe/MycoBox/releases/tag/v1.666.EN), install **S3 first, then H2**. An older H2 that cannot report the required outputs may prevent a newer S3 from controlling or assigning them.
 
 ## Firmware files
 
-Use only the encrypted firmware published for compatible hardware in [GitHub Releases](https://github.com/Moffefe/MycoBox/releases).
+Download encrypted packages for your hardware from [GitHub Releases](https://github.com/Moffefe/MycoBox/releases).
 
-| Release asset | Intended use |
+| File | Use |
 | --- | --- |
-| `MycoBox-S3-OTA-vX.XXX.EN.bin` | Main Controller web update: an encrypted S3 OTA package |
-| `MycoBox-H2-OTA-vX.XXX.EN.bin` | Zigbee Controller web update: an encrypted H2 application OTA package preserving compatible Zigbee data |
-| `SHA256SUMS.txt` | Checksums for the release files |
+| `MycoBox-S3-OTA-vX.XXX.EN.bin` | Main Controller web OTA |
+| `MycoBox-H2-OTA-vX.XXX.EN.bin` | Current Zigbee Controller application OTA; introduced in v1.666.EN |
+| `MycoBox-H2-vX.XXX.EN.bin` in older releases | Legacy full H2 image, exactly 2 MiB; use only with its matching older procedure |
+| `SHA256SUMS.txt` | Release file checksums |
 
-[v1.666.EN](https://github.com/Moffefe/MycoBox/releases/tag/v1.666.EN) introduces the H2 application OTA package. Install its S3 update first, then select `MycoBox-H2-OTA-v1.666.EN.bin` in the updated Zigbee page.
-
-Older releases use names such as `MycoBox-H2-v1.659.EN.bin` for a complete 2 MiB H2 image. That format replaces Zigbee data and requires pairing again. **The current H2 web updater rejects full recovery images.** Follow an older release's instructions only with its matching updater.
-
-Do not interchange S3 and H2 files. Plain development binaries and full recovery images are not OTA packages. Renaming a file does not convert its format.
+**Current web forms reject full recovery images.** S3 and H2 packages are not interchangeable; plain development binaries and renamed files do not become OTA packages.
 
 ### Firmware file integrity
 
-Compare the file's SHA-256 with its entry in **SHA256SUMS.txt**. For example, in PowerShell, replace the filename with your downloaded file:
+Compare the downloaded file's SHA-256 with **SHA256SUMS.txt**. In PowerShell, substitute your filename:
 
 ```powershell
 Get-FileHash -Algorithm SHA256 '.\MycoBox-S3-OTA-v1.666.EN.bin'
 ```
 
-If the checksum differs, download the file again before continuing.
+If it differs, download the file again before continuing.
 
 ## What happens to settings?
 
-| Operation | Settings and pairing |
+| Operation | Effect on saved data |
 | --- | --- |
-| Normal S3 web OTA | Saved S3 settings, Zigbee pairing and assignments are retained. Unsaved cycle edits are lost at restart. Follow release-specific migration instructions. |
-| Current H2 application OTA | Preserves the compatible Zigbee network, paired device and S3 assignments. Outputs are turned OFF; automation waits for post-update verification. |
-| Older full-image H2 update or full H2 recovery | Replaces Zigbee data. Pair again and verify/recreate assignments as directed by the matching procedure. |
-| Full S3 recovery over USB | Replaces saved S3 settings. Initial setup is required again; a compatible backup can help restore selected configuration afterwards. |
+| Normal S3 web OTA | Retains saved S3 settings, Zigbee pairing and assignments. Unsaved cycle edits are lost at restart. |
+| Current H2 application OTA | Retains the compatible Zigbee network, paired device and S3 assignments. |
+| Older full-image H2 update or full H2 recovery | Replaces Zigbee data; pairing must be recreated and assignments verified/restored. |
+| Full S3 recovery over USB | Replaces saved S3 configuration; initial setup is required again. |
 
-H2 preservation applies to the existing compatible 2 MB setup and Zigbee data format. A layout or data-format migration requires separate release instructions.
+H2 preservation applies to the existing compatible 2 MB setup and Zigbee data format. Follow separate release instructions for layout or data-format migrations. Before downgrading, check whether the older firmware can read settings saved by your current version.
 
-Before downgrading, check compatibility and configuration instructions. Older firmware may not understand settings saved by a newer version. A settings export does not restore H2 pairing, firmware or security state.
-
-## Updating the Main Controller
-
-Open **System → Main Controller firmware**. The **Updates** shortcut takes you there.
-
-![System page showing Main Controller firmware information and the OTA file picker](../media/web-ui/firmware-settings.png)
-
-1. Check the installed **Version** and **Build**.
-2. In **Main Controller OTA package (.bin)**, select the correct S3 OTA file.
-3. Select **Update Main Controller** and confirm the warning.
-4. Wait while MycoBox transfers, verifies and installs it. **100% transfer is not installation completion.**
-5. After success is reported, allow the automatic restart and reload to finish.
-6. Reconnect if necessary, then check **Version**, **Build**, saved settings, fresh measurements and equipment operation.
-
-Keep the page open and power connected during verification. The Main Controller selects the new application only after package validation succeeds.
-
-### If the Main Controller update fails
-
-Read the error. If the controller starts normally, verify the file and checksum, then retry using a reliable connection.
-
-**Update result unknown** means the browser lost confirmation. Reconnect, check the reported version and reload configuration before trying again. Avoid repeated power cycles or another upload while the result is unresolved.
-
-If normal access cannot be restored, see [Recovery firmware](#recovery-firmware) and [Troubleshooting](troubleshooting.md#main-controller-firmware-update-failed).
-
-## Updating the Zigbee Controller
-
-Open **Zigbee → Advanced → Zigbee Controller · ESP32-H2**. The **Zigbee Controller updates** link on System also opens Zigbee.
-
-![Zigbee page with assignments and the Advanced section for firmware and network reset](../media/web-ui/zigbee-settings.png)
-
-Use **Zigbee Controller OTA package (.bin)** in the current interface. Older screenshots or firmware may show the former full-image field.
-
-### H2 update procedure
-
-1. Install the S3 version required by the release first. For v1.666.EN, update S3 before H2.
-2. Check **Firmware** and **Build** under **Advanced**, and review saved assignments.
-3. Select the matching **H2-OTA** package in **Zigbee Controller OTA package (.bin)**.
-4. Select **Update Zigbee Controller** and confirm.
-5. Keep the paired outlet or power strip powered. MycoBox closes pairing, confirms the necessary outputs OFF and saves update preparation. If this cannot finish, programming is blocked and assignments are retained.
-6. Wait for transfer, H2 restart and verification. A completed upload means firmware was written; the panel then waits for the expected firmware, saved device/outputs and confirmed OFF. **Automation remains paused until verification completes.**
-7. Check firmware information, retained assignments and physical equipment operation before unattended use. Normal application OTA does not require pairing again.
-
-While an H2 update is incomplete, new ON commands, assignment changes, pairing and network reset remain blocked. The state survives an S3 restart. An earlier network-reset pause is separate and still requires restoring assignments after that reset.
-
-### Pair Zigbee devices again
-
-Pairing again is needed after an intentional network reset, full H2 recovery or an older full-image update; it is not a normal current H2 application OTA step.
-
-Follow [Restoring assignments after maintenance](zigbee.md#restoring-assignments-after-maintenance) when a reset or older update cleared assignments. Keep loads safe, pair if needed, save an initial intended assignment, then identify/test outputs and complete the remaining distinct assignments. Automation may resume for saved roles after the first successful save.
-
-### If an H2 update is interrupted
-
-Reconnect, reload **Zigbee** and read update status. Pairing and assignments are retained. Keep the paired device powered: if verification is waiting for it, restore its power/communication and allow verification to continue.
-
-An incomplete transfer requires uploading the **complete matching H2 OTA package** again. Successful prior OFF preparation can permit retry even when H2 no longer answers, including after an S3 restart. A generic maintenance pause alone does not permit an offline retry. If preparation cannot be validated, the panel may require a responding H2 and fresh OFF confirmation or service recovery.
-
-H2 cannot roll back an interrupted application write by itself. If retrying is blocked or H2 remains unavailable, contact the maintainer. Do not reset the network, erase settings or bypass verification to resume automation. See [Troubleshooting](troubleshooting.md#zigbee-controller-firmware-update-failed).
-
-## Updating both controllers
-
-Follow the release notes for required files, compatible versions and order. The H2 application OTA format requires a Main Controller that supports it, so update S3 first. Do not update H2 solely because a file is present when the release says it is unnecessary.
+<a id="pair-zigbee-devices-again"></a>
+When recovery or a legacy update requires pairing again, use [Zigbee assignment restoration](zigbee.md#restoring-assignments-after-maintenance). A [settings backup](backup-restore.md) can restore selected S3 configuration, but cannot recreate H2 pairing, firmware or security state.
 
 ## Version verification
 
-Compare the displayed version and build with the release notes:
+Read the installed versions before updating and compare them with the release notes afterwards:
 
-| Controller | Location |
+| Controller | Version information |
 | --- | --- |
 | Main Controller | **System → Main Controller firmware → Version / Build** |
 | Zigbee Controller | **Zigbee → Advanced → Firmware / Build** |
 
-A successful transfer alone does not confirm that new firmware is running or equipment is ready. For H2, also wait until update verification is complete.
+## Updating the Main Controller
+
+Open **System → Main Controller firmware**, directly or using the **Updates** shortcut.
+
+![Main Controller firmware section](../media/web-ui/firmware-settings.png)
+
+1. Select the matching S3 release file in **Main Controller OTA package (.bin)**.
+2. Select **Update Main Controller** and confirm.
+3. Wait for package validation and installation. **100% transfer is not installation completion.** Keep power connected; the new application is selected only after validation succeeds.
+4. Allow the automatic restart and reload, reconnecting if necessary.
+5. Verify the installed version, saved configuration and fresh measurements. Use the [equipment checks](safety.md#before-leaving-the-system-unattended) before unattended operation.
+
+### If the Main Controller update fails
+
+If S3 still starts normally, read the error, check the file and checksum, and retry over a reliable connection. **Update result unknown** means confirmation was lost: reconnect, read the running version and configuration before another upload. Avoid repeated power cycles while the result is unresolved.
+
+If normal access cannot be restored, use the [recovery guidance](#recovery-firmware).
+
+## Updating the Zigbee Controller
+
+Open **Zigbee → Advanced → Zigbee Controller · ESP32-H2**, or follow **Zigbee Controller updates** from System.
+
+![Zigbee page with the Advanced firmware section](../media/web-ui/zigbee-settings.png)
+
+### H2 update procedure
+
+1. Check that the required S3 update is installed, and keep the paired outlet or power strip powered.
+2. Select the matching **H2-OTA** release file in **Zigbee Controller OTA package (.bin)**. Older screenshots or firmware may show the former full-image field.
+3. Select **Update Zigbee Controller** and confirm. MycoBox closes pairing, confirms the necessary outputs OFF and saves preparation before programming. If preparation fails, programming is blocked and assignments are retained.
+4. Wait through transfer, H2 restart and verification. After writing, the panel checks the expected firmware, saved device/outputs and confirmed OFF. **Automation stays paused until verification finishes.**
+5. Verify the installed version and retained assignments, then check [equipment operation](safety.md#before-leaving-the-system-unattended).
+
+While this update is incomplete, new ON commands, assignment changes, pairing and network reset remain blocked, including after an S3 restart. An earlier network-reset pause remains separate and still requires [assignment restoration](zigbee.md#restoring-assignments-after-maintenance).
+
+### If an H2 update is interrupted
+
+Reconnect, reload **Zigbee** and read update status. If verification is waiting for the saved switch, restore its power/communication and allow it to continue; absence does not mean settings were erased.
+
+An incomplete transfer requires uploading the **complete matching H2 OTA package** again. Valid prior OFF preparation can permit retry even if H2 no longer answers or S3 has restarted. A generic maintenance pause does not authorize an offline retry. If preparation cannot be validated, the updater may require a responding H2 and fresh OFF confirmation.
+
+H2 cannot roll back an interrupted application write. If retry is blocked or H2 remains unavailable, seek [service recovery](#recovery-firmware). Do not reset the network, erase settings or bypass verification to resume automation.
 
 ## Recovery firmware
 
-Full recovery is a service procedure for a controller that cannot be restored through normal updates. A full S3 recovery image overwrites S3 settings. A full H2 recovery image replaces Zigbee data. Neither full image belongs in the current web OTA forms.
+Full recovery is a service operation when normal updates cannot restore a controller. Its data effects are listed [above](#what-happens-to-settings); it uses separate images and device-specific tooling.
 
-Normal current downloads are encrypted **S3-OTA** and **H2-OTA** packages. Recovery images and device-specific service tooling are separate. Contact the maintainer with the controller model, last known versions and exact error, and use the correct procedure for that device.
+Contact the maintainer with the controller model, last known versions and exact error. Use the procedure for that device rather than a generic ESP32 erase recipe. Afterwards, follow [initial setup](getting-started.md), [settings restoration](backup-restore.md#import-selected-settings) or [Zigbee restoration](zigbee.md#restoring-assignments-after-maintenance) as applicable, then verify equipment under supervision.
 
-After full S3 recovery, repeat initial setup and verify assignments. A compatible [settings backup](backup-restore.md) can restore selected S3 configuration but cannot recreate H2 pairing. After full H2 recovery, pair again and verify/recreate assignments. Supervise equipment until configuration and physical ON/OFF operation have been checked.
-
-## Related documentation
-
-[Getting Started](getting-started.md) · [Backup & restore](backup-restore.md) · [Zigbee Setup](zigbee.md) · [Troubleshooting](troubleshooting.md) · [Compatibility](compatibility.md) · [Safety](safety.md)
+<a id="related-documentation"></a>
+[Documentation](README.md) · [Troubleshooting](troubleshooting.md) · [Safety](safety.md)

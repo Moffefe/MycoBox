@@ -1,14 +1,10 @@
 # Backup and restore
 
-Open **System → Backup & restore** to export settings, download diagnostics or restore selected settings from a JSON file. These operations work locally, including through the controller's access point without internet.
-
-This guide applies to firmware that includes **Backup & restore**. If the section is absent, follow the [release notes and update instructions](firmware-update.md) to install a version that supports it. A feature described here may be newer than your installed firmware.
+Open **System → Backup & restore** to download settings or diagnostics and import selected configuration. Operations work locally, including through the access point without internet. If this section is absent, install [firmware that supports it](firmware-update.md) according to its release notes.
 
 ## Export settings
 
-Choose **Export settings**, then check your browser's downloads for `mycobox-settings.json`.
-
-The file contains:
+Choose **Export settings** and check browser downloads for `mycobox-settings.json`.
 
 | Section | Included settings |
 | --- | --- |
@@ -16,58 +12,53 @@ The file contains:
 | Control settings | Growing mode, humidification mode and light-schedule enable setting |
 | Cycle progress | Cycle start time |
 | System | Controller name, time mode and timezone |
-| Wi-Fi network | Saved network name |
+| Wi-Fi network | Saved SSID |
 | Administrator account | Login name |
-| Zigbee assignments | The four equipment assignments |
+| Zigbee assignments | All four equipment assignments |
 
-Export uses the current configuration, including active **unsaved schedule changes**. File information marks that state. Export does not save the running cycle on the controller; use **Save cycle** when you want those edits to survive its restart.
+The file captures current configuration, including active **unsaved schedule edits**, marked in its information. Export does not save those edits on the controller; use **Save cycle** to retain them after restart.
 
-Saved passwords, Zigbee network keys, firmware and the learned Adaptive model are not included. Import does not restore controller security or recover an interrupted firmware update. The file cannot recreate the Zigbee network or pair a device. Keep it privately: network names, controller identity and device assignments can still identify your installation.
+Settings omit Zigbee network keys, firmware and the learned Adaptive model. Import does not restore controller security or recover an interrupted update.
 
 ## Export diagnostics
 
-Choose **Export diagnostics** and check for `mycobox-diagnostics.zip`. The browser creates the ZIP locally from one snapshot of controller data; it does not need an online archive service.
+Choose **Export diagnostics** to download `mycobox-diagnostics.zip`. The browser creates it locally from one controller snapshot.
 
 | File | Contents |
 | --- | --- |
-| `manifest.json` | Snapshot information, retained range, history limits and current warnings |
+| `manifest.json` | Source information, retained ranges, history limits and current warnings |
 | `measurements.csv` | Retained historical measurements and recent control samples |
-| `events.csv` | Retained events for Humidifier, Fan, Light, Heat and the sensor |
+| `events.csv` | Retained Humidifier, Fan, Light, Heat and sensor events |
 | `report.txt` | System report |
 
-The archive contains the data currently retained in memory, rather than a permanent record of the entire growing cycle. Restart clears this history, and the oldest entries are replaced when buffers fill. A shorter history may therefore be expected. The export includes no saved passwords; review device and network information before sharing it.
+This is a snapshot of currently retained memory, not a permanent growing-cycle record. Restart clears history; full buffers replace their oldest records. A diagnostic ZIP cannot be imported as settings.
 
-A diagnostic ZIP is not a settings backup and cannot be selected for **Import settings**.
+Neither export includes saved passwords. Both can reveal controller identity, network/account names, device addresses or configuration: store them privately and review before sharing.
 
 ## Import selected settings
 
-Keep connected equipment supervised while applying configuration. Changes can affect the running system as each step succeeds, before the final restart.
+Keep equipment supervised: each successful step can affect operation before the final restart.
 
-1. Choose **Import settings** and select a supported MycoBox settings JSON, up to **32 KiB**.
-2. Review the source controller, firmware and export information. The dialog identifies a backup from another controller or one containing an unsaved profile.
-3. Choose the sections to replace. **Growing profile** and **Control settings** are selected by default. **Cycle progress**, **System**, **Wi-Fi network**, **Administrator account** and **Zigbee assignments** are separate choices. Unselected sections keep their local values.
-4. Supply any required passwords. A new Wi-Fi network needs its password or an explicit choice that it is open. For the same saved network, a blank password keeps this controller's current password. The administrator password can be kept or replaced.
-5. If this controller has unsaved cycle changes, save them before continuing. **Save current cycle and continue** explicitly saves the current cycle and returns to validation; it does not confirm the import. You can cancel instead.
-6. Choose **Review selected settings**. Preview and server validation do not write the imported settings.
-7. After validation succeeds, select **Import these sections and restart the controller**, then **Import and restart**.
-8. Wait for the result, reconnect after restart and read back the settings. Network, controller-name or account changes may require a new address or login.
+1. Choose **Import settings** and select a supported MycoBox settings JSON, up to **32 KiB**. Review its source, firmware and export information.
+2. Select sections from the settings table above. **Growing profile** and **Control settings** are selected by default; others require separate selection. Unselected sections keep local values.
+3. Supply required passwords. A new SSID needs a password or an explicit open-network choice; a blank password for the same saved SSID keeps this controller's existing password. Keep or replace the administrator password separately.
+4. Save any unsaved cycle on the destination first. **Save current cycle and continue** explicitly saves it and returns to validation, without confirming import. You can cancel instead.
+5. Choose **Review selected settings**. Preview and validation do not write imported settings.
+6. After validation, select **Import these sections and restart the controller**, then **Import and restart**.
+7. Wait for the result, reconnect and read back configuration. Changed network, controller name or account may require another address or login.
 
-All selected sections are written after confirmation, even if a selected value already matches. Importing **System** restores the time mode and timezone while keeping the current clock. Importing **Cycle progress** separately restores the cycle start time; leave it unselected when reusing a profile without copying its progress.
+Confirmation writes all selected sections, even values already matching. **System** restores time mode and timezone while keeping the current clock. **Cycle progress** restores the cycle start time; leave it unselected when reusing a profile without its progress.
 
 ### Zigbee assignments
 
-Importing assignments requires the matching switching device to be paired already, with matching device identity and outputs. MycoBox validates the complete assignment set and requires the relevant outputs to confirm OFF before saving it.
+The matching switching device must already be paired with matching identity and outputs. Import validates and saves the complete assignment set together, requiring affected outputs to confirm OFF. It cannot recreate the Zigbee network or pairing; use [Zigbee setup](zigbee.md) first for a replacement controller.
 
-A settings file does not restore pairing or the H2 network. Pair and identify the intended device first when setting up a replacement controller. An unfinished H2 update blocks import; exports remain available. Follow [Zigbee setup](zigbee.md) and [Firmware updates](firmware-update.md) to resolve that state.
+An unfinished H2 update blocks import while exports remain available. Resolve it through [Firmware updates](firmware-update.md).
 
 ## If import stops or the result is unknown
 
-Import applies sections in steps. It is **not an all-or-nothing restore**: a failure stops later steps, and completed writes remain applied. There is no automatic rollback. The dialog shows confirmed saves, the current result and remaining operations.
+A failed step stops later steps; completed writes stay applied, without automatic rollback. The dialog lists confirmed saves, the current result and remaining operations. Read current configuration before reviewing another import. Use **Read current settings** when offered, or reconnect and reload if instructed after an uncertain result.
 
-If the outcome is uncertain, reconnect and read the current configuration before retrying. Use **Read current settings** when offered, or reload the controller page if instructed. Review the sections again rather than assuming that nothing changed.
+Successful writes to every selected section trigger one restart request. Earlier failure does not restart automatically. If only restart failed or was unconfirmed, **Retry restart** sends that request alone, without repeating writes. If restart already occurred, reconnect and reload instead.
 
-After every selected section saves successfully, import requests one restart. An earlier failed step does not trigger an automatic restart. If all settings saved but the restart was rejected or its result is unknown, **Retry restart** sends only the restart request; it does not repeat settings writes. If the controller has already restarted, reconnect and reload instead.
-
-After reconnecting, check local time, the active cycle, assignments and physical equipment behavior before relying on automatic operation.
-
-[Web interface](web-interface.md) · [Firmware updates](firmware-update.md) · [Zigbee setup](zigbee.md) · [Troubleshooting](troubleshooting.md) · [Documentation](README.md)
+After reconnecting, check configuration and physical operation using the [unattended-operation checklist](safety.md#before-leaving-the-system-unattended).

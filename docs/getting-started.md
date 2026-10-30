@@ -87,109 +87,58 @@ A working DS3231 RTC with a valid saved time supplies the offline clock. After a
 
 ## 8. Check the sensors
 
-Open **Measurements** and confirm that the SHT41 provides reasonable **Temperature** and **Humidity** readings. Overview also shows these values and how recently they were measured.
-
-![Temperature, humidity and activity in Measurements](../media/web-ui/measurements.png)
-
-The current sensor configuration measures temperature and relative humidity. It has no CO₂ reading or altitude setting.
-
-The interface distinguishes **Sensor heater active**, **Sensor cooling after heating**, possible sensor wetting and a communication error. Ambient readings pause during sensor heating and cooling. An old reading is not presented as a fresh measurement. Possible wetting is an observation, not proof of condensation. Correct persistent sensor errors before enabling measurement-dependent control.
-
-Measurements contains up to 288 five-minute history samples, approximately 24 hours of continuous operation. History is held in memory and begins again after a restart. See [Compatibility](compatibility.md#environmental-sensors) for the supported sensor and its limitations.
+Open **Measurements** and confirm reasonable, fresh temperature and humidity readings before enabling measurement-dependent control. Read [Measurements and sensor states](web-interface.md#measurements) for the history, heating/cooling statuses and interpretation of missing data. Resolve persistent errors through [Troubleshooting](troubleshooting.md).
 
 ## 9. Configure Zigbee devices
 
-Open **Zigbee** from the main navigation.
-
-MycoBox pairs with **one compatible switching device**: a smart outlet or a power strip with independently controlled outputs. To use all four control functions, the device needs at least four compatible independent outputs.
-
-1. Choose **Start pairing**, then put the switching device into its manufacturer's pairing mode.
-2. Wait for it to be recognized. The pairing window normally lasts 120 seconds; **Cancel pairing** closes it early.
-3. Use **Test output** to identify the detected outputs. Test both ON and OFF with a suitable load and verify the physical outlet.
-4. Under **Assignments**, select and save an output for each required role: **Humidifier**, **Fan**, **Light** or **Heat**.
-
-Each role needs a different output from the paired device. Do not infer output numbers from the physical outlet labels, and leave unused roles unassigned. Changing an assignment requires the old and new outputs to confirm OFF.
-
-After a network reset, maintenance can keep **Turn ON** disabled until a new assignment is saved. Restoring an assignment can resume automation immediately, so keep equipment isolated while recovering an unknown mapping. Follow [maintenance recovery](zigbee.md#restoring-assignments-after-maintenance) rather than repeating the initial test steps above.
-
-A compatible H2 application OTA update preserves pairing and assignments. Update the Main Controller to firmware supporting that package first, then follow the [firmware guide](firmware-update.md). Wait for post-update verification before relying on automation.
+Follow [Zigbee setup](zigbee.md) to pair the switching device, identify its physical outputs and save assignments for the functions you need. Keep controlled equipment isolated during output identification; saving an assignment can enable automation. Use the guide's separate maintenance recovery procedure if the network has already been reset.
 
 ## 10. Configure environmental control
 
-Open **Cycle & automation**.
-
-![Cycle and automation settings](../media/web-ui/cultivation-cycle.png)
-
-Choose the modes that fit your setup:
-
-| Setting | Behavior |
-| --- | --- |
-| **Fruiting** | Fan follows its timing, Heat uses the active scheduled temperature, and Light follows its daily window when enabled. |
-| **Incubation** | Fan and Light are set to OFF. Heat uses fixed incubation thresholds. The selected humidification mode is retained. |
-| **Timer** humidification | Uses configured ON and OFF periods; it does not regulate RH to the humidity target. |
-| **Adaptive** humidification | Uses fresh humidity readings and the active target to adjust humidifier pulses. Its response must be observed in your enclosure. |
-
-Start with a simple daily schedule. One day with a single time point at **00:00** is enough for unchanged settings. A cycle can contain up to **32 days**, with up to **four time points per day**. Each day also has a light window; its ON hour must be earlier than its OFF hour.
-
-Edits applied in the cycle editor become active in memory. Choose **Save cycle** to retain them after a restart. Mode changes are saved separately when changed. **Restart cycle** changes the cycle's start time and also needs a subsequent **Save cycle**.
-
-Adaptive V1.4 waits at least five minutes between starts and limits a single run to 120 seconds. Its first run after a restart also waits for five minutes of controller uptime. It learns from the enclosure's response; it does not need a chamber-volume or humidifier-output setting. Timer mode keeps its own configured ON/OFF timing.
+Open **Cycle & automation**, choose the growing and humidification modes, and start with a simple daily schedule. Follow [Cycle and automation](web-interface.md#cycle-and-automation) for mode behavior, Adaptive control limits and the editor. Choose **Save cycle** after applying schedule edits so they survive a restart.
 
 ## 11. Test every controlled device
 
-Before relying on automation, check each saved assignment against the connected equipment:
-
-| Role | Expected equipment |
-| --- | --- |
-| Humidifier | Humidifier |
-| Fan | Ventilation fan |
-| Light | Light |
-| Heat | Heating mat or other suitable heating equipment |
-
-Watch the actual equipment as well as the panel. A confirmed output state does not prove that air is moving, mist is being produced or heat is being delivered. Automation can change an assigned output according to its schedule, so do initial output identification before assigning equipment.
-
-Check electrical ratings, behavior after power is restored and safe operation around moisture. See [Safety](safety.md).
+Check that every saved assignment operates the intended equipment in both ON and OFF states. Watch the actual device as well as the panel: output confirmation does not prove physical airflow, mist or heat. Check electrical ratings, behavior after power restoration and moisture precautions in [Safety](safety.md).
 
 ## 12. Observe the environment
 
-Use **Overview** to check the Growbox diagram, measurement freshness, active cycle and assignments. Use **Measurements** to compare temperature and RH with activity tracks, and **Activity log** to investigate recorded control events.
-
-Confirm that the physical equipment responds correctly and conditions move in the intended direction. Observe the enclosure through its scheduled transitions before unattended operation.
-
-Local warnings describe persistent problems. They are informational and do not replace independent protection or regular checks.
+Use [Overview](web-interface.md#overview-and-growbox), Measurements and Activity log to observe the enclosure through scheduled transitions. Confirm the active cycle day and modes, physical equipment response and environmental changes before unattended operation. Local warnings do not replace independent protection or regular checks.
 
 ## 13. Save a settings backup
 
-Open **System → Backup & restore → Export settings** and keep the downloaded JSON after confirming your setup. It contains the growing profile and configuration, including active unsaved schedule edits, but no saved passwords, firmware or Zigbee network keys. It does not replace **Save cycle** on the controller.
-
-**Import settings** lets you choose sections to restore or reuse on another controller. Zigbee assignments require the matching device to be paired already; a settings file cannot recreate pairing. See [Backup and restore](backup-restore.md) before importing. If the section is absent, install firmware supporting Backup & restore according to the release instructions.
+After checking the setup, use **System → Backup & restore → Export settings** to keep a copy. Read [Backup and restore](backup-restore.md) for file contents, supported firmware and selective import. Exporting a copy does not replace **Save cycle** on the controller.
 
 ## More than one controller
 
-The **Cluster** page discovers other MycoBox controllers on the same local network. It can copy control modes, copy a complete cycle or restart the listed recipients. Each action shows the recipients and replacement scope before confirmation. Recipients need the same administrator login and password; Zigbee assignments remain local to each controller. See [Group actions](web-interface.md#cluster) before using this with connected equipment.
+See [Cluster](web-interface.md#cluster) for controller discovery, shared-account requirements and confirmed group operations.
 
 ## Network recovery
 
 If the saved Wi-Fi network cannot be reached, allow several minutes for connection attempts, then look for `<controller-name>_AP`.
 
-Connect with password `12345678`, use the IP shown on the controller's **Network** display and correct the settings in **System → Network**. After **Save & restart**, reconnect your browser device to the chosen network.
+Reconnect using [AP access](#2-connect-to-the-mycobox-access-point), then correct the saved network through [Wi-Fi configuration](#4-configure-wi-fi).
 
 If the AP does not appear or the interface remains unavailable, see [Troubleshooting](troubleshooting.md).
 
 ## Factory reset
 
-A Main Controller factory reset clears its saved configuration and is intended for recovery when normal configuration is no longer possible. See [Troubleshooting](troubleshooting.md) for the procedure and its effects.
+A **Main Controller factory reset** clears saved S3 configuration, including network, account, time, cycle and output assignments. Use it only when normal configuration recovery is not possible. Make connected equipment safe independently first.
 
-This is different from **Zigbee → Advanced → Reset network**, which removes the paired Zigbee device and clears output assignments. Do not reset a working installation merely to change its schedule or Wi-Fi settings.
+1. Restart the Main Controller normally, without holding BOOT during power-on or reset.
+2. During the approximately seven-second countdown labelled **BOOT = Factory reset**, press the **Main Controller's BOOT** button.
+3. Release it when the factory-reset notice appears and allow the reset and restart to finish.
+4. Repeat initial setup using the factory access details above.
 
-## Before unattended operation
+Holding BOOT before firmware starts can select programming mode instead. Do not confuse this button with the Zigbee Controller's BOOT button.
 
-- Confirm reasonable, fresh temperature and RH readings.
-- Check the local time and timezone.
-- Identify and test every used output and assignment.
-- Save the cycle and verify its active day and modes.
-- Observe Fan, Humidifier, Light and Heat through their expected transitions.
-- Provide suitable independent protection for heating and other critical equipment.
+The reset does **not** reset the H2 Zigbee network. The device may remain paired, but S3 output assignments must be restored and verified. A compatible [settings backup](backup-restore.md) can restore selected configuration and matching assignments; it cannot recreate H2 pairing. Check Zigbee before deciding to pair again.
+
+For the separate operation that removes the paired device, see [Zigbee network reset](zigbee.md#forgetting-all-zigbee-devices). Do not reset a working installation merely to change its schedule or Wi-Fi settings.
+
+<a id="before-unattended-operation"></a>
+
+Check the [equipment and observation steps](#11-test-every-controlled-device) before returning to unattended operation after a reset or configuration change.
 
 ## Next steps
 

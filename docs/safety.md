@@ -1,385 +1,107 @@
 # Safety
 
-MycoBox controls environmental equipment that may operate automatically and without direct supervision.
+MycoBox can start environmental equipment automatically. Choose hardware and environmental targets appropriate to the installation, and verify physical operation before relying on control.
 
-Before using the system, make sure the connected hardware is suitable for the intended environment and installed safely.
+<a id="high-humidity-environments"></a>
 
----
+## Electrical safety
 
-# Electrical safety
+Follow the voltage, current, power and operating limits of both the switching device and every connected load. Do not use damaged plugs, cables, connectors or enclosures.
 
-MycoBox may control mains-powered equipment through one compatible paired Zigbee outlet or power strip. Separate detected outputs can be assigned to **Humidifier**, **Fan**, **Light** and **Heat**.
+Keep the controller, mains connections and equipment dry unless specifically rated for the conditions. Protect them from reservoirs, humidifier outlets, direct mist, wet surfaces and condensation paths. Equipment intended for ordinary indoor use may be unsuitable for a continuously humid enclosure.
 
-Typical connected equipment may include:
+## Heating equipment
 
-* humidifiers,
-* fans,
-* heaters,
-* heating mats,
-* lighting,
-* other environmental-control devices.
+Use heating equipment suitable for the enclosure, with independent over-temperature protection wherever practical. A configuration mistake, stuck relay or communication failure can leave a heater in an unintended state; MycoBox must not be its only protection.
 
-Always follow the electrical ratings and installation requirements of both the switching device and the connected equipment.
+Growing modes change heating behavior, and Incubation also turns Fan and Light OFF. Review [mode behavior](web-interface.md#choose-the-modes) before changing it. Software requests to stop heating when readings are unusable do not guarantee physical OFF or provide frost protection.
 
-Do not exceed:
+## Humidifiers
 
-* maximum voltage,
-* maximum current,
-* maximum power,
-* manufacturer operating limits.
+Mist output can change a small enclosure rapidly, and RH may continue rising after the humidifier stops. Observe both the response and the overshoot with the actual equipment. Keep mist away from sensors and electrical parts.
 
-Do not use damaged plugs, cables, connectors, enclosures or switching devices.
+Retain the equipment's independent dry-run and water-level protection. MycoBox's timing and Adaptive limits do not guarantee a humidity band or prevent every overshoot; see [humidification modes](web-interface.md#choose-the-modes).
 
----
+## Fans and moving equipment
 
-# High-humidity environments
+Fans may start automatically. Keep fingers, loose cables, fabric, plants and substrate clear of moving parts. Safely disconnect or isolate equipment before servicing it; changing a software setting is not electrical isolation.
 
-Some MycoBox applications may operate in environments with elevated humidity.
+## Sensor placement
 
-Electrical equipment should not be exposed to condensation, standing water or direct mist unless it is specifically designed for those conditions.
+Place the sensor where it represents the space occupied by the monitored plants, fungi, animals or other subjects. Avoid direct mist, nearby heaters, strong local fan airflow, wet surfaces and areas where condensation regularly forms. Otherwise control can respond to a local extreme rather than the enclosure as a whole.
 
-Keep mains-voltage devices and connections away from:
+Compare readings with a suitable reference in prolonged high humidity. Sensor-heater operation does not guarantee accuracy at saturation or compensate for poor placement. [Sensor states](web-interface.md#sensor-heating-and-cooling) explain planned measurement pauses.
 
-* water reservoirs,
-* humidifier outlets,
-* direct mist,
-* condensation paths,
-* wet surfaces.
+<a id="zigbee-actuator-testing"></a>
 
-Position the controller and power connections where they remain dry during normal operation.
+<a id="growbox-warnings-and-activity-history"></a>
 
-Do not assume that equipment suitable for normal indoor use is also suitable for a continuously humid enclosure.
+## Control and monitoring limits
 
----
+An ON/OFF acknowledgement confirms the switching output, not physical airflow, mist, heat delivery or continued relay operation. **Unknown** is not proof of OFF. Missing activity history is not proof that equipment was stopped, and automation may change an output after a manual test.
 
-# Heating equipment
+Growbox warnings are informational. Delayed or paused assessment, lost communication and cleared history can leave a hazardous condition without a warning. The interface is not an independent thermostat, smoke alarm, leak alarm or emergency shutdown system. See [warnings and status](web-interface.md#overview-and-growbox).
 
-Heating devices require particular care because incorrect configuration or failed switching equipment can create unsafe temperatures.
+Fan timing does not prove a safe atmosphere. Provide independent monitoring and protection for any parameter essential to the installation.
 
-Before enabling automatic heating:
+<a id="automatic-operation"></a>
 
-1. Verify the paired Zigbee device.
-2. Verify the detected output assigned to **Heat**.
-3. Test manual ON/OFF control.
-4. Confirm that the heater is suitable for the intended environment.
-5. Observe the system while testing automatic control.
+<a id="firmware-updates"></a>
 
-Whenever practical, use heating equipment with its own independent over-temperature protection.
+<a id="after-configuration-changes"></a>
 
-MycoBox should not be the only protection against unsafe heating conditions.
+<a id="main-controller-and-zigbee-resets"></a>
 
-In **Fruiting**, heating uses the active scheduled temperature: ON below that value and OFF above it by 0.3 °C. **Incubation** uses a fixed 23.5–23.8 °C range and turns Fan and Light OFF. Confirm that these behaviors suit the installation before changing growing mode.
+<a id="related-documentation"></a>
 
-Heat requests OFF when no usable temperature reading is available or the reading is below 5 °C. This does not make MycoBox frost protection: lost communication, a stuck outlet or failed equipment can prevent a requested state from taking physical effect.
+## Configuration and maintenance
 
----
+Changes to targets, schedules, modes or assignments can operate connected equipment immediately. Import can leave partially applied settings. Firmware work and resets can interrupt automation or change retained configuration. Keep loads safe and supervised throughout these operations, then use the checklist below.
 
-# Humidifiers
+Use the relevant procedure rather than bypassing a refused operation:
 
-A humidifier can change conditions rapidly inside a small enclosure.
+- [Zigbee setup](zigbee.md) for output identification, assignment changes and network reset.
+- [Firmware updates](firmware-update.md) for OTA, verification and recovery.
+- [Backup and restore](backup-restore.md) for selected imports and partial results.
+- [Main Controller reset](getting-started.md#factory-reset) for its separate recovery procedure.
 
-Before unattended operation:
+A required OFF confirmation or maintenance pause is not evidence that an unresponsive load is safe. Isolate the load when needed; do not erase or reset settings to bypass a block.
 
-* verify the correct **Humidifier** assignment,
-* confirm that the humidifier switches on and off correctly,
-* observe how humidity continues to change after the humidifier stops,
-* avoid directing mist directly at sensors or electrical equipment.
+<a id="loss-of-wi-fi-or-internet-access"></a>
 
-A powerful humidifier in a small enclosure may cause significant humidity overshoot.
+<a id="time-dependent-control"></a>
 
-Sensor placement and humidifier position can strongly affect control behavior.
+## Connectivity and time
 
-**Timer** runs the configured ON/OFF periods; the RH target does not regulate its output. **Adaptive** uses measurements and controlled pulses, with at least five minutes between pulse starts and at most 120 seconds per run. These limits do not guarantee a particular humidity band or prevent all overshoot. The learned response is held in memory and is learned again after a restart.
+Automation runs locally and can continue without internet or an open browser. A lost Wi-Fi connection can still prevent you from checking or changing it, so browser access must not be the only safety mechanism. Inspect the installation locally when necessary.
 
-Adaptive stops an active pulse when usable ambient readings become unavailable. This behavior and the sensor's heating/cooling pauses should be checked with the actual enclosure and humidifier. Keep any independent dry-run or water-level protection supplied with the equipment; MycoBox has no water-level or leak sensor in the current configuration.
+Incorrect clock or timezone settings can trigger scheduled equipment at unexpected times. Check time after configuration, battery or power problems; use [time setup](getting-started.md#7-configure-time-and-localization) for the procedure.
 
----
+<a id="safety-critical-applications"></a>
 
-# Fans and moving equipment
+<a id="animals-and-living-organisms"></a>
 
-Fans and other equipment containing moving parts may start automatically.
+## Suitable applications
 
-Keep:
+MycoBox supports general environmental automation such as growing enclosures, propagation, mushroom cultivation, terraria and experiments. It cannot determine whether targets or equipment suit a species or application.
 
-* fingers,
-* loose cables,
-* fabric,
-* plants,
-* substrate,
-* other objects
+It is not designed or certified as a safety-critical system. Never rely on it as the sole control or protection where failure could cause injury, fire, dangerous overheating, hazardous atmospheric conditions or loss of life support. Animal enclosures in particular need independent safeguards for critical conditions.
 
-away from moving parts.
+Use appropriate independent thermostats, thermal cut-offs, over-current protection, equipment safety limits and separate monitoring or alarms.
 
-Do not perform maintenance on connected equipment while automatic control is enabled.
+## Before leaving the system unattended
 
-Disconnect or safely isolate equipment before working on moving components.
+Use this checklist after installing or servicing equipment, changing configuration, importing settings, updating firmware or resetting either controller:
 
----
+- [ ] Sensor values are reasonable and representative; current readings are usable.
+- [ ] Controller time, timezone, modes, targets and active schedule are correct.
+- [ ] The intended device and physical outputs have been identified and tested using [Zigbee setup](zigbee.md).
+- [ ] Saved assignments operate the intended loads, and required maintenance verification has finished.
+- [ ] Heating turns OFF correctly; humidification, ventilation and lighting behave as intended through scheduled transitions.
+- [ ] Equipment behavior after power restoration is understood.
+- [ ] Electrical equipment stays dry and all loads remain within ratings.
+- [ ] Moving parts are guarded and appropriate independent protection is present.
 
-# Zigbee actuator testing
+## In case of unexpected behavior
 
-Zigbee ON/OFF tests physically switch connected equipment.
-
-Before pressing **Turn ON**, confirm:
-
-* which Zigbee device is paired,
-* which detected output is selected,
-* what equipment is connected to that outlet.
-
-For multi-outlet Zigbee devices, do not assume that endpoint numbering matches physical outlet numbering.
-
-Test each detected output individually. The interface lists discovered outputs; endpoint numbers need not be consecutive and may not match the physical outlet labels.
-
-Whenever possible, identify endpoints using a harmless low-power load before connecting higher-power equipment.
-
-A confirmed ON/OFF result means the controller received the expected output-state confirmation. It does not prove that the connected heater, fan or humidifier is physically operating or that a relay will remain in that state. **Unknown** is not confirmation of OFF. The quick test shows its last command result; automation may change the output again.
-
-Changing an assignment, resetting Zigbee or preparing an H2 update requires confirmed OFF states. A failure can block the operation. Do not bypass that condition by assuming an unresponsive outlet is safe; isolate the load if necessary.
-
-See:
-
-[Zigbee Setup](zigbee.md)
-
----
-
-# Automatic operation
-
-Do not immediately leave a new or modified installation unattended.
-
-After:
-
-* installing equipment,
-* changing Zigbee assignments,
-* changing environmental-control settings,
-* changing schedules,
-* changing environmental profiles,
-* updating firmware,
-* performing a Main Controller factory reset,
-* resetting the Zigbee network,
-
-observe the system and verify that all connected devices behave as expected.
-
-Automatic operation should only be relied on after the complete control path has been tested.
-
----
-
-# Firmware updates
-
-Firmware updates temporarily interrupt normal environmental control.
-
-Do not disconnect power while firmware is being updated.
-
-An interrupted update may leave one of the controllers unable to start normally.
-
-Current ESP32-H2 web OTA writes an application package and preserves compatible Zigbee pairing and assignments. Install the required S3 update first. Full H2 recovery replaces Zigbee data and is a separate service procedure.
-
-For H2 application OTA, keep the paired switch powered and wait for firmware, device/output and confirmed OFF verification. New ON commands remain blocked until verification completes. An interrupted update requires retrying the complete matching OTA package or service recovery; do not bypass the pause by resetting or erasing settings. Verify assignments and physical operation before unattended use. Pairing again is required after full H2 recovery or an older full-image update.
-
-See:
-
-[Firmware Updates](firmware-update.md)
-
----
-
-# After configuration changes
-
-After changing important settings, verify:
-
-* sensor readings,
-* system time,
-* environmental targets,
-* schedules,
-* environmental profiles,
-* Zigbee assignments,
-* actuator behavior.
-
-A configuration that appears correct in the web interface should still be physically verified before unattended operation.
-
-Importing settings can change automation immediately, before the final restart. It can also stop after partially applying the selected sections. Review confirmed changes and the current configuration before retrying, then verify the equipment. See [Backup & restore](backup-restore.md).
-
----
-
-# Sensor placement
-
-Automatic control depends on representative measurements.
-
-Avoid placing environmental sensors:
-
-* directly in humidifier mist,
-* immediately next to a heater,
-* directly in strong fan airflow,
-* against wet surfaces,
-* where condensation regularly forms.
-
-Poor sensor placement can cause the controller to react to local conditions that do not represent the overall controlled environment.
-
-Where possible, place sensors where they measure conditions representative of the space occupied by the plants, fungi, animals or other monitored subjects.
-
-The current SHT41 measures temperature and relative humidity. It does not measure CO₂, air quality, airflow, water level or whether a load is operating. Fan timing is not evidence that a safe atmosphere has been achieved.
-
-The SHT41 has an automatic heater operation followed by a cooling interval. The interface shows heating or cooling while ambient measurements are paused. These operations are intended to manage sensor exposure; they do not guarantee accuracy at saturation or remove the need to check placement and compare readings with a suitable reference. Persistent high humidity and condensation require observation with the actual hardware.
-
----
-
-# Growbox warnings and activity history
-
-Growbox evaluates conditions locally even when the browser is closed. Its warnings are informational, not an independent thermostat, smoke alarm, leak alarm or emergency shutdown system.
-
-Temperature and RH deviation warnings require 30 minutes of observed trouble. Unavailable measurements and a sustained lack of response reported by Adaptive humidification require 15 minutes. Recovery must remain stable for five minutes. A brief hazardous condition can therefore occur without a warning.
-
-Assessment can pause during sensor heating/cooling, maintenance or missing measurements. **Assessment paused** and **Previously observed** do not describe a current all-clear. Warning observations are in memory and start again after a restart; there is no retained alarm history or remote notification service.
-
-Growbox animations and chart activity tracks show recent confirmed output states or recorded commands. They do not independently measure heat, mist or airflow. Missing history, an uncertain state or an interval without a retained end must not be treated as proof that equipment was OFF.
-
----
-
-# Loss of Wi-Fi or internet access
-
-Normal environmental-control logic runs locally on MycoBox.
-
-Loss of internet access does not stop normal local automation.
-
-Loss of Wi-Fi connectivity may prevent access to the web interface until the network connection is restored or MycoBox returns to Access Point mode.
-
-Important installations should therefore not rely solely on remote browser access as a safety mechanism.
-
-If network access is lost, verify the installation locally when necessary.
-
----
-
-# Time-dependent control
-
-Incorrect time or timezone configuration can cause scheduled equipment to operate at unexpected times.
-
-After configuring or changing time settings, verify:
-
-* local controller time,
-* timezone,
-* lighting schedules,
-* environmental profiles,
-* other scheduled functions.
-
-Incorrect time settings may affect control even when the rest of the controller is functioning normally.
-
----
-
-# Suitable applications
-
-MycoBox is intended for general environmental-control and automation applications.
-
-Examples include:
-
-* indoor growing,
-* propagation environments,
-* mushroom cultivation,
-* terraria and vivaria,
-* environmental experiments.
-
-The user is responsible for determining whether MycoBox and the connected equipment are suitable for a specific application.
-
----
-
-# Safety-critical applications
-
-MycoBox is not designed or certified as a safety-critical control system.
-
-Do not rely on it as the sole control or protection system for applications where failure could cause:
-
-* serious injury,
-* fire,
-* dangerous overheating,
-* hazardous atmospheric conditions,
-* loss of critical life-support functions.
-
-Where failure could create a dangerous condition, use independent safety mechanisms appropriate for the application.
-
-Examples may include:
-
-* independent thermostats,
-* thermal cut-offs,
-* over-current protection,
-* equipment with built-in safety limits,
-* separate monitoring or alarm systems.
-
----
-
-# Animals and living organisms
-
-When MycoBox is used with animals, plants, fungi or other living organisms, environmental requirements should be verified independently.
-
-The controller executes the configured control logic but cannot determine whether the selected environmental targets are appropriate for a particular species or application.
-
-Incorrect targets, schedules, sensor placement or actuator assignments can create unsuitable conditions even when MycoBox itself is functioning normally.
-
-For animal enclosures in particular, use independent safeguards for critical parameters such as temperature where appropriate.
-
----
-
-# Main Controller and Zigbee resets
-
-MycoBox contains two independent controllers.
-
-A Main Controller factory reset and a Zigbee network reset are different operations.
-
-After either operation, verify:
-
-* network configuration,
-* environmental-control settings,
-* Zigbee device availability,
-* Zigbee assignments,
-* actuator endpoints,
-* automatic equipment behavior.
-
-Resetting the Zigbee network removes the paired device and clears assignments. Pair again, save the required assignments and test outputs before returning to automatic operation. A Main Controller factory reset is a separate operation; follow its instructions rather than assuming it also resets H2.
-
-See:
-
-[Troubleshooting](troubleshooting.md)
-
----
-
-# Before leaving the system unattended
-
-Verify:
-
-```text
-[ ] Sensors report reasonable values
-[ ] System time and timezone are correct
-[ ] The paired Zigbee device is correctly identified
-[ ] Detected outputs and assignments have been tested
-[ ] Heating switches off correctly
-[ ] Humidification behaves as expected
-[ ] Fans operate safely
-[ ] Lighting follows the intended schedule
-[ ] Electrical equipment remains dry
-[ ] Connected loads are within device ratings
-[ ] Independent protection is present where required
-```
-
----
-
-# In case of unexpected behavior
-
-If the system behaves unexpectedly:
-
-1. Disable or disconnect the affected equipment if it can be done safely.
-2. Do not continue unattended operation.
-3. Check sensor readings.
-4. Check Zigbee assignments and detected outputs.
-5. Check control settings and schedules.
-6. Review controller logs.
-7. Restart equipment only after identifying the likely cause.
-
-See:
-
-[Troubleshooting](troubleshooting.md)
-
----
-
-# Related documentation
-
-* [Getting Started](getting-started.md)
-* [Hardware Overview](hardware-overview.md)
-* [Zigbee Setup](zigbee.md)
-* [Firmware Updates](firmware-update.md)
-* [Troubleshooting](troubleshooting.md)
+Safely disconnect or isolate affected equipment and stop unattended operation. Check measurements, assignments, settings and logs using [Troubleshooting](troubleshooting.md). Resume only after the cause and physical behavior have been checked.

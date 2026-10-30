@@ -1,29 +1,24 @@
 # MycoBox documentation
 
-Use these guides to set up MycoBox, understand the local interface and maintain connected equipment.
+Start with [Getting started](getting-started.md) for first access, then choose a guide by task.
 
-| What you want to do | Guide |
+| Topic | Main guide |
 | --- | --- |
-| Start a new controller and connect to Wi-Fi | [Getting started](getting-started.md) |
-| Understand the screens, measurements and cycle editor | [Web interface](web-interface.md) |
-| Check sensors, switching devices and current limits | [Compatibility](compatibility.md) |
-| Understand the controller hardware | [Hardware overview](hardware-overview.md) |
-| Pair a device, assign outputs or reset Zigbee | [Zigbee setup](zigbee.md) |
-| Choose and install firmware | [Firmware updates](firmware-update.md) |
-| Export settings or diagnostics and restore selected settings | [Backup and restore](backup-restore.md) |
-| Investigate an error or unexpected result | [Troubleshooting](troubleshooting.md) |
-| Review equipment and environmental precautions | [Safety](safety.md) |
-| Protect the local interface or report a vulnerability | [Security policy](../SECURITY.md) |
-| See planned extensions | [Roadmap](roadmap.md) |
+| First AP connection, login, Wi-Fi, name, clock and S3 factory reset | [Getting started](getting-started.md) |
+| Growbox states/warnings, measurements and sensor statuses, modes, cycle editor, activity log and controller groups | [Web interface](web-interface.md) |
+| Supported sensors, switching devices and current limits | [Compatibility](compatibility.md) |
+| Controller components and functional connections | [Hardware overview](hardware-overview.md) |
+| Pairing, physical output tests, assignments and Zigbee network reset/recovery | [Zigbee setup](zigbee.md) |
+| Firmware selection, update order, installation and recovery | [Firmware updates](firmware-update.md) |
+| Settings copies, selective import and diagnostic archives | [Backup and restore](backup-restore.md) |
+| Symptoms, checks and recovery links | [Troubleshooting](troubleshooting.md) |
+| Equipment and environmental precautions | [Safety](safety.md) |
+| Local access protection and vulnerability reports | [Security policy](../SECURITY.md) |
+| Planned work and extension priorities | [Roadmap](roadmap.md) |
 
-## First installation
+<a id="first-installation"></a>
+<a id="updates-and-recovery"></a>
 
-Start with [Getting started](getting-started.md), check [Compatibility](compatibility.md), then pair and test the outputs in [Zigbee](zigbee.md). Configure the cycle only after confirming that each function operates the intended equipment.
-
-## Updates and recovery
-
-Read the [firmware guide](firmware-update.md) and the notes for the release you intend to install. The Main Controller and Zigbee Controller use different files and have different effects on saved settings and pairing.
-
-Use [Backup and restore](backup-restore.md) to keep a settings copy or export currently retained diagnostics. A settings backup does not contain passwords, firmware or the Zigbee network itself. Compatible H2 application OTA preserves pairing and assignments; full recovery has different effects.
+For installation, check compatibility and identify the physical outputs before assigning equipment or enabling automation. For updates, start with the firmware guide and the matching release notes.
 
 [MycoBox overview](../README.md) · [Firmware releases](https://github.com/Moffefe/MycoBox/releases)

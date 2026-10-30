@@ -1,8 +1,6 @@
 # Web interface
 
-MycoBox serves its interface locally. Open the controller's address in a browser on the same network and sign in with your administrator account. For first access, see [Getting started](getting-started.md).
-
-The interface and its assets are stored on the controller. An internet connection is not required for normal control or for viewing the panel.
+Open the controller's local address in a browser and sign in with your administrator account. The interface and its assets are stored on MycoBox and work without internet. For first access, see [Getting started](getting-started.md).
 
 ## Navigation
 
@@ -39,9 +37,17 @@ The Current cycle card shows the active day, effective heating thresholds, humid
 
 ### Warnings
 
-Local warnings highlight conditions that persist long enough to meet the controller's monitoring rules. Expand the highlighted warning beside the device to review the condition and suggested checks. The device link opens its associated settings page.
+Warnings are assessed on the controller, including when the browser is closed. Expand a warning beside a device to read the condition and suggested checks.
 
-If fresh measurements or status information are unavailable, the panel shows that it cannot provide a current assessment. An earlier warning can remain visible until conditions can be evaluated again. Warnings are monitoring aids and do not replace independent equipment protection.
+| Condition | Required observation |
+| --- | --- |
+| Temperature or humidity outside the monitoring band | 30 minutes |
+| No usable measurements or sustained lack of response reported by Adaptive | 15 minutes |
+| Return to normal | Five stable minutes |
+
+Planned sensor heating/cooling, maintenance and measurement gaps pause the relevant assessment. **Assessment paused** or **Previously observed** means a warning is awaiting fresh evidence; it is not a new confirmation of the condition. Observations are held in memory and clear after restart. There is no retained alarm history or notification service.
+
+Warnings indicate observed conditions, not a diagnosis of an empty reservoir or failed appliance. They do not replace independent equipment protection.
 
 ## Measurements
 
@@ -49,7 +55,7 @@ If fresh measurements or status information are unavailable, the panel shows tha
   <img src="../media/web-ui/measurements.png" alt="A full day of MycoBox temperature and humidity readings with equipment activity tracks" width="1000">
 </p>
 
-The SHT41 supplies temperature and relative humidity. Current readings include their age. Missing or stale readings are not presented as fresh measurements.
+The SHT41 supplies ambient temperature and relative-humidity samples every **five seconds**, except during measurement pauses. Current readings include their age. Missing or stale readings are not presented as fresh measurements.
 
 Measurements shows up to **288 samples at five-minute intervals**, approximately a day of continuous operation. Open **Readings as text** to inspect the values as text. Charts may connect valid points across missing samples; this does not create additional measurements.
 
@@ -94,7 +100,9 @@ A cycle contains up to **32 days**, each with up to **four time points**. The fi
 
 Humidification keeps its selected mode when changing between Fruiting and Incubation. Timer mode does not regulate humidity to the Adaptive target.
 
-Adaptive V1.4 learns the response of the humidifier and enclosure during operation. Adaptive starts are separated by at least **five minutes**, and a single run is limited to **120 seconds**; a required OFF is not delayed by the start interval. The first Adaptive run after restart also waits for at least five minutes of controller uptime. The learned response is held in memory and must be learned again after restart. Observe actual humidity and equipment response: the controller cannot guarantee a target band for every enclosure or actuator.
+In Fruiting, Heat turns ON below the active temperature target and OFF above target + 0.3 °C. Incubation uses 23.5–23.8 °C. Between thresholds, heating keeps its previous decision. Heat requests OFF if the temperature reading is unusable or below 5 °C; this is not frost protection or a guarantee of physical OFF.
+
+Adaptive V1.4 learns the response of the humidifier and enclosure during operation. Adaptive starts are separated by at least **five minutes**, and a single run is limited to **120 seconds**; a required OFF is not delayed by the start interval. It stops an active pulse when usable ambient readings become unavailable. The first Adaptive run after restart also waits for at least five minutes of controller uptime. The learned response is held in memory and must be learned again after restart. Observe actual humidity and equipment response: the controller cannot guarantee a target band for every enclosure or actuator.
 
 Mode changes are saved immediately. Schedule edits follow the separate save process below.
 
@@ -114,13 +122,7 @@ If a write reports an unknown result, reload the configuration and inspect its a
 
 ## Zigbee
 
-The Zigbee page manages one paired switching device and its discovered outputs. Assign a distinct output to **Humidifier**, **Fan**, **Light** and **Heat**, and test each one before relying on automation.
-
-Use the [Zigbee guide](zigbee.md) for pairing, assignments, confirmed-state requirements and maintenance.
-
-After a network reset, maintenance blocks manual **Turn ON** until a new assignment is saved. Saving can resume automation immediately. Follow the [maintenance recovery sequence](zigbee.md#restoring-assignments-after-maintenance) when recovering assignments or identifying unknown outputs.
-
-A compatible H2 application OTA update preserves pairing and assignments. Automation remains paused until the updated controller, paired device and outputs have been checked and the required outputs confirm OFF. Read the [firmware guide](firmware-update.md) before updating; the current panel accepts an H2 application OTA package, not a full recovery image.
+Use the [Zigbee guide](zigbee.md) for pairing, output identification, assignments and network maintenance. For controller updates and post-update verification, use [Firmware updates](firmware-update.md).
 
 ## Activity log
 
@@ -128,7 +130,7 @@ Select **Heat**, **Light**, **Fan** or **Humidifier**. The page normally shows u
 
 Each entry includes its time, an event description and a message. Select the column headings to sort the loaded entries. Sorting does not fetch older events. Open **Technical details** for diagnostic codes and original event data.
 
-A confirmed output command and a successful environmental response are different things. For example, **State not confirmed** calls for checking device power and the Zigbee connection; it is not evidence that the connected appliance is safely OFF.
+For **State not confirmed** and similar messages, use the [Zigbee diagnostic checks](troubleshooting.md#zigbee-device-appears-but-cannot-be-controlled).
 
 ## Cluster
 
@@ -142,20 +144,17 @@ The source controller is excluded from recipients. Recipients must use the same 
 
 Review the node list and each growbox's equipment before confirming a group action. Copying a cycle does not copy Zigbee assignments. A group command can succeed on some recipients and fail on others. If the result is incomplete or unknown, inspect each recipient before retrying.
 
+<a id="backup-and-restore"></a>
+
 ## System
 
-System groups **Network**, **Time**, **Account**, **Updates**, **Backup & restore** and **Diagnostics**.
+Use the following guides for System operations. Save pending cycle edits before a setting change that restarts the controller.
 
-Network and account saves restart the controller. After a network change, reconnect to the controller's network and open its current address. Password fields allow keeping the existing password; an empty new-password field is not a way to display the saved password.
-
-The selected timezone applies to local display and schedules in both time modes. In Manual mode the entry field uses **UTC**; **Use computer time** converts the computer's current time to UTC. Check the displayed local time after saving.
-
-### Backup and restore
-
-Use **System → Backup & restore** to download a settings JSON, export the available diagnostics as a ZIP or choose settings sections to import. The settings file omits passwords, Zigbee network keys, firmware and the learned Adaptive model. Export includes active unsaved schedule edits; import requires the destination's current cycle to be saved first.
-
-Import defaults to the growing profile and control settings. Cycle progress, system, Wi-Fi, account and Zigbee assignments are separate choices. Preview and validation do not apply settings. Confirmed import writes the selected sections and requests a restart; a failed import can leave completed steps applied. Read [Backup and restore](backup-restore.md) for the full procedure and recovery from a partial result.
-
-Use the [firmware guide](firmware-update.md) to choose the right file and update procedure. For connection, sensor or control problems, see [Troubleshooting](troubleshooting.md).
+| Section | Guide |
+| --- | --- |
+| **Network**, **Time**, **Account** and controller name | [Connection and initial settings](getting-started.md#3-log-in) |
+| **Updates** | [Firmware files and update procedures](firmware-update.md) |
+| **Backup & restore** | [Settings export, selected import and diagnostic ZIP](backup-restore.md) |
+| **Diagnostics** | [Investigating a problem](troubleshooting.md) |
 
 [Documentation](README.md) · [MycoBox overview](../README.md)
