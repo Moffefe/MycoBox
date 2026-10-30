@@ -1,0 +1,36 @@
+- title: All guides
+  path: docs/README.md
+  url: /docs/
+- title: Getting started
+  path: docs/getting-started.md
+  url: /docs/getting-started.html
+- title: Compatibility
+  path: docs/compatibility.md
+  url: /docs/compatibility.html
+- title: Web interface
+  path: docs/web-interface.md
+  url: /docs/web-interface.html
+- title: Zigbee setup
+  path: docs/zigbee.md
+  url: /docs/zigbee.html
+- title: Backup & restore
+  path: docs/backup-restore.md
+  url: /docs/backup-restore.html
+- title: Firmware updates
+  path: docs/firmware-update.md
+  url: /docs/firmware-update.html
+- title: Troubleshooting
+  path: docs/troubleshooting.md
+  url: /docs/troubleshooting.html
+- title: Hardware overview
+  path: docs/hardware-overview.md
+  url: /docs/hardware-overview.html
+- title: Safety
+  path: docs/safety.md
+  url: /docs/safety.html
+- title: Security
+  path: SECURITY.md
+  url: /SECURITY.html
+- title: Roadmap
+  path: docs/roadmap.md
+  url: /docs/roadmap.html

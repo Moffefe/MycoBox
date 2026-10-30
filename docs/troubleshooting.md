@@ -2,6 +2,19 @@
 
 Start with power, network access and the status shown in **Overview**, **Measurements** and **Zigbee**. Read the reported result before repeating a change. Make potentially unsafe equipment safe independently of the web interface before inspection.
 
+## Find your symptom
+
+| What you see | Start here |
+| --- | --- |
+| The panel will not open, Wi-Fi changed or `.local` fails | [Network access](#network-access-problems) |
+| The panel opens but login fails | [Account access](#i-cannot-log-in) |
+| Readings are missing, incorrect or humidity keeps oscillating | [Missing readings](#sensor-values-are-missing) · [Incorrect readings](#sensor-values-look-incorrect) · [Humidity response](#humidity-oscillates-around-the-target) |
+| An appliance does not run or the wrong socket switches | [Output operation](#an-output-does-not-operate) · [Output assignment](#an-assignment-is-wrong-or-cannot-be-saved) |
+| Zigbee pairing fails or maintenance stays active | [Pairing](#zigbee-device-does-not-appear) · [Unconfirmed control](#zigbee-device-appears-but-cannot-be-controlled) · [Maintenance pause](#zigbee-maintenance-remains-active) |
+| A firmware update fails or its file is rejected | [Main Controller](#main-controller-firmware-update-failed) · [Zigbee Controller](#zigbee-controller-firmware-update-failed) · [Rejected file](#firmware-file-is-rejected) |
+| A save, import or reset has an unclear result | [Unknown result](#an-operation-result-is-unknown) · [Import](#a-settings-import-stopped-or-failed) · [After a reset](#diagnose-configuration-after-a-reset) |
+| Timing is wrong, changes disappear or restarts repeat | [Time and schedule](#time-or-scheduled-transitions-are-wrong) · [Saved settings](#configuration-changes-appear-to-have-no-effect) · [Restarts](#the-controller-restarted-during-normal-use) |
+
 ## An operation result is unknown
 
 A lost response does not establish whether a save, reset or update succeeded. Use **Reload configuration** or **Reload settings** when offered and inspect the stored state before another change.
@@ -140,6 +153,8 @@ Use the [Main Controller reset and setup instructions](getting-started.md#factor
 ## Still having problems?
 
 Complete the [equipment checks](safety.md#before-leaving-the-system-unattended) before returning to unattended use.
+
+[Report a bug](https://github.com/Moffefe/MycoBox/issues/new?template=bug-report.yml) or [ask about setup and compatibility](https://github.com/Moffefe/MycoBox/issues/new?template=setup-question.yml). For a guide correction, use [Documentation feedback](https://github.com/Moffefe/MycoBox/issues/new?template=documentation-feedback.yml).
 
 For a report, include both controllers' version/build, switching-device model, exact error or **Technical details**, reproduction steps and what changed immediately beforehand. [Export diagnostics](backup-restore.md#export-diagnostics) can collect retained evidence in one ZIP.
 

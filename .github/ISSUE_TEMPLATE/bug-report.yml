@@ -9,6 +9,8 @@ body:
       value: |
         Thanks for reporting a problem. Please provide enough detail to reproduce it.
 
+        For setup help, use [Setup or compatibility question](https://github.com/Moffefe/MycoBox/issues/new?template=setup-question.yml). For a guide correction, use [Documentation feedback](https://github.com/Moffefe/MycoBox/issues/new?template=documentation-feedback.yml); no firmware version is needed.
+
         Do not include passwords, keys, authentication headers or other sensitive information in a public issue. Share only short, reviewed event excerpts or cropped screenshots.
 
         For a suspected security vulnerability, follow the [Security Policy](https://github.com/Moffefe/MycoBox/blob/main/SECURITY.md) instead of posting exploit details here.
@@ -38,7 +40,6 @@ body:
         - Firmware update
         - Cluster
         - Local display / joystick
-        - Documentation
         - Other
     validations:
       required: true

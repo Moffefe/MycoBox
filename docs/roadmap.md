@@ -2,27 +2,27 @@
 
 This roadmap describes planned work, not a release schedule. Priorities may change as hardware is tested and the control architecture evolves.
 
-**P2 — extensions** identifies improvements beyond core climate control and reliability. IDs F19–F26 keep those extensions traceable. Where an area also contains other work, P2 applies only to the stated feature scope.
-
 ## Available now
 
 MycoBox provides local climate automation, measurements, schedules, Zigbee control and maintenance tools. See the [project overview](../README.md) and [Web interface](web-interface.md) for current behavior. Availability depends on the installed firmware; check its release notes.
 
 ## Planned capabilities
 
-| Area | Extension priority / ID |
+| Planned improvement | What it would help with |
 | --- | --- |
-| [CO₂ control](#co₂-based-ventilation-control) | — |
-| [Alarms and warnings](#alarms-and-warnings) | — |
-| [Zigbee scale testing](#zigbee-scale-and-reliability-testing) | — |
-| [Additional Zigbee sensors and measurement points](#additional-zigbee-environmental-sensors) | P2 / F21: additional measurement points |
-| [Advanced lighting](#advanced-zigbee-lighting) | P2 / F24: dimming and lighting programs |
-| [Cultivation log and reports](#cultivation-log-and-reports) | P2 / F19 |
-| [Water level and leak detection](#water-level-and-leak-detection) | P2 / F20 |
-| [Variable actuator output](#variable-actuator-output) | P2 / F22 |
-| [Plant mode and VPD](#plant-mode-and-vpd) | P2 / F23 |
-| [Simple irrigation](#simple-irrigation) | P2 / F25 |
-| [Local API and Home Assistant integration](#local-api-and-home-assistant-integration) | P2 / F26 |
+| [CO₂ control](#co₂-based-ventilation-control) | Adjust ventilation using measured CO₂ |
+| [Alarms and warnings](#alarms-and-warnings) | Make persistent problems easier to notice and review |
+| [Broader Zigbee testing](#zigbee-scale-and-reliability-testing) | Identify reliable switches and recovery behavior |
+| [Additional measurement points](#additional-zigbee-environmental-sensors) | Compare conditions in several locations |
+| [Advanced lighting](#advanced-zigbee-lighting) | Adjust brightness and lighting programs |
+| [Cultivation log and reports](#cultivation-log-and-reports) | Keep notes and review a completed growing run |
+| [Water level and leak detection](#water-level-and-leak-detection) | Respond to verified reservoir and leak signals |
+| [Variable actuator output](#variable-actuator-output) | Adjust fan speed or humidification intensity |
+| [Plant mode and VPD](#plant-mode-and-vpd) | View plant-oriented profiles and humidity calculations |
+| [Simple irrigation](#simple-irrigation) | Schedule supported pumps or valves |
+| [Local integrations](#local-api-and-home-assistant-integration) | Connect MycoBox to tools such as Home Assistant |
+
+**Status:** these are planned improvements. No delivery dates are committed. The sections below describe their scope.
 
 ## CO₂-based ventilation control
 
@@ -63,7 +63,9 @@ Add compatible temperature, humidity and combined sensors, plus CO₂ or other u
 
 Support requires capability discovery, periodic reporting, sensor identity and availability tracking, and explicit assignment of measurements to control functions.
 
-### Additional measurement points — P2 / F21
+<a id="additional-measurement-points--p2--f21"></a>
+
+### Additional measurement points
 
 Distinguish named locations such as chamber air, outside ambient air and an optional substrate probe, using supported directly connected or Zigbee sensors. Provide:
 
@@ -75,7 +77,7 @@ Distinguish named locations such as chamber air, outside ambient air and an opti
 
 ## Advanced Zigbee lighting
 
-**P2 / F24** covers dimming and lighting programs. Color and color-temperature control remain separate planned extensions with their own prioritization.
+Dimming and lighting programs are planned alongside separate color and color-temperature extensions.
 
 Planned capabilities include:
 
@@ -89,8 +91,6 @@ Switch-only lights retain ON/OFF control.
 
 ## Cultivation log and reports
 
-**Priority: P2 / F19**
-
 Create a record of a specific cultivation run, extending the retained-data snapshot available through [diagnostic export](backup-restore.md):
 
 - cycle name, start/end dates and user notes;
@@ -102,23 +102,17 @@ Reports should reuse available measurement and event history rather than create 
 
 ## Water level and leak detection
 
-**Priority: P2 / F20**
-
 Add verified signals for low water, an empty reservoir and leaks. Assign each signal to its reservoir or equipment and define alarms, recovery or acknowledgement, and appropriate responses such as stopping an affected pump or humidifier.
 
 Show sensor availability and define behavior for missing or stale signals. Use the planned [alarm mechanism](#alarms-and-warnings). This work may be brought forward for the selected pump or humidifier; responses require a real supported signal and testing with the connected equipment.
 
 ## Variable actuator output
 
-**Priority: P2 / F22**
-
 Support fan speed or humidification intensity where a verified device exposes variable output. Discover its supported range, provide configurable minimum/maximum levels and controlled transitions, and define interaction with automatic/manual modes, failed commands and device unavailability.
 
-Lighting brightness belongs to [F24](#advanced-zigbee-lighting). Switch-only actuators retain ON/OFF control.
+Lighting brightness belongs to [advanced lighting](#advanced-zigbee-lighting). Switch-only actuators retain ON/OFF control.
 
 ## Plant mode and VPD
-
-**Priority: P2 / F23**
 
 Add plant-oriented labels, editable profile templates and vapor pressure deficit (VPD) calculation/charts from valid temperature and RH measurements. Distinguish air VPD from estimated leaf VPD and show any leaf-temperature assumption or configured offset. Missing-data behavior must follow the underlying sensors.
 
@@ -126,21 +120,17 @@ The initial scope is calculation, presentation and profiles. VPD-based control r
 
 ## Simple irrigation
 
-**Priority: P2 / F25**
-
-Add scheduled watering for compatible pumps or valves, with optional feedback from a verified substrate sensor assigned through F21. Include:
+Add scheduled watering for compatible pumps or valves, with optional feedback from a verified substrate sensor assigned through the [additional measurement points](#additional-measurement-points) work. Include:
 
 - explicit assignment, manual testing and cancellation;
 - maximum run time and minimum interval between actions;
 - defined restart/interruption behavior that avoids unintended replay of missed watering;
-- use of F20 water-level or leak information when available;
+- use of [water-level or leak information](#water-level-and-leak-detection) when available;
 - watering events in the existing history.
 
 Nutrient dosing and pH/EC-based fertigation require separate planning and hardware validation.
 
 ## Local API and Home Assistant integration
-
-**Priority: P2 / F26**
 
 Provide one documented local integration path for:
 
@@ -150,6 +140,21 @@ Provide one documented local integration path for:
 - defined handling of disconnected clients and conflicting commands.
 
 Evaluate MQTT where useful. Environmental automation and configuration remain on MycoBox.
+
+## Planning references
+
+The identifiers below connect these plans with development tracking. **P2** means extensions beyond core climate control and reliability; it is not a delivery date.
+
+| Reference | Extension |
+| --- | --- |
+| F19 · P2 | Cultivation log and reports |
+| F20 · P2 | Water level and leak detection |
+| F21 · P2 | Additional measurement points |
+| F22 · P2 | Variable actuator output |
+| F23 · P2 | Plant mode and VPD |
+| F24 · P2 | Dimming and lighting programs |
+| F25 · P2 | Simple irrigation |
+| F26 · P2 | Local API and Home Assistant integration |
 
 ## Roadmap principles
 

@@ -10,3 +10,66 @@
 .mobile-surround a{aspect-ratio:9/19.5;overflow:hidden}.mobile-surround img{width:100%;height:auto}
 
 .dialog-size{padding:7px 12px;border:1px solid #42604a;background:var(--surface);color:var(--text);border-radius:5px;font-size:12px;white-space:nowrap;margin-left:auto}.dialog-toolbar p{margin-right:auto}.dialog-scroll.is-original img{width:auto;max-width:none}.dialog-toolbar{gap:12px}@media(max-width:680px){.dialog-size{padding:5px 8px;font-size:10px}.dialog-toolbar p{max-width:47%}}
+
+/* Reading and touch targets across landing-page and guide navigation. */
+.nav-links a{display:inline-flex;align-items:center;min-height:44px}
+.text-link{font-size:15px;display:inline-flex;align-items:center;min-height:44px}
+.hero-footnote{font-size:14px}
+.capabilities span{font-size:14px}
+.capabilities strong{font-size:16px}
+.screen-label{font-size:12px}
+.gallery-hint{padding:15px 20px 0;font-size:14px}
+.tabs{gap:12px;flex-wrap:wrap;overflow:visible;padding-top:4px}
+.tabs button{font-size:14px;min-height:48px;padding:14px 12px 12px}
+.explorer figcaption strong{font-size:16px}
+.explorer figcaption p,.explorer figcaption>a{font-size:14px}
+.explorer figcaption>a{display:inline-flex;align-items:center;min-height:44px}
+.context-row p,.context-row .text-link{font-size:14px}
+.role-number{font-size:11px}
+.role-card p,.automation-bottom p,.automation-bottom .text-link{font-size:14px}
+.plain-list strong{font-size:16px}
+.plain-list p,.mobile-figure figcaption,.guide p{font-size:14px}
+.firmware-callout p:last-child{font-size:14px}
+.site-footer p,.site-footer nav a{font-size:14px}
+.site-footer nav a{display:inline-flex;align-items:center;min-height:44px}
+.image-link{position:relative}
+.enlarge-hint{font-size:13px}
+.image-link:focus-visible .enlarge-hint{background:#153323}
+.backup-strip{padding-block:30px;display:flex;align-items:center;justify-content:space-between;gap:28px;border-top:1px solid var(--line)}
+.backup-strip h2{font-size:25px}
+.backup-strip p{font-size:15px;margin-top:9px}
+.backup-strip .text-link{flex-shrink:0}
+@media(max-width:680px){
+  .nav{gap:5px;padding-block:10px}
+  .nav-links{font-size:13px;gap:14px;padding-block:0}
+  .nav-links a{min-height:44px}
+  .hero .eyebrow,.section .eyebrow{font-size:11px}
+  .hero-copy,.section-heading>p,.section-intro{font-size:16px}
+  .button{font-size:14px;min-height:48px;padding:11px 16px}
+  .hero-footnote{font-size:13px}
+  .capabilities>div,.capabilities>div:first-child{display:block;padding-block:13px}
+  .capabilities strong{font-size:15px}
+  .capabilities span{font-size:14px;text-align:left;margin-top:4px}
+  .screen-label{font-size:11px}
+  .tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;padding-inline:8px}
+  .tabs button{white-space:normal;font-size:14px;padding:13px 7px;min-height:50px;line-height:1.45}
+  .gallery-hint{font-size:14px;padding:16px 16px 6px}
+  .explorer figcaption strong{font-size:16px}
+  .explorer figcaption p,.explorer figcaption>a,.context-row p,.context-row .text-link{font-size:14px}
+  .role-grid{grid-template-columns:1fr}
+  .role-card{border-left:0;border-top:1px solid var(--line);padding:24px}
+  .role-card:first-child{border-top:0}
+  .role-number{font-size:12px}
+  .role-card h3{font-size:22px}
+  .role-card p,.automation-bottom p,.automation-bottom .text-link,.plain-list p{font-size:15px}
+  .plain-list strong{font-size:16px}
+  .guide p,.firmware-callout p:last-child{font-size:14px}
+  .enlarge-hint{font-size:12px;right:10px;bottom:10px;padding:8px 10px}
+  .backup-strip{display:block;padding-block:28px}
+  .backup-strip h2{font-size:24px}
+  .backup-strip .text-link{margin-top:12px;font-size:15px}
+  .dialog-toolbar{flex-wrap:wrap}
+  .dialog-toolbar p{max-width:none;flex-basis:100%;font-size:14px}
+  .dialog-size,.dialog-close{font-size:14px;min-height:44px}
+  .dialog-scroll{max-height:calc(94dvh - 145px)}
+}

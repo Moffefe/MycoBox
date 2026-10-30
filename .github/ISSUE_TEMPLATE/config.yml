@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Read the MycoBox guides
+    url: https://moffefe.github.io/MycoBox/docs/
+    about: First connection, everyday use, updates and troubleshooting.
+  - name: Security reporting
+    url: https://github.com/Moffefe/MycoBox/blob/main/SECURITY.md#reporting-a-vulnerability
+    about: Follow this route for a suspected vulnerability; do not publish exploit details.

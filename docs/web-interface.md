@@ -8,13 +8,13 @@ Screenshots include earlier captures and examples with sample data; they illustr
 
 | Page | Main purpose |
 | --- | --- |
-| **Overview** | Current conditions, Growbox states, warnings, active cycle and assignments |
-| **Measurements** | Temperature and humidity history, activity tracks and recorded readings |
-| **Cycle & automation** | Growing mode, humidification mode, light schedule and daily time points |
-| **Zigbee** | Pairing, output assignments, manual tests and Zigbee Controller maintenance |
-| **Activity log** | Recorded events for Heat, Light, Fan and Humidifier |
-| **Cluster** | Discovered controllers and group actions |
-| **System** | Network, time, administrator account, backup and restore, and Main Controller updates |
+| [**Overview**](#overview-and-growbox) | Current conditions, Growbox states, warnings, active cycle and assignments |
+| [**Measurements**](#measurements) | Temperature and humidity history, activity tracks and recorded readings |
+| [**Cycle & automation**](#cycle-and-automation) | Growing mode, humidification mode, light schedule and daily time points |
+| [**Zigbee**](#zigbee) | Pairing, output assignments, manual tests and Zigbee Controller maintenance |
+| [**Activity log**](#activity-log) | Recorded events for Heat, Light, Fan and Humidifier |
+| [**Cluster**](#cluster) | Discovered controllers and group actions |
+| [**System**](#system) | Network, time, administrator account, backup and restore, and Main Controller updates |
 
 **Diagnostics** is available from System and the page footer.
 

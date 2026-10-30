@@ -1,10 +1,22 @@
-# Getting Started
+# Getting started
 
-[MycoBox home](../README.md) · [Documentation](README.md) · [Web interface](web-interface.md)
+[MycoBox home](../README.md) · [Documentation](README.md)
 
-This guide takes a MycoBox controller from first power-on to a saved growing cycle. Keep controlled equipment disconnected until you have identified and tested its switching outputs.
+This guide is for a MycoBox controller ready to power on. Keep controlled equipment disconnected until you have identified and tested its switching outputs.
 
-## 1. Power on the controller
+| Stage | What you will do |
+| --- | --- |
+| [1. Connect](#1-connect) | Open the local panel, change the factory login and join your Wi-Fi |
+| [2. Configure](#2-configure) | Set the clock, check measurements, assign outputs and save a simple cycle |
+| [3. Verify](#3-verify) | Check physical operation, observe the cycle and keep a settings backup |
+
+[Optional: controller name](#6-change-the-controller-name) · [Several controllers](#more-than-one-controller) · [Network recovery](#network-recovery) · [Factory reset](#factory-reset)
+
+## 1. Connect
+
+<a id="1-power-on-the-controller"></a>
+
+### Power on the controller
 
 Connect the controller to its intended power supply and let it finish starting. The Main Controller loads settings, starts the Zigbee Controller, reads the sensor and brings up networking.
 
@@ -16,7 +28,9 @@ When no Wi-Fi network has been saved, MycoBox creates an access point named:
 
 A controller with factory settings receives a name beginning with `FC`, for example `FC123456_AP`. Use the actual name shown by your unit.
 
-## 2. Connect to the MycoBox access point
+<a id="2-connect-to-the-mycobox-access-point"></a>
+
+### Connect to the access point
 
 1. On your phone or computer, connect to `<controller-name>_AP`.
 2. Enter the access point password: `12345678`.
@@ -25,7 +39,9 @@ A controller with factory settings receives a name beginning with `FC`, for exam
 
 A phone may report that this Wi-Fi network has no internet access. Stay connected to it while configuring MycoBox. The local interface does not require internet access.
 
-## 3. Log in
+<a id="3-log-in"></a>
+
+### Log in and replace the factory credentials
 
 Factory web credentials are:
 
@@ -40,7 +56,9 @@ Open **System → Account → Administrator account** to change the credentials.
 
 Use the interface on a trusted local network. It uses HTTP, which does not encrypt the browser connection. Do not expose it directly to the internet.
 
-## 4. Configure Wi-Fi
+<a id="4-configure-wi-fi"></a>
+
+### Join your Wi-Fi network
 
 Open **System → Network**.
 
@@ -52,7 +70,9 @@ Open **System → Network**.
 
 MycoBox attempts to join the saved network before falling back to its own access point. If the network is unavailable, this can take several minutes. See [Network recovery](#network-recovery).
 
-## 5. Open MycoBox on your local network
+<a id="5-open-mycobox-on-your-local-network"></a>
+
+### Open MycoBox on your local network
 
 Use the IP address on the controller's **Network** display or the address assigned by your router. In this mode, MycoBox also advertises:
 
@@ -64,17 +84,13 @@ For example, a controller named `GrowRoom` advertises `http://GrowRoom.local`.
 
 Name resolution depends on your device and local network. If `.local` does not work, use the IP address. The access point connection can be used directly without mDNS.
 
-## 6. Change the controller name
+**Ready to continue:** the panel opens at the controller's local address and accepts your saved account.
 
-Select the pencil icon beside the controller name in the web interface. Names must:
+## 2. Configure
 
-- contain 3–20 letters and digits;
-- start with a letter;
-- be distinct from other controllers on your network.
+<a id="7-configure-time-and-localization"></a>
 
-Saving the name restarts the controller. Save any pending cycle changes first. The new name is used for the `.local` address on your network and for `<controller-name>_AP` in access point mode.
-
-## 7. Configure time and localization
+### Set the clock and timezone
 
 Open **System → Time → Time and timezone**.
 
@@ -85,29 +101,59 @@ Open **System → Time → Time and timezone**.
 
 A working DS3231 RTC with a valid saved time supplies the offline clock. After a clock or battery problem, correct the time before relying on schedules. A change of time mode restarts the Main Controller; reconnect if prompted.
 
-## 8. Check the sensors
+<a id="8-check-the-sensors"></a>
+
+### Check temperature and humidity
 
 Open **Measurements** and confirm reasonable, fresh temperature and humidity readings before enabling measurement-dependent control. Read [Measurements and sensor states](web-interface.md#measurements) for the history, heating/cooling statuses and interpretation of missing data. Resolve persistent errors through [Troubleshooting](troubleshooting.md).
 
-## 9. Configure Zigbee devices
+<a id="9-configure-zigbee-devices"></a>
+
+### Pair the switch and assign its outputs
 
 Follow [Zigbee setup](zigbee.md) to pair the switching device, identify its physical outputs and save assignments for the functions you need. Keep controlled equipment isolated during output identification; saving an assignment can enable automation. Use the guide's separate maintenance recovery procedure if the network has already been reset.
 
-## 10. Configure environmental control
+<a id="10-configure-environmental-control"></a>
+
+### Create and save a simple cycle
 
 Open **Cycle & automation**, choose the growing and humidification modes, and start with a simple daily schedule. Follow [Cycle and automation](web-interface.md#cycle-and-automation) for mode behavior, Adaptive control limits and the editor. Choose **Save cycle** after applying schedule edits so they survive a restart.
 
-## 11. Test every controlled device
+**Ready to continue:** local time is correct, measurements are fresh, outputs are identified and the cycle reports a successful save.
+
+## 3. Verify
+
+<a id="11-test-every-controlled-device"></a>
+
+### Test every controlled device
 
 Check that every saved assignment operates the intended equipment in both ON and OFF states. Watch the actual device as well as the panel: output confirmation does not prove physical airflow, mist or heat. Check electrical ratings, behavior after power restoration and moisture precautions in [Safety](safety.md).
 
-## 12. Observe the environment
+<a id="12-observe-the-environment"></a>
+
+### Observe scheduled transitions
 
 Use [Overview](web-interface.md#overview-and-growbox), Measurements and Activity log to observe the enclosure through scheduled transitions. Confirm the active cycle day and modes, physical equipment response and environmental changes before unattended operation. Local warnings do not replace independent protection or regular checks.
 
-## 13. Save a settings backup
+<a id="13-save-a-settings-backup"></a>
+
+### Save a settings backup
 
 After checking the setup, use **System → Backup & restore → Export settings** to keep a copy. Read [Backup and restore](backup-restore.md) for file contents, supported firmware and selective import. Exporting a copy does not replace **Save cycle** on the controller.
+
+**Setup complete:** the intended equipment responds correctly through scheduled transitions and you have downloaded a settings copy.
+
+<a id="6-change-the-controller-name"></a>
+
+## Optional: name your controller
+
+Select the pencil icon beside the controller name in the web interface. Names must:
+
+- contain 3–20 letters and digits;
+- start with a letter;
+- be distinct from other controllers on your network.
+
+Saving the name restarts the controller. Save any pending cycle changes first. The new name is used for the `.local` address on your network and for `<controller-name>_AP` in access point mode.
 
 ## More than one controller
 

@@ -1,0 +1,37 @@
+title: MycoBox
+description: Local climate automation for your growing space.
+url: https://moffefe.github.io
+baseurl: /MycoBox
+theme: null
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+plugins:
+  - jekyll-optional-front-matter
+  - jekyll-relative-links
+readme_index:
+  enabled: false
+titles_from_headings:
+  enabled: true
+  strip_title: false
+defaults:
+  - scope:
+      path: "docs"
+    values:
+      layout: guide
+  - scope:
+      path: "docs/README.md"
+    values:
+      permalink: /docs/
+  - scope:
+      path: "SECURITY.md"
+    values:
+      layout: guide
+  - scope:
+      path: "README.md"
+    values:
+      layout: guide
+exclude:
+  - media/web-ui/README.md
+  - site/README.md
